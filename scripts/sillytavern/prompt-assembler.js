@@ -3,17 +3,9 @@
  */
 
 import { createLorebookEngine } from './lorebook-engine.js';
-import { formatVariablesForPrompt } from './variables.js';
-import { render as renderTemplate, hasTemplateMarkers } from './template-engine.js';
-import { buildContext as buildTemplateContext } from './extension-api.js';
 
 export function assemblePrompt(options) {
-  const { userInput, history, preset, lorebooks, userName, characterName, variables, extraVariables, formatPrompt, globalVariables, templateEngineSettings } = options;
-
-  const tplEnabled = templateEngineSettings?.enabled !== false;
-  const renderLore = tplEnabled && templateEngineSettings?.renderLorebook !== false;
-  const renderPresetTpl = tplEnabled && templateEngineSettings?.renderPreset !== false;
-  const tplCtx = tplEnabled ? buildTemplateContext({ userInput }) : null;
+  const { userInput, history, preset, lorebooks, userName, characterName, variables, formatPrompt } = options;
 
   const allMatchedEntries = [];
   const scanText = userInput + ' ' + history.slice(-3).map(m => m.content).join(' ');
@@ -21,13 +13,6 @@ export function assemblePrompt(options) {
   for (const book of lorebooks) {
     const engine = createLorebookEngine(book);
     const matches = engine.recursiveScan(scanText, 3);
-    if (renderLore && tplCtx) {
-      for (const m of matches) {
-        if (m.entry?.content && hasTemplateMarkers(m.entry.content)) {
-          m.entry = { ...m.entry, content: renderTemplate(m.entry.content, tplCtx) };
-        }
-      }
-    }
     allMatchedEntries.push(...matches);
   }
 
@@ -93,9 +78,6 @@ export function assemblePrompt(options) {
     if (!rawContent) continue;
 
     let content = replaceMacros(rawContent, { userName, characterName, userInput, variables });
-    if (renderPresetTpl && tplCtx && hasTemplateMarkers(content)) {
-      content = renderTemplate(content, tplCtx);
-    }
     if (!content.trim()) continue;
 
     const role = item.role || 'system';
@@ -110,24 +92,8 @@ export function assemblePrompt(options) {
     }
   }
 
-  const variablesBlock = formatVariablesForPrompt(variables || {}, globalVariables);
-  if (variablesBlock) {
-    systemAccumulator += (systemAccumulator ? '\n\n' : '') + variablesBlock;
-  }
-
-  if (extraVariables && Object.keys(extraVariables).length > 0) {
-    const extraBlock = formatVariablesForPrompt(extraVariables);
-    if (extraBlock) {
-      systemAccumulator += (systemAccumulator ? '\n\n' : '') + extraBlock;
-    }
-  }
-
   if (formatPrompt) {
-    let fp = formatPrompt;
-    if (renderPresetTpl && tplCtx && hasTemplateMarkers(fp)) {
-      fp = renderTemplate(fp, tplCtx);
-    }
-    systemAccumulator += (systemAccumulator ? '\n\n' : '') + fp;
+    systemAccumulator += (systemAccumulator ? '\n\n' : '') + formatPrompt;
   }
 
   if (systemAccumulator) {

@@ -55,23 +55,6 @@ export const DEFAULT_SETTINGS = {
   customTags: ['maintext', 'option', 'sum', 'vars', 'thinking', 'think'],
   formatPromptTemplate: DEFAULT_FORMAT_PROMPT,
   thinkingDisplay: 'fold',
-  defaultVariables: {},
-  variableRules: {
-    extractFromResponse: true,
-    useSecondaryApi: false,
-    allowedKeys: [],
-  },
-  variableSchema: [],
-  // ========== Extension layer ==========
-  globalVariables: {},
-  globalVariableSchema: [],
-  templateEngine: {
-    enabled: true,
-    renderLorebook: true,
-    renderPreset: true,
-  },
-  enabledScriptIds: [],
-  enabledTemplateIds: [],
 };
 
 export const DEFAULT_PROMPT_ORDER = [

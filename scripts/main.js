@@ -1,6 +1,5 @@
 /* scripts/main.js — 入口与全局连线 (ES module, SillyTavern v3 integrated) */
-import { openSettings, openLorebooks, openVariables } from './sillytavern-ui.js';
-import { openExtensions } from './sillytavern-extensions-ui.js';
+import { openSettings, openLorebooks } from './sillytavern-ui.js';
 import { store } from './sillytavern-store.js';
 import { exportAllData } from './sillytavern/database.js';
 
@@ -85,9 +84,7 @@ function renderCtxPane() {
             <span class="ctx-item-name">${escapeHtml(s.settings?.characterName || 'AI')} 状态</span>
             <span class="badge badge-sakura">活跃</span>
           </div>
-          <div class="ctx-item-body">
-            ${chat && chat.variables ? Object.entries(chat.variables).slice(0, 5).map(([k,v]) => `<span style="margin-right:16px;font-size:12px">${escapeHtml(k)}: ${escapeHtml(String(v))}</span>`).join('') : '暂无变量'}
-          </div>
+          <div class="ctx-item-body">当前活跃对话</div>
           <div class="ctx-item-meta" style="margin-top: var(--sp-3);">
             <span>${chat ? chat.messages.length + ' 条消息' : '无活跃对话'}</span>
             <span class="ctx-item-meta-dot"></span>
@@ -174,14 +171,6 @@ document.getElementById('archive-btn').addEventListener('click', async () => {
 
 document.getElementById('lorebook-btn').addEventListener('click', () => {
   openLorebooks();
-});
-
-document.getElementById('variables-btn').addEventListener('click', () => {
-  openVariables();
-});
-
-document.getElementById('extensions-btn').addEventListener('click', () => {
-  openExtensions();
 });
 
 // —— 全局快捷键 —— //

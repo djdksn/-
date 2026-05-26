@@ -3,8 +3,8 @@
  * Replaces Dexie CDN with a minimal native IndexedDB wrapper.
  */
 const DB_NAME = 'SillyTavernWebDB';
-const DB_VERSION = 4;
-const STORES = ['lorebooks', 'presets', 'settings', 'chats', 'scripts', 'templates'];
+const DB_VERSION = 5;
+const STORES = ['lorebooks', 'presets', 'settings', 'chats'];
 
 class MiniDB {
   constructor(name, version) {
@@ -185,15 +185,13 @@ export async function clearAllData() {
 
 export async function exportAllData() {
   const db = getDatabase();
-  const [lorebooks, presets, settings, chats, scripts, templates] = await Promise.all([
+  const [lorebooks, presets, settings, chats] = await Promise.all([
     db.table('lorebooks').toArray(),
     db.table('presets').toArray(),
     db.table('settings').toArray(),
     db.table('chats').toArray(),
-    db.table('scripts').toArray(),
-    db.table('templates').toArray(),
   ]);
-  return { version: DB_VERSION, exportedAt: Date.now(), lorebooks, presets, settings, chats, scripts, templates };
+  return { version: DB_VERSION, exportedAt: Date.now(), lorebooks, presets, settings, chats };
 }
 
 export async function importAllData(backup) {
@@ -203,14 +201,10 @@ export async function importAllData(backup) {
   await db.table('presets').clear();
   await db.table('settings').clear();
   await db.table('chats').clear();
-  await db.table('scripts').clear();
-  await db.table('templates').clear();
   if (Array.isArray(backup.lorebooks)) await db.table('lorebooks').bulkPut(backup.lorebooks);
   if (Array.isArray(backup.presets)) await db.table('presets').bulkPut(backup.presets);
   if (Array.isArray(backup.settings)) await db.table('settings').bulkPut(backup.settings);
   if (Array.isArray(backup.chats)) await db.table('chats').bulkPut(backup.chats);
-  if (Array.isArray(backup.scripts)) await db.table('scripts').bulkPut(backup.scripts);
-  if (Array.isArray(backup.templates)) await db.table('templates').bulkPut(backup.templates);
 }
 
 export async function getLorebooks() { return getDatabase().table('lorebooks').toArray(); }
@@ -245,31 +239,3 @@ export async function saveChat(chat) {
 }
 export async function deleteChat(id) { await getDatabase().table('chats').delete(id); }
 
-export async function setVariables(chatId, variables) {
-  const db = getDatabase();
-  const chat = await db.table('chats').get(chatId);
-  if (!chat) return;
-  chat.variables = variables;
-  chat.updatedAt = Date.now();
-  await db.table('chats').put(chat);
-}
-
-// ========== Scripts ==========
-export async function getScripts() { return getDatabase().table('scripts').toArray(); }
-export async function saveScript(script) {
-  script.updatedAt = Date.now();
-  if (!script.createdAt) script.createdAt = Date.now();
-  await getDatabase().table('scripts').put(script);
-  return script.id;
-}
-export async function deleteScript(id) { await getDatabase().table('scripts').delete(id); }
-
-// ========== Templates ==========
-export async function getTemplates() { return getDatabase().table('templates').toArray(); }
-export async function saveTemplate(template) {
-  template.updatedAt = Date.now();
-  if (!template.createdAt) template.createdAt = Date.now();
-  await getDatabase().table('templates').put(template);
-  return template.id;
-}
-export async function deleteTemplate(id) { await getDatabase().table('templates').delete(id); }

@@ -151,12 +151,6 @@
       bodyHtml += `<details class="st-sum-fold"><summary>总结</summary><p>${escapeHtml(parsed.sum)}</p></details>`;
     }
 
-    // Variables display
-    const vars = msg.variables || msg.variablesAfter;
-    if (vars && Object.keys(vars).length > 0) {
-      const varEntries = Object.entries(vars).slice(0, 5);
-      bodyHtml += `<div class="st-vars-inline" style="margin-top:8px;font-size:11px;color:var(--fg-quaternary);">${varEntries.map(([k,v]) => `<span style="margin-right:12px">${escapeHtml(k)}: ${escapeHtml(String(v))}</span>`).join('')}</div>`;
-    }
 
     b.innerHTML = `
       <div class="bubble-avatar tone-${tone}">${escapeHtml(avatarChar)}</div>
@@ -257,14 +251,6 @@
     }
     const mode = document.querySelector('.mode-tab.is-active').getAttribute('data-mode');
 
-    // Slash command intercept: cmd mode OR raw text starting with '/'
-    if (mode === 'cmd' || v.startsWith('/')) {
-      const line = v.startsWith('/') ? v : '/' + v;
-      runSlash(line);
-      input.value = '';
-      autoSize();
-      return;
-    }
 
     // If store is ready, use real LLM
     if (store && store.activeChat && store.settings?.api?.apiKey) {
@@ -320,38 +306,6 @@
       input.focus();
     });
   });
-
-  // —— Slash command runner —— //
-  async function runSlash(line) {
-    let dispatch;
-    try {
-      const mod = await import('./sillytavern/slash-commands.js');
-      dispatch = mod.dispatch;
-    } catch (err) {
-      if (typeof GameNotify !== 'undefined') GameNotify.error('斜杠命令加载失败', err.message);
-      return;
-    }
-    const result = await dispatch(line, store);
-    appendSlashEcho(line, result);
-    if (result && typeof GameNotify !== 'undefined') {
-      if (result.ok) GameNotify.success('命令执行', truncate(result.text || '', 80));
-      else GameNotify.warn('命令未执行', truncate(result.text || '', 80));
-    }
-  }
-
-  function appendSlashEcho(line, result) {
-    const div = document.createElement('div');
-    div.className = 'bubble narration';
-    const ok = result?.ok !== false;
-    div.innerHTML = `
-      <div style="font-family:var(--font-mono);font-size:12px;color:var(--wisteria-200);margin-bottom:4px;">${escapeHtml(line)}</div>
-      <div style="font-family:var(--font-mono);font-size:12px;color:${ok ? 'var(--fg-secondary)' : 'var(--amber-300)'};white-space:pre-wrap;">${escapeHtml(result?.text || '(无返回)')}</div>
-    `;
-    stream.appendChild(div);
-    requestAnimationFrame(() => { scrollDown(); });
-  }
-
-  function truncate(s, n) { return s.length > n ? s.slice(0, n - 1) + '…' : s; }
 
   // —— 选项点击 —— //
   stream.addEventListener('click', e => {
