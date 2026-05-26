@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>申请表制作器 · Form Maker</title>
+<style>
+/* ===== tokens ===== */
+:root {
+  --ink-1000: #0c0e16; --ink-950: #11131c; --ink-900: #161927; --ink-850: #1a1d29;
+  --ink-800: #1e2230; --ink-700: #262b3b; --ink-600: #313749; --ink-500: #3e4459;
+  --ink-400: #525a73; --ink-300: #6d758f; --ink-200: #8a92ab; --ink-100: #adb4cb;
+  --ink-25: #e6e9f4;
+  --sakura-400: #ff6b9a; --sakura-500: #f04e84; --sakura-300: #ff8caf; --sakura-200: #ffb3c8;
+  --wisteria-300: #a691ff; --wisteria-400: #8a72f0; --wisteria-500: #6a55d6; --wisteria-200: #c8b8ff;
+  --moss-200: #91e0b5; --moss-300: #5fc99a;
+  --amber-200: #ffcf7a; --amber-300: #ffae42;
+  --vermil-200: #ffb5b5; --vermil-300: #ff8888;
+  --bg-base: var(--ink-950); --bg-canvas: var(--ink-900); --bg-surface: var(--ink-850);
+  --bg-elevated: var(--ink-800); --bg-floating: var(--ink-700);
+  --bg-hover: rgba(255,255,255,0.04); --bg-active: rgba(255,255,255,0.08);
+  --fg-primary: var(--ink-25); --fg-secondary: var(--ink-100);
+  --fg-tertiary: var(--ink-300); --fg-quaternary: var(--ink-400);
+  --border-faint: rgba(255,255,255,0.04); --border-soft: rgba(255,255,255,0.08);
+  --border-base: rgba(255,255,255,0.12);
+  --accent: var(--sakura-400); --accent-glow: rgba(255,107,154,0.32);
+  --font-sans: "Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --font-serif: "Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  --font-display: "Cormorant Garamond","Noto Serif SC",serif;
+  --font-mono: "JetBrains Mono","SF Mono","Consolas",monospace;
+  --fs-2xs:10px;--fs-xs:11px;--fs-sm:12px;--fs-md:13px;--fs-base:14px;--fs-lg:15px;--fs-xl:17px;
+  --sp-1:2px;--sp-2:4px;--sp-3:6px;--sp-4:8px;--sp-5:10px;--sp-6:12px;--sp-7:14px;--sp-8:16px;
+  --sp-10:20px;--sp-12:24px;
+  --r-xs:4px;--r-sm:6px;--r-md:10px;--r-lg:14px;--r-xl:18px;--r-2xl:24px;--r-full:999px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.22),0 1px 2px rgba(0,0,0,0.14);
+  --shadow-xl:0 24px 50px -12px rgba(0,0,0,0.55),0 8px 16px -8px rgba(0,0,0,0.35);
+  --shadow-2xl:0 36px 80px -20px rgba(0,0,0,0.7),0 12px 24px -12px rgba(0,0,0,0.45);
+  --shadow-inset:inset 0 1px 0 rgba(255,255,255,0.04);
+  --lh-relaxed:1.7;
+  --ease-out:cubic-bezier(0.22,1,0.36,1); --ease-in:cubic-bezier(0.55,0,0.7,0.2);
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1); --ease-soft:cubic-bezier(0.4,0,0.2,1);
+  --t-fast:140ms; --t-base:220ms; --t-slow:380ms;
+  --z-modal:200; --z-toast:500;
+  --glass-bg-strong:rgba(22,25,39,0.88);
+  --glass-blur:saturate(180%) blur(16px);
+}
+/* ===== base ===== */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;background:var(--bg-base);color:var(--fg-primary);font-family:var(--font-sans);font-size:var(--fs-base);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+input,textarea,select{font:inherit;color:inherit}
+svg{width:1em;height:1em;flex-shrink:0}
+::selection{background:var(--sakura-500);color:#fff}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--ink-600);border-radius:var(--r-full)}
+::-webkit-scrollbar-thumb:hover{background:var(--ink-500)}
+*{scrollbar-color:var(--ink-600) transparent;scrollbar-width:thin}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-xs)}
+button:focus{outline:none}button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ===== components ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-4);height:34px;padding:0 var(--sp-8);border-radius:var(--r-md);font-size:var(--fs-sm);font-weight:500;letter-spacing:0.04em;cursor:pointer;transition:background var(--t-fast),color var(--t-fast),border-color var(--t-fast),transform var(--t-fast),box-shadow var(--t-fast);white-space:nowrap;user-select:none;position:relative;overflow:hidden}
+.btn:active{transform:scale(0.97)}
+.btn svg{width:14px;height:14px}
+.btn-primary{background:linear-gradient(135deg,var(--sakura-500),var(--wisteria-500));color:#fff;box-shadow:0 4px 12px -2px var(--accent-glow),var(--shadow-inset)}
+.btn-primary:hover{background:linear-gradient(135deg,var(--sakura-400),var(--wisteria-400));box-shadow:0 6px 18px -2px var(--accent-glow),var(--shadow-inset);transform:translateY(-1px)}
+.btn-ghost{background:var(--bg-elevated);color:var(--fg-secondary);border:1px solid var(--border-soft)}
+.btn-ghost:hover{background:var(--bg-floating);border-color:var(--border-base);color:var(--fg-primary)}
+.btn-soft{background:rgba(255,107,154,0.10);color:var(--sakura-300);border:1px solid rgba(255,107,154,0.18)}
+.btn-soft:hover{background:rgba(255,107,154,0.16);color:var(--sakura-200)}
+.btn-danger{background:rgba(238,90,90,0.10);color:var(--vermil-300);border:1px solid rgba(238,90,90,0.22)}
+.btn-danger:hover{background:rgba(238,90,90,0.18);color:var(--vermil-200)}
+.btn-sm{height:28px;padding:0 var(--sp-6);font-size:var(--fs-xs)}
+.btn-block{width:100%}
+.input,.textarea,.select{width:100%;height:34px;padding:0 var(--sp-7);background:var(--ink-900);border:1px solid var(--border-base);border-radius:var(--r-md);color:var(--fg-primary);font-size:var(--fs-sm);font-family:var(--font-sans);outline:0;transition:border-color var(--t-fast),box-shadow var(--t-fast),background var(--t-fast)}
+.textarea{height:auto;min-height:80px;padding:var(--sp-5) var(--sp-7);resize:vertical;line-height:var(--lh-relaxed)}
+.input:focus,.textarea:focus,.select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);background:var(--ink-850)}
+.input::placeholder,.textarea::placeholder{color:var(--fg-quaternary);font-style:italic}
+.switch{display:inline-flex;align-items:center;gap:var(--sp-5);cursor:pointer;user-select:none}
+.switch-track{position:relative;width:36px;height:20px;border-radius:var(--r-full);background:var(--ink-700);border:1px solid var(--border-soft);transition:background var(--t-base) var(--ease-soft);flex-shrink:0}
+.switch-track::after{content:"";position:absolute;top:1px;left:1px;width:16px;height:16px;border-radius:50%;background:linear-gradient(180deg,var(--ink-200),var(--ink-300));box-shadow:var(--shadow-sm);transition:left var(--t-base) var(--ease-spring),background var(--t-base)}
+.switch input{display:none}
+.switch input:checked+.switch-track{background:linear-gradient(135deg,var(--sakura-500),var(--wisteria-500))}
+.switch input:checked+.switch-track::after{left:17px;background:linear-gradient(180deg,#fff,var(--sakura-100))}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px var(--sp-4);border-radius:var(--r-xs);font-size:var(--fs-2xs);letter-spacing:0.06em;font-weight:500;background:var(--bg-elevated);color:var(--fg-secondary);border:1px solid var(--border-soft)}
+.badge-moss{background:rgba(95,201,154,0.10);color:var(--moss-200);border-color:rgba(95,201,154,0.20)}
+.badge-amber{background:rgba(255,174,66,0.10);color:var(--amber-200);border-color:rgba(255,174,66,0.20)}
+.badge-vermil{background:rgba(238,90,90,0.10);color:var(--vermil-300);border-color:rgba(238,90,90,0.20)}
+.chip-btn{display:inline-flex;align-items:center;gap:var(--sp-3);padding:5px var(--sp-6);border-radius:var(--r-sm);color:var(--fg-secondary);font-size:var(--fs-xs);letter-spacing:0.04em;transition:all var(--t-fast)}
+.chip-btn:hover{background:var(--bg-hover);color:var(--accent)}
+.chip-btn svg{width:13px;height:13px}
+.iconbtn{width:32px;height:32px;display:grid;place-items:center;border-radius:var(--r-md);color:var(--fg-tertiary);transition:all var(--t-fast)}
+.iconbtn:hover{background:var(--bg-hover);color:var(--fg-primary)}
+.iconbtn svg{width:16px;height:16px}
+.iconbtn-ghost{width:28px;height:28px}
+.empty{padding:var(--sp-16) var(--sp-12);text-align:center;display:flex;flex-direction:column;align-items:center;gap:var(--sp-5);color:var(--fg-quaternary)}
+.empty-icon{width:56px;height:56px;border-radius:50%;background:var(--bg-elevated);display:grid;place-items:center;border:1px dashed var(--border-base)}
+.empty-icon svg{width:24px;height:24px;opacity:0.7}
+.empty-title{font-size:var(--fs-md);color:var(--fg-secondary);font-weight:500}
+.empty-text{font-size:var(--fs-xs);color:var(--fg-quaternary)}
+.alert{display:flex;align-items:flex-start;gap:var(--sp-5);padding:var(--sp-6) var(--sp-8);border-radius:var(--r-md);font-size:var(--fs-sm);line-height:var(--lh-relaxed)}
+.alert-info{background:rgba(166,145,255,0.06);border:1px solid rgba(166,145,255,0.20);color:var(--fg-secondary)}
+.alert-info .alert-icon{color:var(--wisteria-300)}
+.alert-icon svg{width:16px;height:16px}
+.alert-body{flex:1}
+.alert-title{font-weight:500;color:var(--fg-primary);margin-bottom:2px}
+.avatar{width:36px;height:36px;border-radius:var(--r-md);display:grid;place-items:center;font-family:var(--font-serif);font-weight:600;font-size:var(--fs-md);color:#fff;flex-shrink:0;box-shadow:var(--shadow-sm),var(--shadow-inset)}
+.avatar-sm{width:28px;height:28px;font-size:var(--fs-sm);border-radius:var(--r-sm)}
+.tone-sakura{background:linear-gradient(135deg,var(--sakura-400),#b62d62)}
+.tone-wisteria{background:linear-gradient(135deg,var(--wisteria-300),var(--wisteria-600))}
+.tone-moss{background:linear-gradient(135deg,var(--moss-300),#1f9c75)}
+.tone-amber{background:linear-gradient(135deg,var(--amber-200),#d2710a);color:#5a3500}
+.tone-ink{background:linear-gradient(135deg,var(--ink-400),var(--ink-700))}
+.tone-vermil{background:linear-gradient(135deg,var(--vermil-300),#d83434)}
+
+/* ===== app shell ===== */
+.app-root{height:100vh;display:flex;flex-direction:column;overflow:hidden;background:var(--bg-base)}
+.app-topbar{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-8) var(--sp-12);background:linear-gradient(180deg,var(--ink-850),var(--ink-900));border-bottom:1px solid var(--border-faint);flex-shrink:0}
+.app-brand{display:flex;align-items:center;gap:var(--sp-6)}
+.app-brand-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:var(--r-md);background:linear-gradient(135deg,var(--sakura-500),var(--wisteria-500));color:#fff}
+.app-brand-icon svg{width:18px;height:18px}
+.app-brand-text{display:flex;flex-direction:column}
+.app-brand-name{font-family:var(--font-serif);font-weight:600;font-size:var(--fs-lg);letter-spacing:0.04em}
+.app-brand-sub{font-family:var(--font-display);font-style:italic;font-size:var(--fs-2xs);color:var(--fg-tertiary);letter-spacing:0.12em}
+.app-body{flex:1;display:flex;min-height:0}
+
+/* ===== form-editor.css ===== */
+.form-shell{display:grid;grid-template-columns:240px 320px 1fr;grid-template-rows:minmax(0,1fr);flex:1;width:100%;min-height:0}
+.form-left,.form-mid,.form-right{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.form-left{background:var(--ink-900);border-right:1px solid var(--border-faint)}
+.form-mid{background:var(--ink-850);border-right:1px solid var(--border-faint)}
+.form-right{background:var(--ink-900)}
+.form-pane-head{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-7);border-bottom:1px solid var(--border-faint);flex-shrink:0}
+.pane-title{display:flex;align-items:center;gap:var(--sp-4);font-size:var(--fs-2xs);letter-spacing:0.16em;text-transform:uppercase;color:var(--fg-quaternary);font-weight:600}
+.form-tpl-list{flex:1;min-height:0;overflow-y:auto;padding:var(--sp-3)}
+.form-tpl-item{position:relative;padding:var(--sp-6) var(--sp-7);border-radius:var(--r-md);cursor:pointer;margin-bottom:2px;transition:background var(--t-fast)}
+.form-tpl-item:hover{background:var(--bg-hover)}
+.form-tpl-item.is-active{background:linear-gradient(90deg,rgba(255,107,154,0.10),rgba(106,85,214,0.04));box-shadow:inset 0 0 0 1px rgba(255,107,154,0.18)}
+.form-tpl-item-name{display:flex;align-items:center;gap:var(--sp-4);font-size:var(--fs-sm);font-weight:500;color:var(--fg-primary);margin-bottom:2px;letter-spacing:0.04em}
+.form-tpl-item-name svg{width:13px;height:13px;opacity:0.8}
+.form-tpl-item-meta{display:flex;gap:var(--sp-4);font-size:var(--fs-2xs);color:var(--fg-quaternary);font-family:var(--font-mono);letter-spacing:0.06em}
+.form-tpl-item-code{padding:1px 5px;border-radius:var(--r-xs);background:rgba(255,107,154,0.08);color:var(--sakura-300)}
+.form-mid-body{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:var(--sp-7) var(--sp-8);display:flex;flex-direction:column;gap:var(--sp-8);scroll-behavior:smooth}
+.form-info-card{padding:var(--sp-7);background:linear-gradient(180deg,var(--ink-800),var(--ink-850));border:1px solid var(--border-soft);border-radius:var(--r-md);display:flex;flex-direction:column;gap:var(--sp-5)}
+.form-info-title{display:flex;align-items:center;gap:var(--sp-4);font-family:var(--font-display);font-style:italic;font-size:var(--fs-md);letter-spacing:0.16em;text-transform:uppercase;color:var(--fg-tertiary)}
+.form-info-title::before{content:"";width:16px;height:1px;background:var(--accent)}
+.form-info-row{display:flex;flex-direction:column;gap:4px}
+.form-info-row-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5)}
+.form-info-label{font-size:var(--fs-2xs);letter-spacing:0.06em;color:var(--fg-quaternary);text-transform:uppercase}
+.flow-list{display:flex;flex-direction:column;gap:var(--sp-3);position:relative}
+.flow-list::before{content:"";position:absolute;left:18px;top:22px;bottom:22px;width:1px;background:linear-gradient(180deg,var(--sakura-400),var(--wisteria-400));opacity:0.4}
+.flow-step{position:relative;display:grid;grid-template-columns:36px 1fr auto;gap:var(--sp-5);align-items:center;padding:var(--sp-5);border-radius:var(--r-md);background:rgba(255,255,255,0.03);border:1px solid var(--border-soft)}
+.flow-step-no{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--sakura-500),var(--wisteria-500));color:#fff;font-family:var(--font-mono);font-weight:600;font-size:var(--fs-xs);z-index:1;box-shadow:0 0 0 3px var(--ink-850)}
+.flow-step-info{min-width:0;display:flex;flex-direction:column;gap:2px}
+.flow-input{background:transparent;border:0;outline:0;padding:2px 4px;border-radius:var(--r-xs)}
+.flow-step-name{font-size:var(--fs-sm);color:var(--fg-primary);font-weight:500}
+.flow-step-name:focus{background:var(--ink-900);box-shadow:0 0 0 2px var(--accent-glow)}
+.flow-step-who{font-size:var(--fs-2xs);color:var(--fg-tertiary);letter-spacing:0.04em}
+.flow-step-who:focus{background:var(--ink-900);box-shadow:0 0 0 2px var(--accent-glow);color:var(--fg-secondary)}
+.flow-step-x{width:22px;height:22px;display:grid;place-items:center;border-radius:var(--r-xs);color:var(--fg-quaternary);transition:all var(--t-fast)}
+.flow-step-x:hover{background:rgba(238,90,90,0.10);color:var(--vermil-300)}
+.flow-step-x svg{width:12px;height:12px}
+.form-right-body{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:var(--sp-8);display:flex;flex-direction:column;gap:var(--sp-7);scroll-behavior:smooth}
+.form-prop-bar{display:flex;align-items:center;gap:var(--sp-5);padding:var(--sp-5) var(--sp-7);background:linear-gradient(180deg,rgba(255,107,154,0.06),rgba(106,85,214,0.04));border-bottom:1px solid rgba(255,107,154,0.18);flex-shrink:0;animation:propBarIn 280ms var(--ease-out)}
+@keyframes propBarIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.form-prop-back{display:inline-flex;align-items:center;gap:var(--sp-3);padding:5px var(--sp-5) 5px var(--sp-4);height:28px;border-radius:var(--r-full);background:var(--bg-elevated);border:1px solid var(--border-soft);color:var(--fg-secondary);font-size:var(--fs-xs);letter-spacing:0.06em;transition:all var(--t-fast);flex-shrink:0}
+.form-prop-back svg{width:13px;height:13px;transition:transform var(--t-fast)}
+.form-prop-back:hover{background:var(--bg-active);color:var(--accent);border-color:var(--accent)}
+.form-prop-back:hover svg{transform:translateX(-2px)}
+.form-prop-bar-title{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.form-prop-bar-name{font-family:var(--font-serif);font-weight:600;font-size:var(--fs-sm);color:var(--fg-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.form-prop-bar-id{font-family:var(--font-mono);font-size:var(--fs-2xs);color:var(--fg-quaternary);letter-spacing:0.06em}
+.form-group-card{background:linear-gradient(180deg,var(--ink-800),var(--ink-850));border:1px solid var(--border-soft);border-radius:var(--r-md);overflow:hidden;flex-shrink:0}
+.form-group-head{display:flex;align-items:center;gap:var(--sp-5);padding:var(--sp-6) var(--sp-7);border-bottom:1px solid var(--border-faint);background:rgba(255,255,255,0.02)}
+.form-group-name{display:flex;align-items:center;gap:var(--sp-4);font-family:var(--font-serif);font-weight:600;font-size:var(--fs-md);color:var(--fg-primary);letter-spacing:0.04em;flex:1;min-width:0}
+.form-group-name svg{width:14px;height:14px;opacity:0.7;flex-shrink:0}
+.form-group-name input{background:transparent;border:0;outline:0;font:inherit;color:inherit;padding:4px 6px;border-radius:var(--r-xs);flex:1;min-width:0;transition:background var(--t-fast),box-shadow var(--t-fast)}
+.form-group-name input:focus{background:var(--ink-900);box-shadow:0 0 0 2px var(--accent-glow)}
+.form-group-actions{display:flex;gap:2px}
+.form-group-actions button{width:26px;height:26px;display:grid;place-items:center;border-radius:var(--r-xs);color:var(--fg-tertiary);transition:all var(--t-fast)}
+.form-group-actions button:hover{background:var(--bg-hover);color:var(--accent)}
+.form-group-actions button svg{width:13px;height:13px}
+.form-group-fields{display:flex;flex-direction:column;padding:var(--sp-5);gap:var(--sp-3)}
+.form-group-fields-empty{padding:var(--sp-10);text-align:center;font-size:var(--fs-xs);color:var(--fg-quaternary);font-style:italic;border:1px dashed var(--border-base);border-radius:var(--r-sm)}
+.field-card{position:relative;display:grid;grid-template-columns:22px 28px 1fr auto auto;gap:var(--sp-4);align-items:center;padding:var(--sp-5);background:rgba(255,255,255,0.03);border:1px solid var(--border-soft);border-radius:var(--r-sm);cursor:pointer;transition:all var(--t-fast)}
+.field-card.is-selected{background:linear-gradient(90deg,rgba(255,107,154,0.06),rgba(106,85,214,0.04));border-color:rgba(255,107,154,0.30);box-shadow:inset 0 0 0 1px rgba(255,107,154,0.18)}
+.field-card:hover{background:rgba(255,255,255,0.05)}
+.field-handle{color:var(--fg-quaternary);display:grid;place-items:center;cursor:grab;opacity:0.5}
+.field-handle svg{width:12px;height:12px}
+.field-icon{width:28px;height:28px;display:grid;place-items:center;border-radius:var(--r-sm);background:rgba(255,255,255,0.04);color:var(--accent)}
+.field-icon svg{width:13px;height:13px}
+.field-info{min-width:0}
+.field-name{font-size:var(--fs-sm);color:var(--fg-primary);font-weight:500;letter-spacing:0.04em}
+.field-meta{font-size:var(--fs-2xs);color:var(--fg-quaternary);font-family:var(--font-mono);margin-top:2px;letter-spacing:0.04em}
+.field-pill{display:inline-flex;align-items:center;gap:3px;padding:2px var(--sp-4);border-radius:var(--r-xs);background:var(--ink-700);color:var(--fg-tertiary);font-size:var(--fs-2xs);letter-spacing:0.06em;font-weight:500}
+.field-pill.is-required{background:rgba(238,90,90,0.10);color:var(--vermil-300)}
+.field-actions{display:flex;gap:2px}
+.field-actions button{width:22px;height:22px;display:grid;place-items:center;border-radius:var(--r-xs);color:var(--fg-tertiary);transition:all var(--t-fast)}
+.field-actions button:hover{background:var(--bg-hover);color:var(--accent)}
+.field-actions button svg{width:12px;height:12px}
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-3)}
+.type-tile{padding:var(--sp-5);display:flex;flex-direction:column;align-items:center;gap:var(--sp-3);border-radius:var(--r-md);background:var(--ink-900);border:1px solid var(--border-soft);color:var(--fg-secondary);font-size:var(--fs-2xs);letter-spacing:0.04em;cursor:pointer;transition:all var(--t-fast)}
+.type-tile:hover{background:var(--bg-active);border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.type-tile.is-active{background:linear-gradient(135deg,rgba(255,107,154,0.10),rgba(106,85,214,0.06));border-color:var(--accent);color:var(--accent)}
+.type-tile svg{width:16px;height:16px}
+.opt-list{display:flex;flex-direction:column;gap:var(--sp-3)}
+.opt-row{display:grid;grid-template-columns:22px 1fr auto;gap:var(--sp-3);align-items:center;padding:4px var(--sp-4);background:var(--ink-900);border:1px solid var(--border-soft);border-radius:var(--r-sm)}
+.opt-row input{background:transparent;border:0;outline:0;font-size:var(--fs-xs);color:var(--fg-primary);padding:4px 0}
+.opt-row input:focus{color:var(--accent)}
+.opt-row-x{color:var(--fg-tertiary);transition:color var(--t-fast);cursor:pointer}
+.opt-row-x:hover{color:var(--vermil-300)}
+.opt-row-x svg{width:12px;height:12px}
+.opt-source{padding:var(--sp-5);background:rgba(166,145,255,0.05);border:1px solid rgba(166,145,255,0.15);border-radius:var(--r-sm);display:flex;flex-direction:column;gap:var(--sp-3);margin-top:var(--sp-5)}
+.opt-source-head{display:flex;align-items:center;gap:var(--sp-3);font-size:var(--fs-2xs);letter-spacing:0.08em;color:var(--wisteria-200);font-weight:500}
+.opt-source-head svg{width:12px;height:12px}
+.preview-form{display:flex;flex-direction:column;gap:var(--sp-7)}
+.preview-group-h{display:flex;align-items:center;gap:var(--sp-5);font-family:var(--font-serif);font-weight:600;font-size:var(--fs-md);color:var(--fg-primary);letter-spacing:0.04em;margin-bottom:var(--sp-4)}
+.preview-group-h::before{content:"";width:3px;height:14px;background:linear-gradient(180deg,var(--sakura-400),var(--wisteria-400));border-radius:var(--r-full)}
+.preview-field{display:flex;flex-direction:column;gap:4px}
+.preview-field-label{font-size:var(--fs-xs);color:var(--fg-secondary);letter-spacing:0.04em}
+.preview-field-required{color:var(--vermil-300);margin-left:2px}
+.event-progress{display:flex;gap:var(--sp-4);align-items:center}
+.event-step{flex:1;padding:var(--sp-5);border-radius:var(--r-md);border:1px solid var(--border-soft);background:rgba(255,255,255,0.03)}
+.event-step.is-current{background:rgba(255,174,66,0.08);border-color:rgba(255,174,66,0.25)}
+.event-step.is-pending{opacity:0.5}
+.event-step-name{font-size:var(--fs-xs);color:var(--fg-secondary);margin-bottom:2px}
+.event-step-state{font-size:var(--fs-2xs);color:var(--fg-quaternary)}
+.event-arrow{color:var(--fg-quaternary)}
+.event-arrow svg{width:14px;height:14px}
+/* record cards */
+.record-card{padding:var(--sp-8);background:linear-gradient(180deg,var(--ink-800),var(--ink-850));border:1px solid var(--border-soft);border-radius:var(--r-lg);display:flex;flex-direction:column;gap:var(--sp-5)}
+.record-head{display:flex;justify-content:space-between;align-items:flex-start}
+.record-title{display:flex;align-items:center;gap:var(--sp-5)}
+.record-name{font-family:var(--font-serif);font-weight:600;font-size:var(--fs-md);color:var(--fg-primary)}
+.record-meta{font-size:var(--fs-2xs);color:var(--fg-quaternary);margin-top:2px;font-family:var(--font-mono);letter-spacing:0.06em}
+.record-brief{font-family:var(--font-serif);font-size:var(--fs-sm);color:var(--fg-tertiary);font-style:italic;line-height:var(--lh-relaxed);padding-left:var(--sp-7);border-left:2px solid var(--border-base)}
+.record-flow{display:flex;align-items:center;gap:var(--sp-3);flex-wrap:wrap}
+.record-step{flex:1;min-width:100px;padding:var(--sp-4) var(--sp-5);border-radius:var(--r-sm);background:rgba(255,255,255,0.03);border:1px solid var(--border-soft)}
+.record-step-done{background:rgba(95,201,154,0.10);border-color:rgba(95,201,154,0.25)}
+.record-step-current{background:rgba(255,174,66,0.10);border-color:rgba(255,174,66,0.30)}
+.record-step-rejected{background:rgba(238,90,90,0.10);border-color:rgba(238,90,90,0.30)}
+.record-step-name{font-size:var(--fs-2xs);color:var(--fg-tertiary);letter-spacing:0.04em;margin-bottom:2px}
+.record-step-state{font-size:var(--fs-xs);color:var(--fg-secondary);font-weight:500}
+.record-step-done .record-step-state{color:var(--moss-200)}
+.record-step-current .record-step-state{color:var(--amber-200)}
+.record-step-rejected .record-step-state{color:var(--vermil-200)}
+.record-arrow{color:var(--fg-quaternary)}
+.record-arrow svg{width:14px;height:14px}
+.record-actions{display:flex;gap:var(--sp-4);margin-top:var(--sp-3);padding-top:var(--sp-5);border-top:1px dashed var(--border-faint)}
+</style>
+
+<style>
+/* ===== modal ===== */
+.modal-host{position:fixed;inset:0;z-index:var(--z-modal);pointer-events:none}
+.modal-backdrop{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(12,14,22,0.6),rgba(0,0,0,0.85));backdrop-filter:blur(8px) saturate(140%);opacity:0;transition:opacity var(--t-base) var(--ease-soft);pointer-events:auto}
+.modal-backdrop.is-open{opacity:1}
+.modal-frame{position:absolute;inset:0}
+.modal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.96);opacity:0;pointer-events:auto;display:flex;flex-direction:column;background:var(--ink-900);border:1px solid var(--border-base);border-radius:var(--r-2xl);box-shadow:var(--shadow-2xl);overflow:hidden;transition:opacity var(--t-base) var(--ease-soft),transform var(--t-slow) var(--ease-spring);max-width:calc(100vw - 80px);max-height:calc(100vh - 80px)}
+.modal.is-open{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.modal-full{width:calc(100vw - 80px);height:calc(100vh - 80px)}
+.modal-lg{width:960px;min-height:540px}
+.modal-head{position:relative;display:flex;align-items:center;padding:var(--sp-10) var(--sp-12);background:linear-gradient(180deg,var(--ink-850),var(--ink-900)),radial-gradient(circle at 0% 0%,rgba(255,107,154,0.06),transparent 50%);border-bottom:1px solid var(--border-faint);gap:var(--sp-8);flex-shrink:0}
+.modal-head::before{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0.4}
+.modal-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:var(--r-md);background:linear-gradient(135deg,var(--ink-700),var(--ink-800));border:1px solid var(--border-base);color:var(--accent);flex-shrink:0}
+.modal-icon svg{width:22px;height:22px}
+.modal-title-block{flex:1;min-width:0}
+.modal-title{font-family:var(--font-serif);font-weight:600;font-size:var(--fs-xl);color:var(--fg-primary);letter-spacing:0.06em}
+.modal-subtitle{font-family:var(--font-display);font-style:italic;font-size:var(--fs-sm);color:var(--fg-tertiary);letter-spacing:0.12em;margin-top:2px}
+.modal-actions{display:flex;align-items:center;gap:var(--sp-5);flex-shrink:0}
+.modal-close{width:32px;height:32px;display:grid;place-items:center;border-radius:var(--r-md);color:var(--fg-tertiary);transition:all var(--t-fast)}
+.modal-close:hover{background:rgba(238,90,90,0.10);color:var(--vermil-300);transform:rotate(90deg)}
+.modal-close svg{width:16px;height:16px}
+.modal-body{flex:1;overflow:hidden;display:flex;min-height:0}
+.modal-body-pad{padding:var(--sp-12);overflow:auto}
+.modal-foot{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-7) var(--sp-12);background:var(--ink-850);border-top:1px solid var(--border-faint);gap:var(--sp-7);flex-shrink:0}
+.modal-foot-info{font-size:var(--fs-xs);color:var(--fg-quaternary);letter-spacing:0.04em}
+.modal-foot-actions{display:flex;gap:var(--sp-5)}
+</style>
+
+<style>
+/* ===== toast ===== */
+.toast-host{position:fixed;top:var(--sp-12);right:var(--sp-12);z-index:var(--z-toast);display:flex;flex-direction:column;gap:var(--sp-5);pointer-events:none;max-width:380px}
+.toast{display:grid;grid-template-columns:36px 1fr auto;gap:var(--sp-6);padding:var(--sp-7) var(--sp-8);background:var(--glass-bg-strong);backdrop-filter:var(--glass-blur);border:1px solid var(--border-base);border-radius:var(--r-lg);box-shadow:var(--shadow-xl);pointer-events:auto;animation:toastIn var(--t-slow) var(--ease-spring);position:relative;overflow:hidden}
+.toast::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.toast.toast-success::before{background:var(--moss-300)}
+.toast.toast-warn::before{background:var(--amber-300)}
+.toast.toast-error::before{background:var(--vermil-300)}
+.toast.toast-info::before{background:var(--wisteria-300)}
+.toast.is-leaving{animation:toastOut var(--t-base) var(--ease-in) forwards}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px) scale(0.95)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0);max-height:200px}to{opacity:0;transform:translateX(40px);max-height:0;padding-top:0;padding-bottom:0;margin-top:0}}
+.toast-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:var(--r-sm);background:var(--bg-elevated);color:var(--accent)}
+.toast-success .toast-icon{color:var(--moss-300);background:rgba(95,201,154,0.10)}
+.toast-warn .toast-icon{color:var(--amber-300);background:rgba(255,174,66,0.10)}
+.toast-error .toast-icon{color:var(--vermil-300);background:rgba(238,90,90,0.10)}
+.toast-info .toast-icon{color:var(--wisteria-300);background:rgba(166,145,255,0.10)}
+.toast-icon svg{width:16px;height:16px}
+.toast-body{display:flex;flex-direction:column;gap:2px;min-width:0}
+.toast-title{font-size:var(--fs-sm);font-weight:500;color:var(--fg-primary);letter-spacing:0.04em}
+.toast-text{font-size:var(--fs-xs);color:var(--fg-tertiary);line-height:var(--lh-relaxed)}
+.toast-close{width:22px;height:22px;display:grid;place-items:center;border-radius:var(--r-sm);color:var(--fg-quaternary);transition:all var(--t-fast);flex-shrink:0;align-self:flex-start}
+.toast-close:hover{background:var(--bg-hover);color:var(--fg-primary)}
+.toast-close svg{width:14px;height:14px}
+.toast-progress{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,0.05);overflow:hidden}
+.toast-progress span{display:block;height:100%;background:var(--accent);width:100%;transform-origin:left;animation:toastProgress var(--toast-dur,5000ms) linear forwards}
+.toast-success .toast-progress span{background:var(--moss-300)}
+.toast-warn .toast-progress span{background:var(--amber-300)}
+.toast-error .toast-progress span{background:var(--vermil-300)}
+.toast-info .toast-progress span{background:var(--wisteria-300)}
+@keyframes toastProgress{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+.toast-actions{display:flex;gap:var(--sp-3);margin-top:var(--sp-3);grid-column:2/-1}
+.toast-action-btn{padding:4px var(--sp-5);border-radius:var(--r-xs);font-size:var(--fs-2xs);letter-spacing:0.06em;background:rgba(255,255,255,0.05);color:var(--fg-secondary);border:1px solid var(--border-soft);transition:all var(--t-fast)}
+.toast-action-btn:hover{background:rgba(255,107,154,0.15);color:var(--accent);border-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="app-root">
+  <header class="app-topbar">
+    <div class="app-brand">
+      <div class="app-brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
+      </div>
+      <div class="app-brand-text">
+        <span class="app-brand-name">申请表制作器</span>
+        <span class="app-brand-sub">Visual Form Designer · Approval Flow</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:var(--sp-5);">
+      <button class="chip-btn" id="export-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg><span>导出</span></button>
+      <button class="chip-btn" id="import-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg><span>导入</span></button>
+    </div>
+  </header>
+  <div class="app-body">
+    <div class="form-shell" id="form-shell">
+      <aside class="form-left">
+        <div class="form-pane-head">
+          <span class="pane-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span>模板列表</span></span>
+          <button class="iconbtn iconbtn-ghost" id="form-new" title="新建模板"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg></button>
+        </div>
+        <div class="form-tpl-list" id="form-tpl-list"></div>
+      </aside>
+      <section class="form-mid">
+        <div class="form-pane-head">
+          <span class="pane-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>模板信息 / 流程</span></span>
+        </div>
+        <div class="form-mid-body" id="form-mid-body"></div>
+      </section>
+      <section class="form-right">
+        <div class="form-pane-head">
+          <span class="pane-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>表单设计 · 分组与字段</span></span>
+          <div style="display:flex;gap:var(--sp-3);">
+            <button class="chip-btn" id="form-preview-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>预览</span></button>
+            <button class="chip-btn" id="form-records-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg><span>记录</span></button>
+            <button class="chip-btn" id="form-add-group"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg><span>新增分组</span></button>
+          </div>
+        </div>
+        <div class="form-right-body" id="form-right-body"></div>
+      </section>
+    </div>
+  </div>
+</div>
+<div class="modal-host" id="modal-host" aria-hidden="true"></div>
+<div class="toast-host" id="toast-host" aria-live="polite"></div>
+
+<script>
+// ===== Icons =====
+const S = 'fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"';
+const I = {
+  close:`<svg viewBox="0 0 24 24" ${S}><path d="M18 6L6 18M6 6l12 12"/></svg>`,
+  plus:`<svg viewBox="0 0 24 24" ${S}><path d="M12 5v14M5 12h14"/></svg>`,
+  check:`<svg viewBox="0 0 24 24" ${S}><path d="M20 6L9 17l-5-5"/></svg>`,
+  arrowRight:`<svg viewBox="0 0 24 24" ${S}><path d="M5 12h14M13 5l7 7-7 7"/></svg>`,
+  chevronDown:`<svg viewBox="0 0 24 24" ${S}><path d="M6 9l6 6 6-6"/></svg>`,
+  chevronUp:`<svg viewBox="0 0 24 24" ${S}><path d="M18 15l-6-6-6 6"/></svg>`,
+  chevronRight:`<svg viewBox="0 0 24 24" ${S}><path d="M9 6l6 6-6 6"/></svg>`,
+  chevronLeft:`<svg viewBox="0 0 24 24" ${S}><path d="M15 6l-6 6 6 6"/></svg>`,
+  edit:`<svg viewBox="0 0 24 24" ${S}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  trash:`<svg viewBox="0 0 24 24" ${S}><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></svg>`,
+  copy:`<svg viewBox="0 0 24 24" ${S}><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+  save:`<svg viewBox="0 0 24 24" ${S}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>`,
+  upload:`<svg viewBox="0 0 24 24" ${S}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>`,
+  download:`<svg viewBox="0 0 24 24" ${S}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>`,
+  eye:`<svg viewBox="0 0 24 24" ${S}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  info:`<svg viewBox="0 0 24 24" ${S}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`,
+  warn:`<svg viewBox="0 0 24 24" ${S}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>`,
+  error:`<svg viewBox="0 0 24 24" ${S}><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>`,
+  success:`<svg viewBox="0 0 24 24" ${S}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>`,
+  drag:`<svg viewBox="0 0 24 24" ${S}><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg>`,
+  folder:`<svg viewBox="0 0 24 24" ${S}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
+  document:`<svg viewBox="0 0 24 24" ${S}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>`,
+  layers:`<svg viewBox="0 0 24 24" ${S}><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`,
+  sliders:`<svg viewBox="0 0 24 24" ${S}><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>`,
+  type:`<svg viewBox="0 0 24 24" ${S}><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>`,
+  align:`<svg viewBox="0 0 24 24" ${S}><path d="M21 10H3M21 6H3M21 14H3M21 18H3"/></svg>`,
+  hash:`<svg viewBox="0 0 24 24" ${S}><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></svg>`,
+  calendar:`<svg viewBox="0 0 24 24" ${S}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
+  clock:`<svg viewBox="0 0 24 24" ${S}><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+  target:`<svg viewBox="0 0 24 24" ${S}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+  grid:`<svg viewBox="0 0 24 24" ${S}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+  send:`<svg viewBox="0 0 24 24" ${S}><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`,
+  archive:`<svg viewBox="0 0 24 24" ${S}><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg>`,
+  zap:`<svg viewBox="0 0 24 24" ${S}><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>`,
+  feather:`<svg viewBox="0 0 24 24" ${S}><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><path d="M16 8L2 22M17.5 15H9"/></svg>`,
+};
+function ic(n){return I[n]||I.info}
+</script>
+
+<script>
+// ===== Notifications =====
+(function(){
+const host=document.getElementById('toast-host');
+function notify(o){
+  const{title:t,text:x,kind:k='info',duration:d=5000,actions:a=[]}=o;
+  const e=document.createElement('div');e.className='toast toast-'+k;e.style.setProperty('--toast-dur',d+'ms');
+  const ik={info:'info',success:'success',warn:'warn',error:'error'}[k]||'info';
+  e.innerHTML=`<div class="toast-icon">${ic(ik)}</div><div class="toast-body"><div class="toast-title"></div><div class="toast-text"></div></div><button class="toast-close">${ic('close')}</button><div class="toast-progress"><span></span></div>`;
+  e.querySelector('.toast-title').textContent=t;e.querySelector('.toast-text').textContent=x;
+  if(a.length){const r=document.createElement('div');r.className='toast-actions';a.forEach(v=>{const b=document.createElement('button');b.className='toast-action-btn';b.textContent=v.label;b.addEventListener('click',()=>{try{v.onClick()}finally{remove()}});r.appendChild(b)});e.querySelector('.toast-body').appendChild(r)}
+  host.appendChild(e);let tm=null;
+  function remove(){if(!e.isConnected)return;e.classList.add('is-leaving');clearTimeout(tm);setTimeout(()=>e.remove(),220)}
+  e.querySelector('.toast-close').addEventListener('click',remove);tm=setTimeout(remove,d);
+}
+window.Notify={info:(t,x,o)=>notify({...o,title:t,text:x,kind:'info'}),success:(t,x,o)=>notify({...o,title:t,text:x,kind:'success',duration:4000}),warn:(t,x,o)=>notify({...o,title:t,text:x,kind:'warn'}),error:(t,x,o)=>notify({...o,title:t,text:x,kind:'error',duration:8000})};
+})();
+</script>
+
+<script>
+// ===== Modal =====
+(function(){
+const host=document.getElementById('modal-host');let c=0;
+window.Modal={open({size:s='md',title:t,subtitle:st,icon:inm='',headerExtra:he='',body:b,footer:f,fullPane:fp}){
+const el=document.createElement('div');el.className='modal-frame';const bd=document.createElement('div');bd.className='modal-backdrop';el.appendChild(bd);
+const m=document.createElement('div');m.className='modal modal-'+s;
+m.innerHTML=`<header class="modal-head">${inm?'<div class="modal-icon">'+ic(inm)+'</div>':''}<div class="modal-title-block"><div class="modal-title">${t}</div>${st?'<div class="modal-subtitle">'+st+'</div>':''}</div><div class="modal-actions">${he}</div><button class="modal-close">${ic('close')}</button></header><div class="modal-body ${fp?'':'modal-body-pad'}">${b}</div>${f?'<footer class="modal-foot">'+f+'</footer>':''}`;
+el.appendChild(m);host.appendChild(el);
+function close(){m.classList.remove('is-open');bd.classList.remove('is-open');setTimeout(()=>{el.remove();c=Math.max(0,c-1);if(c===0)host.setAttribute('aria-hidden','true')},220);document.removeEventListener('keydown',onKey)}
+function onKey(e){if(e.key==='Escape'){e.preventDefault();close()}}
+bd.addEventListener('click',close);m.querySelector('.modal-close').addEventListener('click',close);document.addEventListener('keydown',onKey);
+requestAnimationFrame(()=>{bd.classList.add('is-open');m.classList.add('is-open')});c++;host.setAttribute('aria-hidden','false');
+return{el:m,close,setBody(h){m.querySelector('.modal-body').innerHTML=h},setTitle(t,s){m.querySelector('.modal-title').innerHTML=t;const st=m.querySelector('.modal-subtitle');if(st)st.textContent=s||''}};
+}};
+})();
+</script>
+
+<script>
+// ===== Sample Data =====
+const sampleChars = [
+  {id:'ch-mc',name:'主人公（你）',tone:'ink',avatar:'汝'},
+  {id:'ch-chinatsu',name:'一之濑 千夏',tone:'sakura',avatar:'千'},
+  {id:'ch-aoi',name:'雾岛 葵',tone:'wisteria',avatar:'葵'},
+  {id:'ch-haruki',name:'黑泽 春树',tone:'moss',avatar:'春'},
+  {id:'ch-mio',name:'黑泽 澪',tone:'wisteria',avatar:'澪'},
+  {id:'ch-yuuna',name:'汐见 优奈',tone:'amber',avatar:'优'},
+  {id:'ch-ryouko',name:'若叶 凉子',tone:'moss',avatar:'凉'},
+];
+const sampleOrgs = [
+  {id:'org-student-council',name:'学生会'},{id:'org-disciplinary',name:'风纪委员会'},
+  {id:'org-lit-club',name:'文学部'},{id:'org-photo-club',name:'影像研究部'},
+  {id:'org-orchestra',name:'管弦乐团'},{id:'org-basketball',name:'男子篮球部'},
+  {id:'org-tea-ceremony',name:'茶道部'},{id:'org-vocal-club',name:'声乐部'},
+  {id:'org-biology',name:'生物研究部'},
+];
+const sampleFacilities = [
+  {id:'fac-old-lib',name:'旧馆图书室'},{id:'fac-school-court',name:'中央庭园'},
+  {id:'fac-music-hall',name:'梧桐音乐厅'},{id:'fac-gymnasium',name:'第一体育馆'},
+  {id:'fac-cafe',name:'云雀咖啡间'},{id:'fac-rooftop',name:'钟楼天台'},
+];
+</script>
+
+<script>
+// ===== Form Editor =====
+(function(){
+const FIELD_TYPES=[
+  {v:'text',label:'单行文本',icon:'type'},{v:'textarea',label:'多行文本',icon:'align'},
+  {v:'number',label:'数字',icon:'hash'},{v:'date',label:'日期',icon:'calendar'},
+  {v:'datetime',label:'日期时间',icon:'clock'},{v:'radio',label:'单选',icon:'target'},
+  {v:'select',label:'下拉',icon:'chevronDown'},{v:'checkbox',label:'多选',icon:'check'},
+  {v:'readonly',label:'只读说明',icon:'info'},{v:'table',label:'表格',icon:'grid'},
+];
+
+let templates=[];
+const sampleTemplates=[
+  {id:'form-club-join',name:'部活加入申请表',code:'CLUB_JOIN',version:'v2.1',desc:'申请加入新部活时使用，需由原部长（如有）与学生会双重审批。',validityDays:7,
+    groups:[
+      {id:'g1',name:'基本信息',fields:[
+        {id:'f1',label:'申请人姓名',type:'select',required:true,source:{kind:'roster',path:'花名册',display:'name'},placeholder:'从花名册选择'},
+        {id:'f2',label:'所在班级',type:'text',required:true,placeholder:'如「高二 三组」'},
+        {id:'f3',label:'申请日期',type:'date',required:true},
+      ]},
+      {id:'g2',name:'申请内容',fields:[
+        {id:'f4',label:'欲加入部活',type:'select',required:true,source:{kind:'organizations',path:'组织名录',display:'name'},placeholder:'选择部活'},
+        {id:'f5',label:'原部活（如有）',type:'select',required:false,source:{kind:'organizations',path:'组织名录',display:'name'}},
+        {id:'f6',label:'申请理由',type:'textarea',required:true,min:30,max:400,placeholder:'请用至少 30 字阐述加入意愿与可贡献之处。'},
+        {id:'f7',label:'是否参与本期合本',type:'radio',required:false,options:['是','否','视情况而定']},
+      ]},
+      {id:'g3',name:'附加',fields:[
+        {id:'f8',label:'过往作品 / 实绩',type:'textarea',required:false,placeholder:'可粘贴链接或简要描述。'},
+        {id:'f9',label:'本人签字',type:'text',required:true,placeholder:'请输入您的签名'},
+      ]},
+    ],
+    flow:[
+      {id:'s1',name:'原部长审查',who:'原所属部长（如不存在则跳过）',allowReject:true},
+      {id:'s2',name:'目标社团审查表格合规性并组织面试',who:'目标社团相关人员',allowReject:true},
+      {id:'s3',name:'学生会备案',who:'学生会会长 / 书记',allowReject:true},
+    ]},
+  {id:'form-rooftop',name:'钟楼天台通行申请',code:'ROOFTOP_PASS',version:'v1.0',desc:'夜间或非授权时段进入钟楼天台所必需的临时通行证申请。',validityDays:1,
+    groups:[
+      {id:'g1',name:'基本信息',fields:[
+        {id:'f1',label:'姓名',type:'select',required:true,source:{kind:'roster'}},
+        {id:'f2',label:'通行起始时间',type:'datetime',required:true},
+        {id:'f3',label:'通行截止时间',type:'datetime',required:true},
+      ]},
+      {id:'g2',name:'事由',fields:[
+        {id:'f4',label:'前往原因',type:'radio',required:true,options:['观星','取景','部活活动','私人事务','其他']},
+        {id:'f5',label:'具体说明',type:'textarea',required:true,min:20},
+      ]},
+    ],
+    flow:[
+      {id:'s1',name:'风纪委员会审查',who:'风纪委员长',allowReject:true},
+      {id:'s2',name:'学生会签发通行证',who:'学生会会长',allowReject:false},
+    ]},
+];
+const sampleRecords=[
+  {id:'rec-1',tplId:'form-club-join',who:'ch-mc',applied:'2026-05-22 16:08',status:'pending',currentStep:1,brief:'申请加入「文学部」夜读分会，欲参与本期合本。'},
+  {id:'rec-2',tplId:'form-rooftop',who:'ch-mc',applied:'2026-05-26 14:22',status:'pending',currentStep:0,brief:'今夜 19:30—21:00 前往钟楼天台观流星。'},
+  {id:'rec-3',tplId:'form-club-join',who:'ch-aoi',applied:'2026-04-12 09:14',status:'approved',currentStep:3,brief:'由学生会备案：葵作为文学部副部长上任。'},
+];
+
+let activeId=null, selectedFieldId=null;
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c])}
+function activeTpl(){return templates.find(t=>t.id===activeId)}
+
+function init(){
+  templates=JSON.parse(JSON.stringify(sampleTemplates));
+  activeId=templates[0]?.id;selectedFieldId=null;
+  bindAll();selectTpl(activeId);
+}
+
+function bindAll(){
+  renderList();renderMid();renderRight();
+  document.getElementById('form-tpl-list').addEventListener('click',e=>{const it=e.target.closest('.form-tpl-item');if(it)selectTpl(it.getAttribute('data-id'))});
+  document.getElementById('form-new').addEventListener('click',()=>{
+    const id='form-'+Date.now();templates.push({id,name:'新申请表',code:'NEW_FORM',version:'v0.1',desc:'',validityDays:7,groups:[{id:'g-'+Date.now(),name:'基本信息',fields:[]}],flow:[]});
+    activeId=id;selectedFieldId=null;renderList();renderMid();renderRight();Notify.success('已创建模板','请补全模板名称与字段。');
+  });
+  document.getElementById('form-add-group').addEventListener('click',addGroup);
+  document.getElementById('form-preview-btn').addEventListener('click',openPreview);
+  document.getElementById('form-records-btn').addEventListener('click',openRecords);
+  document.addEventListener('keydown',escHandler,true);
+}
+
+function escHandler(e){
+  if(e.key!=='Escape'||!selectedFieldId)return;
+  e.preventDefault();e.stopImmediatePropagation();selectedFieldId=null;renderRight();
+}
+
+function renderList(){
+  const h=templates.map(t=>`<div class="form-tpl-item ${t.id===activeId?'is-active':''}" data-id="${t.id}"><div class="form-tpl-item-name">${ic('document')}<span>${esc(t.name)}</span></div><div class="form-tpl-item-meta"><span class="form-tpl-item-code">${esc(t.code)}</span><span>${t.version}</span><span>· ${t.flow.length} 步审批</span></div></div>`).join('');
+  document.getElementById('form-tpl-list').innerHTML=h;
+}
+function selectTpl(id){activeId=id;selectedFieldId=null;renderList();renderMid();renderRight();}
+
+function renderMid(){
+  const t=activeTpl();const b=document.getElementById('form-mid-body');
+  if(!t){b.innerHTML='';return}
+  const flowHtml=t.flow.map((f,i)=>`<div class="flow-step" data-id="${f.id}"><div class="flow-step-no">${i+1}</div><div class="flow-step-info"><input class="flow-step-name flow-input" data-k="name" value="${esc(f.name)}"/><input class="flow-step-who flow-input" data-k="who" value="${esc(f.who)}"/></div><label class="switch"><input type="checkbox" ${f.allowReject?'checked':''} data-k="allowReject" class="flow-input"/><span class="switch-track"></span></label><button class="flow-step-x" data-act="del-flow">${ic('trash')}</button></div>`).join('');
+  b.innerHTML=`<div class="form-info-card"><div class="form-info-title">基础信息</div><div class="form-info-row"><span class="form-info-label">模板标题</span><input class="input" id="t-name" value="${esc(t.name)}"/></div><div class="form-info-row-2"><div class="form-info-row"><span class="form-info-label">内部代号</span><input class="input" id="t-code" value="${esc(t.code)}"/></div><div class="form-info-row"><span class="form-info-label">版本</span><input class="input" id="t-ver" value="${esc(t.version)}"/></div></div><div class="form-info-row"><span class="form-info-label">用途说明</span><textarea class="textarea" rows="2" id="t-desc">${esc(t.desc||'')}</textarea></div><div class="form-info-row"><span class="form-info-label">有效期（日）</span><input class="input" type="number" min="1" max="365" id="t-validity" value="${t.validityDays||7}"/></div></div><div class="form-info-card"><div class="form-info-title">审批流程</div><div class="alert alert-info" style="font-size:var(--fs-2xs);"><span class="alert-icon">${ic('info')}</span><div class="alert-body">处理人可使用 {{user}}、{{char}}、角色描述等变量；开关「允许驳回」决定该步是否可拒绝申请。</div></div><div class="flow-list" id="flow-list">${flowHtml}</div><button class="btn btn-soft btn-block" id="flow-add">${ic('plus')}<span>添加流程步骤</span></button></div>`;
+  bindMid(t);
+}
+
+function bindMid(t){
+  const r=document.getElementById('form-mid-body');
+  r.querySelector('#t-name').addEventListener('input',e=>{t.name=e.target.value;renderList()});
+  r.querySelector('#t-code').addEventListener('input',e=>{t.code=e.target.value;renderList()});
+  r.querySelector('#t-ver').addEventListener('input',e=>{t.version=e.target.value;renderList()});
+  r.querySelector('#t-desc').addEventListener('input',e=>t.desc=e.target.value);
+  r.querySelector('#t-validity').addEventListener('input',e=>t.validityDays=+e.target.value);
+  r.querySelectorAll('.flow-step').forEach(step=>{
+    const id=step.getAttribute('data-id');const f=t.flow.find(x=>x.id===id);
+    step.querySelectorAll('.flow-input').forEach(inp=>{inp.addEventListener('input',e=>{const k=inp.getAttribute('data-k');if(k==='allowReject')f.allowReject=e.target.checked;else f[k]=e.target.value;renderList()})});
+    step.querySelector('[data-act="del-flow"]').addEventListener('click',()=>{t.flow=t.flow.filter(x=>x.id!==id);renderMid();renderList()});
+  });
+  r.querySelector('#flow-add').addEventListener('click',()=>{t.flow.push({id:'s-'+Date.now(),name:'新步骤',who:'负责人',allowReject:true});renderMid();renderList()});
+}
+
+// Right panel
+function renderRight(){
+  const t=activeTpl();const right=document.getElementById('form-right');
+  if(!t){document.getElementById('form-right-body').innerHTML='';removePropBar();return}
+  if(selectedFieldId){
+    const fnd=findField(t,selectedFieldId);
+    if(!fnd){selectedFieldId=null;removePropBar()}else{ensurePropBar(fnd)}
+  }else{removePropBar()}
+  const body=document.getElementById('form-right-body');
+  if(!selectedFieldId){
+    const groups=t.groups.map(g=>`<div class="form-group-card" data-id="${g.id}"><div class="form-group-head"><span class="form-group-name">${ic('layers')}<input value="${esc(g.name)}" data-act="rename-group"/></span><div class="form-group-actions"><button title="添加字段" data-act="add-field">${ic('plus')}</button><button title="上移" data-act="up-group">${ic('chevronUp')}</button><button title="下移" data-act="down-group">${ic('chevronDown')}</button><button title="删除分组" data-act="del-group">${ic('trash')}</button></div></div><div class="form-group-fields">${g.fields.length===0?'<div class="form-group-fields-empty">暂无字段 · 点击右上角加号添加</div>':g.fields.map(f=>fieldCardHtml(f)).join('')}</div></div>`).join('');
+    body.innerHTML=groups||'<div class="empty"><div class="empty-icon">'+ic('layers')+'</div><div class="empty-title">暂无分组</div><div class="empty-text">点击「新增分组」开始</div></div>';
+  }else{
+    const fnd=findField(t,selectedFieldId);
+    body.innerHTML='<div class="form-info-card">'+fieldPropHtml(fnd.field)+'</div>';
+    body.scrollTop=0;
+  }
+  bindRight();
+}
+
+function ensurePropBar(fnd){
+  let bar=document.getElementById('form-prop-bar');
+  const html=`<button class="form-prop-back" id="form-prop-back">${ic('chevronLeft')}<span>返回</span></button><div class="form-prop-bar-title"><span class="form-prop-bar-name">${esc(fnd.field.label||'（未命名字段）')}</span><span class="form-prop-bar-id">${esc(fnd.group.name)} · ${esc(fnd.field.id)}</span></div><button class="iconbtn iconbtn-ghost" id="form-prop-del">${ic('trash')}</button>`;
+  if(!bar){bar=document.createElement('div');bar.id='form-prop-bar';bar.className='form-prop-bar';bar.innerHTML=html;const right=document.querySelector('.form-right');const body=document.getElementById('form-right-body');right.insertBefore(bar,body)}else{bar.innerHTML=html}
+}
+function removePropBar(){const bar=document.getElementById('form-prop-bar');if(bar)bar.remove()}
+
+function fieldCardHtml(f){
+  const tm=FIELD_TYPES.find(x=>x.v===f.type)||FIELD_TYPES[0];
+  return `<div class="field-card ${selectedFieldId===f.id?'is-selected':''}" data-id="${f.id}"><span class="field-handle">${ic('drag')}</span><span class="field-icon">${ic(tm.icon)}</span><div class="field-info"><div class="field-name">${esc(f.label||'（未命名字段）')}</div><div class="field-meta">${tm.label} · ${esc(f.id)}</div></div><span class="field-pill ${f.required?'is-required':''}">${f.required?'必填':'选填'}</span><div class="field-actions"><button data-act="up">${ic('chevronUp')}</button><button data-act="down">${ic('chevronDown')}</button><button data-act="copy">${ic('copy')}</button><button data-act="del">${ic('trash')}</button></div></div>`;
+}
+
+function findField(t,fid){for(const g of t.groups){const idx=g.fields.findIndex(f=>f.id===fid);if(idx>=0)return{group:g,field:g.fields[idx],index:idx}}return null}
+
+function bindRight(){
+  const t=activeTpl();const root=document.querySelector('.form-right');
+  const back=root.querySelector('#form-prop-back');if(back)back.addEventListener('click',()=>{selectedFieldId=null;renderRight()});
+  const propDel=root.querySelector('#form-prop-del');if(propDel)propDel.addEventListener('click',()=>{for(const g of t.groups){const idx=g.fields.findIndex(x=>x.id===selectedFieldId);if(idx>=0){g.fields.splice(idx,1);break}}selectedFieldId=null;renderRight();Notify.info('字段已删除')});
+  root.querySelectorAll('.form-group-card').forEach(card=>{
+    const gid=card.getAttribute('data-id');const g=t.groups.find(x=>x.id===gid);
+    card.querySelector('[data-act="rename-group"]').addEventListener('input',e=>g.name=e.target.value);
+    card.querySelector('[data-act="add-field"]').addEventListener('click',()=>addField(g));
+    card.querySelector('[data-act="up-group"]').addEventListener('click',()=>moveGroup(t,gid,-1));
+    card.querySelector('[data-act="down-group"]').addEventListener('click',()=>moveGroup(t,gid,1));
+    card.querySelector('[data-act="del-group"]').addEventListener('click',()=>{
+      if(g.fields.length){Notify.warn('该分组仍含字段',g.fields.length+' 个字段将一并删除。',{actions:[{label:'确认删除',onClick:()=>doDelGroup(t,gid)}]})}else doDelGroup(t,gid);
+    });
+    card.querySelectorAll('.field-card').forEach(fc=>{
+      const fid=fc.getAttribute('data-id');
+      fc.addEventListener('click',e=>{if(e.target.closest('.field-actions'))return;selectedFieldId=fid;renderRight()});
+      fc.querySelectorAll('.field-actions button').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();handleFieldAction(t,g,fid,b.getAttribute('data-act'))})});
+    });
+  });
+  if(selectedFieldId){const fnd=findField(t,selectedFieldId);if(fnd)bindFieldProp(fnd.field)}
+}
+
+function addGroup(){const t=activeTpl();t.groups.push({id:'g-'+Date.now(),name:'新分组',fields:[]});renderRight()}
+function doDelGroup(t,gid){t.groups=t.groups.filter(x=>x.id!==gid);renderRight();Notify.info('分组已删除')}
+function moveGroup(t,gid,dir){const idx=t.groups.findIndex(x=>x.id===gid);const next=idx+dir;if(next<0||next>=t.groups.length)return;const tmp=t.groups[next];t.groups[next]=t.groups[idx];t.groups[idx]=tmp;renderRight()}
+function addField(g){const id='f-'+Date.now();g.fields.push({id,label:'新字段',type:'text',required:false,placeholder:''});selectedFieldId=id;renderRight()}
+function handleFieldAction(t,g,fid,act){
+  const idx=g.fields.findIndex(x=>x.id===fid);if(idx<0)return;
+  if(act==='up'&&idx>0){const x=g.fields[idx-1];g.fields[idx-1]=g.fields[idx];g.fields[idx]=x}
+  if(act==='down'&&idx<g.fields.length-1){const x=g.fields[idx+1];g.fields[idx+1]=g.fields[idx];g.fields[idx]=x}
+  if(act==='copy'){const cp=JSON.parse(JSON.stringify(g.fields[idx]));cp.id='f-'+Date.now();cp.label+='（副本）';g.fields.splice(idx+1,0,cp);selectedFieldId=cp.id}
+  if(act==='del'){g.fields.splice(idx,1);if(selectedFieldId===fid)selectedFieldId=null}
+  renderRight();
+}
+
+function fieldPropHtml(f){
+  const typeTiles=FIELD_TYPES.map(t=>`<button class="type-tile ${f.type===t.v?'is-active':''}" data-v="${t.v}">${ic(t.icon)}<span>${t.label}</span></button>`).join('');
+  let extra='';
+  if(f.type==='text'||f.type==='textarea')extra=`<div class="form-info-row-2"><div class="form-info-row"><span class="form-info-label">最少字符</span><input class="input" type="number" id="fp-min" value="${f.min||''}" placeholder="可空"/></div><div class="form-info-row"><span class="form-info-label">最多字符</span><input class="input" type="number" id="fp-max" value="${f.max||''}" placeholder="可空"/></div></div>`;
+  else if(f.type==='number')extra=`<div class="form-info-row-2"><div class="form-info-row"><span class="form-info-label">最小值</span><input class="input" type="number" id="fp-min" value="${f.min??''}"/></div><div class="form-info-row"><span class="form-info-label">最大值</span><input class="input" type="number" id="fp-max" value="${f.max??''}"/></div></div>`;
+  else if(['radio','select','checkbox'].includes(f.type)){
+    const opts=(f.options||[]);
+    extra=`<div class="form-info-row"><span class="form-info-label">选项列表</span><div class="opt-list" id="fp-opt-list">${opts.map((o,i)=>`<div class="opt-row" data-i="${i}"><span class="opt-row-handle">${ic('drag')}</span><input value="${esc(o)}"/><span class="opt-row-x">${ic('close')}</span></div>`).join('')}</div><button class="btn btn-soft btn-sm" id="fp-opt-add" style="margin-top:var(--sp-3);">${ic('plus')}<span>添加选项</span></button></div>`;
+    if(f.type==='radio'||f.type==='select'){
+      extra+=`<div class="opt-source"><div class="opt-source-head">${ic('zap')}<span>动态数据源（可选）</span></div><div class="form-info-row-2"><div class="form-info-row"><span class="form-info-label">来源类型</span><select class="select" id="fp-src-kind"><option value="" ${!f.source?'selected':''}>不使用</option><option value="roster" ${f.source?.kind==='roster'?'selected':''}>花名册</option><option value="organizations" ${f.source?.kind==='organizations'?'selected':''}>组织名录</option><option value="facilities" ${f.source?.kind==='facilities'?'selected':''}>设施名录</option><option value="custom" ${f.source?.kind==='custom'?'selected':''}>自定义路径</option></select></div><div class="form-info-row"><span class="form-info-label">显示字段</span><input class="input" id="fp-src-display" value="${esc(f.source?.display||'name')}"/></div></div><div class="form-info-row"><span class="form-info-label">数据路径</span><input class="input" id="fp-src-path" value="${esc(f.source?.path||'花名册')}"/></div></div>`;
+    }
+  }else if(f.type==='readonly'){extra=`<div class="form-info-row"><span class="form-info-label">说明文字</span><textarea class="textarea" id="fp-content" rows="3">${esc(f.content||'')}</textarea></div>`}
+  else if(f.type==='table'){extra=`<div class="alert alert-info"><span class="alert-icon">${ic('info')}</span><div class="alert-body"><div class="alert-title">表格字段</div>后续版本将支持自定义列头与列类型。</div></div>`}
+  return `<div class="form-info-title" style="margin-bottom:var(--sp-3);">字段属性 · ${esc(f.id)}</div><div class="form-info-row"><span class="form-info-label">字段标签</span><input class="input" id="fp-label" value="${esc(f.label)}"/></div><div class="form-info-row"><span class="form-info-label">输入样式</span><div class="type-grid" id="fp-types">${typeTiles}</div></div>${['readonly','table'].includes(f.type)?'':`<div class="form-info-row"><span class="form-info-label">占位提示</span><input class="input" id="fp-ph" value="${esc(f.placeholder||'')}" placeholder="如：请输入您的姓名"/></div><div class="form-info-row row-inline" style="flex-direction:row;align-items:center;justify-content:space-between;"><span class="form-info-label">必填字段</span><label class="switch"><input type="checkbox" id="fp-required" ${f.required?'checked':''}><span class="switch-track"></span></label></div>`}${extra}`;
+}
+
+function bindFieldProp(f){
+  const root=document.getElementById('form-right-body');
+  root.querySelector('#fp-label')?.addEventListener('input',e=>{f.label=e.target.value;refreshFieldCard(f)});
+  root.querySelector('#fp-ph')?.addEventListener('input',e=>f.placeholder=e.target.value);
+  root.querySelector('#fp-required')?.addEventListener('change',e=>{f.required=e.target.checked;refreshFieldCard(f)});
+  root.querySelector('#fp-min')?.addEventListener('input',e=>f.min=+e.target.value||undefined);
+  root.querySelector('#fp-max')?.addEventListener('input',e=>f.max=+e.target.value||undefined);
+  root.querySelector('#fp-content')?.addEventListener('input',e=>f.content=e.target.value);
+  root.querySelectorAll('#fp-types .type-tile').forEach(b=>{b.addEventListener('click',()=>{f.type=b.getAttribute('data-v');if(['radio','select','checkbox'].includes(f.type)&&!f.options)f.options=['选项一','选项二'];renderRight()})});
+  root.querySelector('#fp-opt-add')?.addEventListener('click',()=>{f.options=f.options||[];f.options.push('新选项');renderRight()});
+  root.querySelectorAll('#fp-opt-list .opt-row').forEach(row=>{const i=+row.getAttribute('data-i');row.querySelector('input').addEventListener('input',e=>f.options[i]=e.target.value);row.querySelector('.opt-row-x').addEventListener('click',()=>{f.options.splice(i,1);renderRight()})});
+  root.querySelector('#fp-src-kind')?.addEventListener('change',e=>{const v=e.target.value;f.source=v?{kind:v,path:f.source?.path||(v==='roster'?'花名册':v==='organizations'?'组织名录':v==='facilities'?'设施名录':''),display:f.source?.display||'name'}:null;renderRight()});
+  root.querySelector('#fp-src-display')?.addEventListener('input',e=>{f.source=f.source||{};f.source.display=e.target.value});
+  root.querySelector('#fp-src-path')?.addEventListener('input',e=>{f.source=f.source||{};f.source.path=e.target.value});
+}
+
+function refreshFieldCard(f){
+  const card=document.querySelector('.field-card[data-id="'+f.id+'"]');if(!card)return;
+  card.querySelector('.field-name').textContent=f.label||'（未命名字段）';
+  const pill=card.querySelector('.field-pill');pill.classList.toggle('is-required',!!f.required);pill.textContent=f.required?'必填':'选填';
+}
+
+// Preview
+function openPreview(){
+  const t=activeTpl();
+  const groupsHtml=t.groups.map(g=>`<div><div class="preview-group-h">${esc(g.name)}</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-7) var(--sp-8);">${g.fields.map(f=>previewFieldHtml(f)).join('')||'<div style="grid-column:1/-1;color:var(--fg-quaternary);font-style:italic;font-size:var(--fs-xs);">该分组暂无字段</div>'}</div></div>`).join('');
+  Modal.open({size:'lg',icon:'eye',title:t.name+' · 预览',subtitle:t.code+' · '+t.version,
+    body:`<div class="form-preview-modal"><div class="alert alert-info"><span class="alert-icon">${ic('info')}</span><div class="alert-body"><div class="alert-title">${esc(t.name)}</div>${esc(t.desc||'该模板暂无描述。')}</div></div><div class="preview-form">${groupsHtml}</div><div><div class="preview-group-h">审批流程</div><div class="event-progress">${t.flow.map((s,i,arr)=>`<div class="event-step ${i===0?'is-current':'is-pending'}" style="flex:1;"><div class="event-step-name">第 ${i+1} 步 · ${esc(s.name)}</div><div class="event-step-state">${esc(s.who)} ${s.allowReject?'· 可驳回':''}</div></div>${i<arr.length-1?'<div class="event-arrow">'+ic('chevronRight')+'</div>':''}`).join('')}</div></div></div>`,
+    footer:`<div class="modal-foot-info">此为预览，模拟填写不会创建真实记录。</div><div class="modal-foot-actions"><button class="btn btn-ghost">${ic('feather')}<span>模拟填写</span></button><button class="btn btn-primary">${ic('send')}<span>提交（演示）</span></button></div>`});
+}
+
+function previewFieldHtml(f){
+  const required=f.required?'<span class="preview-field-required">*</span>':'';let ctrl='';
+  if(f.type==='text')ctrl=`<input class="input" placeholder="${esc(f.placeholder||'')}"/>`;
+  else if(f.type==='textarea')ctrl=`<textarea class="textarea" rows="3" placeholder="${esc(f.placeholder||'')}"></textarea>`;
+  else if(f.type==='number')ctrl=`<input class="input" type="number" placeholder="${esc(f.placeholder||'')}" min="${f.min??''}" max="${f.max??''}"/>`;
+  else if(f.type==='date')ctrl='<input class="input" type="date"/>';
+  else if(f.type==='datetime')ctrl='<input class="input" type="datetime-local"/>';
+  else if(f.type==='radio'){const opts=realizeOptions(f);ctrl=`<div style="display:flex;flex-wrap:wrap;gap:var(--sp-5);">${opts.map(o=>`<label style="display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--fg-secondary);"><input type="radio" name="${f.id}"/>${esc(o)}</label>`).join('')}</div>`}
+  else if(f.type==='select'){const opts=realizeOptions(f);ctrl=`<select class="select"><option>请选择…</option>${opts.map(o=>'<option>'+esc(o)+'</option>').join('')}</select>`}
+  else if(f.type==='checkbox'){const opts=realizeOptions(f);ctrl=`<div style="display:flex;flex-wrap:wrap;gap:var(--sp-5);">${opts.map(o=>`<label style="display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--fg-secondary);"><input type="checkbox"/>${esc(o)}</label>`).join('')}</div>`}
+  else if(f.type==='readonly'){ctrl=`<div style="padding:var(--sp-5) var(--sp-6);background:rgba(166,145,255,0.05);border:1px dashed var(--border-base);border-radius:var(--r-sm);font-size:var(--fs-sm);color:var(--fg-tertiary);font-style:italic;">${esc(f.content||'说明性文本')}</div>`}
+  else if(f.type==='table'){ctrl=`<div style="padding:var(--sp-5);background:rgba(255,255,255,0.03);border:1px dashed var(--border-base);border-radius:var(--r-sm);color:var(--fg-tertiary);font-size:var(--fs-xs);">表格输入（演示占位）— 行可增删</div>`}
+  else{ctrl=`<input class="input" placeholder="${esc(f.placeholder||'')}"/>`}
+  return `<div class="preview-field" ${['textarea','readonly','table'].includes(f.type)?'style="grid-column:1/-1;"':''}><span class="preview-field-label">${esc(f.label)} ${required}</span>${ctrl}</div>`;
+}
+
+function realizeOptions(f){
+  if(f.source?.kind){if(f.source.kind==='roster')return sampleChars.map(c=>c.name);if(f.source.kind==='organizations')return sampleOrgs.map(o=>o.name);if(f.source.kind==='facilities')return sampleFacilities.map(c=>c.name)}
+  return f.options||[];
+}
+
+// Records
+function openRecords(){
+  const recs=sampleRecords;
+  const items=recs.map(r=>{
+    const tpl=templates.find(t=>t.id===r.tplId)||sampleTemplates.find(t=>t.id===r.tplId);
+    const who=sampleChars.find(c=>c.id===r.who);
+    const flowItems=(tpl?.flow||[]).map((s,i)=>{const state=i<r.currentStep?'done':i===r.currentStep?(r.status==='approved'?'done':r.status==='rejected'?'rejected':'current'):'pending';return{name:s.name,state}});
+    const stateMap={pending:'审批中',approved:'已通过',rejected:'已驳回'};
+    const tone=r.status==='pending'?'amber':r.status==='approved'?'moss':'vermil';
+    return `<div class="record-card"><div class="record-head"><div class="record-title"><span class="avatar avatar-sm tone-${who?.tone||'ink'}">${who?.avatar||'?'}</span><div><div class="record-name">${esc(tpl?.name||'?')}</div><div class="record-meta">${esc(who?.name||'?')} · ${esc(r.applied)}</div></div></div><span class="badge badge-${tone}">${stateMap[r.status]}</span></div><div class="record-brief">${esc(r.brief)}</div><div class="record-flow">${flowItems.map((s,i,arr)=>`<div class="record-step record-step-${s.state}"><div class="record-step-name">${i+1}. ${esc(s.name)}</div><div class="record-step-state">${{done:'已完成',current:'处理中',pending:'待处理',rejected:'已驳回'}[s.state]}</div></div>${i<arr.length-1?'<div class="record-arrow">'+ic('chevronRight')+'</div>':''}`).join('')}</div><div class="record-actions">${r.status==='pending'?`<button class="btn btn-ghost btn-sm">${ic('eye')}<span>查看</span></button><button class="btn btn-soft btn-sm">${ic('arrowRight')}<span>推进流程</span></button><button class="btn btn-danger btn-sm">${ic('close')}<span>驳回</span></button>`:`<button class="btn btn-ghost btn-sm">${ic('eye')}<span>查看</span></button>`}</div></div>`;
+  }).join('');
+  Modal.open({size:'lg',icon:'archive',title:'申请记录',subtitle:'Active & Archived Records',body:`<div style="padding:var(--sp-10) var(--sp-12);display:flex;flex-direction:column;gap:var(--sp-7);width:100%;">${items||'<div class="empty"><div class="empty-icon">'+ic('archive')+'</div><div class="empty-title">暂无申请记录</div></div>'}</div>`});
+}
+
+// Export/Import
+function exportTpls(){
+  const blob=new Blob([JSON.stringify(templates,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='form-templates.json';a.click();Notify.success('已导出',templates.length+' 个模板');
+}
+function importTpls(){
+  const input=document.createElement('input');input.type='file';input.accept='.json';input.addEventListener('change',()=>{const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data))throw new Error('格式错误');templates=data;activeId=templates[0]?.id;selectedFieldId=null;renderList();renderMid();renderRight();Notify.success('已导入',templates.length+' 个模板')}catch(e){Notify.error('导入失败',e.message)}};reader.readAsText(file)});input.click();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{init();document.getElementById('export-btn').addEventListener('click',exportTpls);document.getElementById('import-btn').addEventListener('click',importTpls)});
+})();
+</script>
+</body>
+</html>
