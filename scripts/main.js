@@ -1,5 +1,6 @@
 /* scripts/main.js — 入口与全局连线 (SillyTavern v3 integrated) */
 (function () {
+try {
   // —— 主导航 -> 模态框 —— //
   document.querySelectorAll('.nav-item[data-modal]').forEach(item => {
     item.addEventListener('click', () => {
@@ -298,4 +299,13 @@
   }, 800);
 
   function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
+
+} catch (_e) {
+  console.error('[main.js] Fatal error during init:', _e);
+  var el = document.getElementById('ctx-pane-body') || document.body;
+  if (el) {
+    el.innerHTML += '<div style="padding:12px;margin:8px;background:#300;border:1px solid #c44;color:#fcc;font-size:12px;font-family:monospace;border-radius:4px"><strong>main.js init error</strong><br>' + _e.message.replace(/</g, '&lt;') + '</div>';
+  }
+  if (typeof GameNotify !== 'undefined') GameNotify.error('入口初始化失败', _e.message);
+}
 })();
