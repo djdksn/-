@@ -975,24 +975,87 @@ export function openPresets() {
 
 export function openVariables() {
   const chat = store.activeChat;
-  if (!chat) { GameNotify.warn('无活跃对话', ''); return; }
-  const vars = chat.variables || {};
-  const entries = Object.entries(vars);
+  const s = store.settings || DEFAULT_SETTINGS;
+  const defaultVars = s.defaultVariables || {};
+  const chatVars = chat?.variables || {};
+  const rules = s.variableRules || { extractFromResponse: true, useSecondaryApi: false, allowedKeys: [] };
+  let activeTab = 'default';
 
-  let rowsHtml = entries.map(([k, v]) => `
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-      <input type="text" value="${esc(k)}" data-var-key="${esc(k)}" class="st-var-key" style="flex:1;padding:6px 8px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
-      <input type="text" value="${esc(String(v))}" data-var-key="${esc(k)}" class="st-var-val" style="flex:1;padding:6px 8px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
-      <button class="btn-sm st-var-del" data-var-key="${esc(k)}" style="color:var(--amber-400);">删除</button>
-    </div>
-  `).join('');
+  function buildVarRows(vars, prefix) {
+    const entries = Object.entries(vars);
+    if (entries.length === 0) return '<p style="color:var(--fg-tertiary);font-size:13px;">暂无变量</p>';
+    return entries.map(([k, v]) => `
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+        <input type="text" value="${esc(k)}" class="st-var-key" data-prefix="${prefix}" data-oldkey="${esc(k)}" style="flex:1;padding:6px 8px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;" placeholder="变量名">
+        <input type="text" value="${esc(String(v))}" class="st-var-val" data-prefix="${prefix}" data-key="${esc(k)}" style="flex:1;padding:6px 8px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;" placeholder="值">
+        <button class="btn-sm st-var-del" data-prefix="${prefix}" data-key="${esc(k)}" style="color:var(--amber-400);">删除</button>
+      </div>
+    `).join('');
+  }
+
+  function buildDefaultTab() {
+    return `
+      <div>
+        <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">默认变量将在创建新对话时自动注入。修改此处不会影响已有对话。</p>
+        <div id="st-vars-list-default">${buildVarRows(defaultVars, 'default')}</div>
+        <button class="btn-sm st-var-add" data-prefix="default" style="margin-top:8px;">+ 添加</button>
+      </div>`;
+  }
+
+  function buildChatTab() {
+    if (!chat) return '<p style="color:var(--fg-tertiary);">暂无活跃对话。请先创建对话或切换到默认变量标签。</p>';
+    return `
+      <div>
+        <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">当前对话「${esc(chat.name)}」的变量。AI 回复中的 &lt;vars&gt; 标签会自动更新此处。</p>
+        <div id="st-vars-list-chat">${buildVarRows(chatVars, 'chat')}</div>
+        <button class="btn-sm st-var-add" data-prefix="chat" style="margin-top:8px;">+ 添加</button>
+      </div>`;
+  }
+
+  function buildRulesTab() {
+    const allowedKeys = (rules.allowedKeys || []).join(', ');
+    return `
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <p style="font-size:12px;color:var(--fg-tertiary);">配置 AI 回复中变量提取的行为。回复中的 <code style="background:var(--ink-700);padding:1px 4px;border-radius:3px;">&lt;vars&gt;{"HP": 38}&lt;/vars&gt;</code> 标签会被解析并更新变量。</p>
+        <label style="font-size:13px;display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="st-rule-extract" ${rules.extractFromResponse !== false ? 'checked' : ''}> 从回复中提取变量
+        </label>
+        <label style="font-size:13px;display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="st-rule-secondary" ${rules.useSecondaryApi ? 'checked' : ''}> 使用次 API 提取变量 (需配置次 API)
+        </label>
+        <label class="st-field"><span class="st-field-label">允许更新的变量 (逗号分隔，留空表示全部允许)</span>
+          <input id="st-rule-keys" type="text" value="${esc(allowedKeys)}" placeholder="HP, 金钱, 好感度" style="width:100%;padding:6px 8px;margin-top:4px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
+        </label>
+        <div style="font-size:12px;color:var(--fg-quaternary);margin-top:4px;">
+          支持格式: <code>&lt;vars&gt;{"key": value}&lt;/vars&gt;</code> (JSON 对象) 或 <code>&lt;var name="key" value="val"/&gt;</code>
+        </div>
+      </div>`;
+  }
+
+  function buildContent(tab) {
+    switch (tab) {
+      case 'default': return buildDefaultTab();
+      case 'chat': return buildChatTab();
+      case 'rules': return buildRulesTab();
+      default: return '';
+    }
+  }
 
   const body = `
-    <div id="st-vars-list">${rowsHtml || '<p style="color:var(--fg-tertiary);">暂无变量</p>'}</div>
-    <button id="st-var-add" class="btn-sm" style="margin-top:12px;">+ 添加</button>
+    <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--ink-600);padding-bottom:8px;">
+      <button class="st-var-tab btn-tab" data-st-var-tab="default" style="background:var(--ink-600);color:var(--fg-primary);padding:4px 10px;border-radius:4px;border:none;font-size:13px;cursor:pointer;">默认变量</button>
+      <button class="st-var-tab btn-tab" data-st-var-tab="chat" style="background:transparent;color:var(--fg-tertiary);padding:4px 10px;border-radius:4px;border:none;font-size:13px;cursor:pointer;">对话变量${chat ? ' · '+esc(chat.name) : ''}</button>
+      <button class="st-var-tab btn-tab" data-st-var-tab="rules" style="background:transparent;color:var(--fg-tertiary);padding:4px 10px;border-radius:4px;border:none;font-size:13px;cursor:pointer;">更新规则</button>
+    </div>
+    <div id="st-var-content">${buildContent('default')}</div>
   `;
 
-  const modal = GameModal.open({ size: 'md', title: '变量管理', body });
+  const modal = GameModal.open({
+    size: 'md',
+    title: '变量管理',
+    subtitle: `默认 ${Object.keys(defaultVars).length} 项${chat ? ' | 对话 ' + Object.keys(chatVars).length + ' 项' : ''}`,
+    body,
+  });
 
   requestAnimationFrame(() => wireVarEvents(modal));
 }
@@ -1001,12 +1064,25 @@ function wireVarEvents(modal) {
   const el = modal.el;
   if (!el) return;
 
-  function saveVars() {
-    const chat = store.activeChat;
-    if (!chat) return;
+  function saveDefaultVars() {
     const next = {};
-    el.querySelectorAll('.st-var-key').forEach((kInp, i) => {
-      const vInp = el.querySelectorAll('.st-var-val')[i];
+    el.querySelectorAll('.st-var-key[data-prefix="default"]').forEach((kInp, i) => {
+      const vInps = el.querySelectorAll('.st-var-val[data-prefix="default"]');
+      const vInp = vInps[i];
+      if (kInp && vInp && kInp.value.trim()) {
+        const num = Number(vInp.value);
+        next[kInp.value.trim()] = Number.isNaN(num) ? vInp.value : num;
+      }
+    });
+    store.updateSettings({ defaultVariables: next });
+  }
+
+  function saveChatVars() {
+    if (!store.activeChat) return;
+    const next = {};
+    el.querySelectorAll('.st-var-key[data-prefix="chat"]').forEach((kInp, i) => {
+      const vInps = el.querySelectorAll('.st-var-val[data-prefix="chat"]');
+      const vInp = vInps[i];
       if (kInp && vInp && kInp.value.trim()) {
         const num = Number(vInp.value);
         next[kInp.value.trim()] = Number.isNaN(num) ? vInp.value : num;
@@ -1015,26 +1091,147 @@ function wireVarEvents(modal) {
     store.setChatVariables(next);
   }
 
+  function saveRules() {
+    const extract = document.getElementById('st-rule-extract')?.checked ?? true;
+    const secondary = document.getElementById('st-rule-secondary')?.checked ?? false;
+    const keysStr = document.getElementById('st-rule-keys')?.value || '';
+    const allowedKeys = keysStr.split(',').map(s => s.trim()).filter(Boolean);
+    store.updateSettings({ variableRules: { extractFromResponse: extract, useSecondaryApi: secondary, allowedKeys } });
+  }
+
+  // Type-change on inputs saves
   el.querySelectorAll('.st-var-key, .st-var-val').forEach(inp => {
-    inp.addEventListener('input', saveVars);
-  });
-  el.querySelectorAll('.st-var-del').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const key = btn.getAttribute('data-var-key');
-      const chat = store.activeChat;
-      if (!chat) return;
-      const next = { ...(chat.variables || {}) };
-      delete next[key];
-      store.setChatVariables(next);
-      modal.close(); openVariables();
+    inp.addEventListener('change', () => {
+      if (inp.getAttribute('data-prefix') === 'default') saveDefaultVars();
+      else saveChatVars();
     });
   });
-  const addBtn = el.querySelector('#st-var-add');
-  if (addBtn) addBtn.addEventListener('click', () => {
-    const chat = store.activeChat;
-    if (!chat) return;
-    store.setChatVariables({ ...(chat.variables || {}), 'new_var': '' });
-    modal.close(); openVariables();
+
+  // Delete buttons
+  el.querySelectorAll('.st-var-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prefix = btn.getAttribute('data-prefix');
+      const key = btn.getAttribute('data-key');
+      if (prefix === 'default') {
+        const vars = { ...(store.settings?.defaultVariables || {}) };
+        delete vars[key];
+        store.updateSettings({ defaultVariables: vars });
+      } else if (prefix === 'chat' && store.activeChat) {
+        const vars = { ...(store.activeChat.variables || {}) };
+        delete vars[key];
+        store.setChatVariables(vars);
+      }
+      modal.close();
+      openVariables();
+    });
+  });
+
+  // Add buttons
+  el.querySelectorAll('.st-var-add').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const prefix = btn.getAttribute('data-prefix');
+      if (prefix === 'default') {
+        const vars = { ...(store.settings?.defaultVariables || {}), 'new_var': '' };
+        store.updateSettings({ defaultVariables: vars });
+      } else if (prefix === 'chat' && store.activeChat) {
+        const vars = { ...(store.activeChat.variables || {}), 'new_var': '' };
+        store.setChatVariables(vars);
+      }
+      modal.close();
+      openVariables();
+    });
+  });
+
+  // Rule inputs
+  const ruleExtract = el.querySelector('#st-rule-extract');
+  if (ruleExtract) ruleExtract.addEventListener('change', saveRules);
+  const ruleSecondary = el.querySelector('#st-rule-secondary');
+  if (ruleSecondary) ruleSecondary.addEventListener('change', saveRules);
+  const ruleKeys = el.querySelector('#st-rule-keys');
+  if (ruleKeys) ruleKeys.addEventListener('change', saveRules);
+
+  // Tab switching
+  el.querySelectorAll('.st-var-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.getAttribute('data-st-var-tab');
+      // Save current tab's data before switching
+      const currentContent = el.querySelector('#st-var-content');
+      if (currentContent) {
+        if (currentContent.querySelector('.st-var-key[data-prefix="default"]')) saveDefaultVars();
+        if (currentContent.querySelector('.st-var-key[data-prefix="chat"]')) saveChatVars();
+        if (currentContent.querySelector('#st-rule-extract')) saveRules();
+      }
+
+      // Update tab buttons
+      el.querySelectorAll('.st-var-tab').forEach(b => {
+        b.style.background = 'transparent';
+        b.style.color = 'var(--fg-tertiary)';
+      });
+      btn.style.background = 'var(--ink-600)';
+      btn.style.color = 'var(--fg-primary)';
+
+      // Rebuild content
+      const content = el.querySelector('#st-var-content');
+      if (!content) return;
+
+      const chat = store.activeChat;
+      const s = store.settings || DEFAULT_SETTINGS;
+      const defaultVars = s.defaultVariables || {};
+      const chatVars = chat?.variables || {};
+      const rules = s.variableRules || { extractFromResponse: true, useSecondaryApi: false, allowedKeys: [] };
+
+      function buildVarRows(vars, prefix) {
+        const entries = Object.entries(vars);
+        if (entries.length === 0) return '<p style="color:var(--fg-tertiary);font-size:13px;">暂无变量</p>';
+        return entries.map(([k, v]) => `
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <input type="text" value="${esc(k)}" class="st-var-key" data-prefix="${prefix}" data-oldkey="${esc(k)}" style="flex:1;padding:6px 8px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;" placeholder="变量名">
+            <input type="text" value="${esc(String(v))}" class="st-var-val" data-prefix="${prefix}" data-key="${esc(k)}" style="flex:1;padding:6px 8px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;" placeholder="值">
+            <button class="btn-sm st-var-del" data-prefix="${prefix}" data-key="${esc(k)}" style="color:var(--amber-400);">删除</button>
+          </div>
+        `).join('');
+      }
+
+      switch (tab) {
+        case 'default':
+          content.innerHTML = `
+            <div>
+              <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">默认变量将在创建新对话时自动注入。</p>
+              <div id="st-vars-list-default">${buildVarRows(defaultVars, 'default')}</div>
+              <button class="btn-sm st-var-add" data-prefix="default" style="margin-top:8px;">+ 添加</button>
+            </div>`;
+          break;
+        case 'chat':
+          content.innerHTML = chat
+            ? `<div>
+                <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">当前对话「${esc(chat.name)}」的变量。</p>
+                <div id="st-vars-list-chat">${buildVarRows(chatVars, 'chat')}</div>
+                <button class="btn-sm st-var-add" data-prefix="chat" style="margin-top:8px;">+ 添加</button>
+              </div>`
+            : '<p style="color:var(--fg-tertiary);">暂无活跃对话。请先创建对话或切换到默认变量标签。</p>';
+          break;
+        case 'rules': {
+          const allowedKeys = (rules.allowedKeys || []).join(', ');
+          content.innerHTML = `
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <p style="font-size:12px;color:var(--fg-tertiary);">配置 AI 回复中变量提取的行为。</p>
+              <label style="font-size:13px;display:flex;align-items:center;gap:8px;">
+                <input type="checkbox" id="st-rule-extract" ${rules.extractFromResponse !== false ? 'checked' : ''}> 从回复中提取变量
+              </label>
+              <label style="font-size:13px;display:flex;align-items:center;gap:8px;">
+                <input type="checkbox" id="st-rule-secondary" ${rules.useSecondaryApi ? 'checked' : ''}> 使用次 API 提取变量
+              </label>
+              <label class="st-field"><span class="st-field-label">允许更新的变量 (逗号分隔，留空表示全部允许)</span>
+                <input id="st-rule-keys" type="text" value="${esc(allowedKeys)}" placeholder="HP, 金钱, 好感度" style="width:100%;padding:6px 8px;margin-top:4px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
+              </label>
+            </div>`;
+          break;
+        }
+      }
+
+      // Re-wire events for the new content
+      wireVarEvents(modal);
+    });
   });
 }
 

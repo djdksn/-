@@ -84,6 +84,7 @@ class SillytavernStore {
   // ========== CHAT ACTIONS ==========
   async createChat(name, options) {
     if (!this.settings) throw new Error('Settings not loaded');
+    const defaultVars = this.settings.defaultVariables || {};
     const chat = {
       id: crypto.randomUUID(),
       name: name || `${this.settings.characterName} - 新对话`,
@@ -92,7 +93,7 @@ class SillytavernStore {
       userName: this.settings.userName,
       presetId: options?.presetId ?? this.settings.activePresetId ?? null,
       lorebookIds: options?.lorebookIds ?? this.settings.activeLorebookIds ?? [],
-      variables: {},
+      variables: JSON.parse(JSON.stringify(defaultVars)),
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };

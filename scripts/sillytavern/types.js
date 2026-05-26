@@ -55,6 +55,12 @@ export const DEFAULT_SETTINGS = {
   customTags: ['maintext', 'option', 'sum', 'vars', 'thinking', 'think'],
   formatPromptTemplate: DEFAULT_FORMAT_PROMPT,
   thinkingDisplay: 'fold',
+  defaultVariables: {},
+  variableRules: {
+    extractFromResponse: true,
+    useSecondaryApi: false,
+    allowedKeys: [],
+  },
 };
 
 export const DEFAULT_PROMPT_ORDER = [
