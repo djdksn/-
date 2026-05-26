@@ -1,0 +1,182 @@
+/* ========================================================
+   SillyTavern v3 — Game View & Modal Styles
+   ======================================================== */
+
+/* ---- Game Content (inside bubbles) ---- */
+
+.st-game-content {
+  line-height: 1.7;
+}
+
+.st-maintext {
+  color: var(--fg-primary);
+  font-size: var(--fs-body);
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.st-maintext p {
+  margin: 0 0 0.75em;
+}
+
+/* ---- Thinking Fold ---- */
+
+.st-thinking-fold {
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  background: rgba(106, 85, 214, 0.06);
+  border: 1px solid rgba(106, 85, 214, 0.15);
+  border-radius: var(--r-md);
+  font-size: var(--fs-xs);
+}
+
+.st-thinking-summary {
+  cursor: pointer;
+  color: var(--wisteria-300);
+  user-select: none;
+  font-size: var(--fs-xs);
+}
+
+.st-thinking-body {
+  margin-top: var(--sp-2);
+  color: var(--fg-tertiary);
+  line-height: 1.65;
+  white-space: pre-wrap;
+  max-height: 320px;
+  overflow-y: auto;
+  font-style: italic;
+}
+
+/* ---- Option List ---- */
+
+.st-option-list {
+  margin-top: var(--sp-4);
+}
+
+.st-option-chip {
+  /* inherits .option-chip from components.css */
+}
+
+/* ---- Sum Fold ---- */
+
+.st-sum-fold {
+  margin-top: var(--sp-4);
+  padding: var(--sp-2) var(--sp-3);
+  background: rgba(255, 171, 64, 0.05);
+  border: 1px solid rgba(255, 171, 64, 0.12);
+  border-radius: var(--r-md);
+  font-size: var(--fs-xs);
+  color: var(--fg-tertiary);
+}
+
+.st-sum-fold summary {
+  cursor: pointer;
+  color: var(--amber-300);
+}
+
+/* ---- Variables Inline ---- */
+
+.st-vars-inline {
+  border-top: 1px solid var(--ink-700);
+  padding-top: var(--sp-2);
+}
+
+/* ---- Fields ---- */
+
+.st-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--sp-3);
+}
+
+.st-field-label {
+  font-size: var(--fs-xs);
+  color: var(--fg-tertiary);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.st-field input,
+.st-field select,
+.st-field textarea {
+  background: var(--ink-800);
+  border: 1px solid var(--ink-600);
+  border-radius: var(--r-md, 6px);
+  color: var(--fg-primary);
+  font-size: var(--fs-sm);
+  font-family: var(--font-sans);
+  padding: 7px 10px;
+  transition: border-color 0.15s;
+}
+
+.st-field input:focus,
+.st-field select:focus,
+.st-field textarea:focus {
+  outline: none;
+  border-color: var(--wisteria-400);
+  box-shadow: 0 0 0 2px rgba(106,85,214,0.15);
+}
+
+/* ---- Buttons ---- */
+
+.btn-sm {
+  padding: 5px 12px;
+  font-size: var(--fs-xs);
+  border-radius: var(--r-md, 6px);
+  border: 1px solid var(--ink-600);
+  background: var(--ink-700);
+  color: var(--fg-secondary);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all 0.12s;
+}
+
+.btn-sm:hover {
+  background: var(--ink-600);
+  color: var(--fg-primary);
+  border-color: var(--ink-500);
+}
+
+.btn-tab {
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all 0.12s;
+}
+
+/* ---- ST Modal content within GameModal ---- */
+
+.st-settings-modal .modal-body {
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+
+/* ---- Streaming Live Bubble ---- */
+
+.bubble-typing {
+  display: flex;
+  gap: 4px;
+  padding: var(--sp-2) 0;
+}
+
+.bubble-typing span {
+  width: 6px;
+  height: 6px;
+  background: var(--fg-quaternary);
+  border-radius: 50%;
+  animation: stTyping 1.4s infinite;
+}
+
+.bubble-typing span:nth-child(2) { animation-delay: 0.2s; }
+.bubble-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes stTyping {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-4px); }
+}
+
+/* ---- Responsive ---- */

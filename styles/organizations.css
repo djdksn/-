@@ -1,0 +1,246 @@
+/* ==========================================================
+ * organizations.css — 组织名录
+ * ========================================================== */
+
+.org-shell {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: minmax(0, 1fr);
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+}
+
+.org-list-pane {
+  border-right: 1px solid var(--border-faint);
+  background: var(--ink-900);
+  display: flex; flex-direction: column;
+  min-height: 0;
+}
+.org-list-toolbar {
+  padding: var(--sp-7);
+  border-bottom: 1px solid var(--border-faint);
+  display: flex; flex-direction: column; gap: var(--sp-5);
+}
+.org-search {
+  position: relative;
+}
+.org-search svg {
+  position: absolute; left: var(--sp-6); top: 50%; transform: translateY(-50%);
+  width: 13px; height: 13px;
+  color: var(--fg-quaternary);
+}
+.org-search input {
+  width: 100%; height: 30px;
+  padding: 0 var(--sp-5) 0 var(--sp-10);
+  background: var(--ink-850);
+  border: 1px solid var(--border-base);
+  border-radius: var(--r-sm);
+  color: var(--fg-primary);
+  font-size: var(--fs-xs);
+  outline: 0;
+}
+.org-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+.org-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-3);
+}
+
+.org-list-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: var(--sp-5);
+  padding: var(--sp-5) var(--sp-6);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background var(--t-fast);
+  margin-bottom: 2px;
+}
+.org-list-item::before {
+  content: ""; position: absolute;
+  left: 0; top: 50%;
+  width: 2px; height: 0;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+  transform: translateY(-50%);
+  transition: height var(--t-base) var(--ease-spring);
+}
+.org-list-item:hover { background: var(--bg-hover); }
+.org-list-item:hover::before { height: 60%; }
+.org-list-item.is-active { background: var(--bg-active); }
+.org-list-item.is-active::before { height: 60%; }
+
+.org-list-info { min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+.org-list-name { font-size: var(--fs-sm); font-weight: 500; color: var(--fg-primary); letter-spacing: 0.04em; }
+.org-list-meta {
+  display: flex; align-items: center; gap: var(--sp-3);
+  font-size: var(--fs-2xs);
+  color: var(--fg-quaternary);
+  letter-spacing: 0.04em;
+}
+.org-list-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--fg-quaternary); }
+
+/* —— 详情区 —— */
+.org-detail {
+  display: flex; flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.org-detail-head {
+  position: relative;
+  padding: var(--sp-12) var(--sp-12) var(--sp-10);
+  background:
+    radial-gradient(circle at 100% 0%, var(--org-tone-glow), transparent 50%),
+    linear-gradient(180deg, var(--ink-850), var(--ink-900));
+  border-bottom: 1px solid var(--border-faint);
+}
+.org-detail-head[data-tone="sakura"] { --org-tone-glow: rgba(240,78,132,0.10); }
+.org-detail-head[data-tone="wisteria"] { --org-tone-glow: rgba(106,85,214,0.10); }
+.org-detail-head[data-tone="moss"] { --org-tone-glow: rgba(95,201,154,0.10); }
+.org-detail-head[data-tone="amber"] { --org-tone-glow: rgba(255,174,66,0.10); }
+.org-detail-head[data-tone="vermil"] { --org-tone-glow: rgba(238,90,90,0.10); }
+.org-detail-head[data-tone="ink"] { --org-tone-glow: rgba(173,180,203,0.06); }
+
+.org-detail-top {
+  display: flex; align-items: flex-start; gap: var(--sp-8);
+}
+
+.org-detail-main { flex: 1; min-width: 0; }
+.org-detail-tags {
+  display: flex; flex-wrap: wrap; gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+}
+.org-detail-name {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-3xl);
+  color: var(--fg-primary);
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+.org-detail-tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.08em;
+  margin-bottom: var(--sp-7);
+}
+
+.org-detail-stats {
+  display: flex; gap: 0;
+  border-top: 1px solid var(--border-soft);
+  padding-top: var(--sp-7);
+}
+.org-stat {
+  flex: 1;
+  display: flex; flex-direction: column; gap: 4px;
+  padding-right: var(--sp-7);
+  border-right: 1px solid var(--border-faint);
+}
+.org-stat:last-child { border-right: 0; padding-right: 0; }
+.org-stat-key {
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-quaternary);
+}
+.org-stat-val {
+  font-family: var(--font-serif);
+  font-size: var(--fs-md);
+  color: var(--fg-primary);
+  font-weight: 500;
+}
+
+/* —— Section —— */
+.org-detail-section { padding: var(--sp-10) var(--sp-12); border-bottom: 1px solid var(--border-faint); }
+.org-detail-section:last-child { border-bottom: 0; }
+
+.org-section-h {
+  display: flex; align-items: center; gap: var(--sp-5);
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: var(--fs-md);
+  color: var(--fg-primary);
+  margin-bottom: var(--sp-7);
+  letter-spacing: 0.04em;
+}
+.org-section-h::before {
+  content: ""; width: 3px; height: 14px;
+  background: linear-gradient(180deg, var(--sakura-400), var(--wisteria-400));
+  border-radius: var(--r-full);
+}
+.org-section-h-meta { margin-left: auto; font-size: var(--fs-xs); color: var(--fg-quaternary); }
+
+.org-desc {
+  font-family: var(--font-serif);
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-secondary);
+}
+.org-story {
+  margin-top: var(--sp-7);
+  padding: var(--sp-7) var(--sp-8);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+  font-family: var(--font-serif);
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--fg-tertiary);
+  line-height: var(--lh-relaxed);
+  position: relative;
+}
+.org-story::before {
+  content: '"';
+  position: absolute; left: 8px; top: -6px;
+  font-family: var(--font-display);
+  font-size: 36px;
+  color: var(--accent);
+  opacity: 0.4;
+}
+
+/* —— 成员名录 —— */
+.org-members {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--sp-5);
+}
+.org-member {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: var(--sp-5);
+  padding: var(--sp-6);
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-soft);
+  cursor: pointer;
+  transition: all var(--t-fast);
+  align-items: center;
+}
+.org-member:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.org-member-info { min-width: 0; }
+.org-member-name { font-size: var(--fs-sm); font-weight: 500; color: var(--fg-primary); margin-bottom: 2px; letter-spacing: 0.04em; }
+.org-member-role {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: var(--fs-2xs);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.06em;
+}
+.org-member-role-tag {
+  display: inline-block;
+  padding: 1px 5px;
+  background: rgba(255,107,154,0.10);
+  border-radius: var(--r-xs);
+  color: var(--sakura-200);
+  font-size: var(--fs-2xs);
+}

@@ -1,0 +1,196 @@
+/* ==========================================================
+ * tokens.css — 设计系统：色彩、字体、阴影、动效曲线
+ * 樱栖学园 · 暮色和纸主题
+ * ========================================================== */
+:root {
+  /* —— 中性 / 墨色（主背景层） —— */
+  --ink-1000: #0c0e16;
+  --ink-950:  #11131c;
+  --ink-900:  #161927;
+  --ink-850:  #1a1d29;
+  --ink-800:  #1e2230;
+  --ink-700:  #262b3b;
+  --ink-600:  #313749;
+  --ink-500:  #3e4459;
+  --ink-400:  #525a73;
+  --ink-300:  #6d758f;
+  --ink-200:  #8a92ab;
+  --ink-100:  #adb4cb;
+  --ink-50:   #cdd2e3;
+  --ink-25:   #e6e9f4;
+
+  /* —— 樱（主品牌：粉樱与暮霞） —— */
+  --sakura-50:  #fff0f4;
+  --sakura-100: #ffd9e2;
+  --sakura-200: #ffb3c8;
+  --sakura-300: #ff8caf;
+  --sakura-400: #ff6b9a;
+  --sakura-500: #f04e84;
+  --sakura-600: #d93a72;
+  --sakura-700: #b62d62;
+
+  /* —— 藤（次级：紫藤、深暮） —— */
+  --wisteria-100: #e6deff;
+  --wisteria-200: #c8b8ff;
+  --wisteria-300: #a691ff;
+  --wisteria-400: #8a72f0;
+  --wisteria-500: #6a55d6;
+  --wisteria-600: #5343b8;
+
+  /* —— 苔（强调：青苔、玉色） —— */
+  --moss-100: #c8efd9;
+  --moss-200: #91e0b5;
+  --moss-300: #5fc99a;
+  --moss-400: #36b389;
+  --moss-500: #1f9c75;
+
+  /* —— 暮（警示：橙金） —— */
+  --amber-100: #ffe6b8;
+  --amber-200: #ffcf7a;
+  --amber-300: #ffae42;
+  --amber-400: #f08f1f;
+  --amber-500: #d2710a;
+
+  /* —— 朱（错误） —— */
+  --vermil-200: #ffb5b5;
+  --vermil-300: #ff8888;
+  --vermil-400: #ee5a5a;
+  --vermil-500: #d83434;
+
+  /* —— 语义角色 —— */
+  --bg-base: var(--ink-950);
+  --bg-canvas: var(--ink-900);
+  --bg-surface: var(--ink-850);
+  --bg-elevated: var(--ink-800);
+  --bg-floating: var(--ink-700);
+  --bg-hover: rgba(255, 255, 255, 0.04);
+  --bg-active: rgba(255, 255, 255, 0.08);
+
+  --fg-primary: var(--ink-25);
+  --fg-secondary: var(--ink-100);
+  --fg-tertiary: var(--ink-300);
+  --fg-quaternary: var(--ink-400);
+  --fg-disabled: var(--ink-500);
+
+  --border-faint: rgba(255, 255, 255, 0.04);
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --border-base: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  --accent: var(--sakura-400);
+  --accent-soft: var(--sakura-500);
+  --accent-glow: rgba(255, 107, 154, 0.32);
+
+  --info: var(--wisteria-300);
+  --success: var(--moss-300);
+  --warning: var(--amber-300);
+  --danger: var(--vermil-300);
+
+  /* —— 字体 —— */
+  --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+  --font-display: "Cormorant Garamond", "Noto Serif SC", serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Consolas", monospace;
+
+  /* —— 字号阶梯 —— */
+  --fs-2xs: 10px;
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-base: 14px;
+  --fs-lg: 15px;
+  --fs-xl: 17px;
+  --fs-2xl: 20px;
+  --fs-3xl: 24px;
+  --fs-4xl: 30px;
+  --fs-5xl: 38px;
+  --fs-6xl: 48px;
+
+  --lh-tight: 1.2;
+  --lh-snug: 1.35;
+  --lh-normal: 1.55;
+  --lh-relaxed: 1.7;
+  --lh-loose: 1.9;
+
+  /* —— 间距 —— */
+  --sp-0: 0;
+  --sp-1: 2px;
+  --sp-2: 4px;
+  --sp-3: 6px;
+  --sp-4: 8px;
+  --sp-5: 10px;
+  --sp-6: 12px;
+  --sp-7: 14px;
+  --sp-8: 16px;
+  --sp-10: 20px;
+  --sp-12: 24px;
+  --sp-14: 28px;
+  --sp-16: 32px;
+  --sp-20: 40px;
+  --sp-24: 48px;
+  --sp-32: 64px;
+
+  /* —— 圆角 —— */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+  --r-2xl: 24px;
+  --r-3xl: 32px;
+  --r-full: 999px;
+
+  /* —— 阴影（双层叠加，更立体） —— */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.18);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.22), 0 1px 2px rgba(0,0,0,0.14);
+  --shadow-md: 0 4px 8px -2px rgba(0,0,0,0.32), 0 2px 4px -2px rgba(0,0,0,0.22);
+  --shadow-lg: 0 12px 28px -8px rgba(0,0,0,0.45), 0 4px 10px -4px rgba(0,0,0,0.30);
+  --shadow-xl: 0 24px 50px -12px rgba(0,0,0,0.55), 0 8px 16px -8px rgba(0,0,0,0.35);
+  --shadow-2xl: 0 36px 80px -20px rgba(0,0,0,0.7), 0 12px 24px -12px rgba(0,0,0,0.45);
+  --shadow-glow: 0 0 0 1px var(--accent-glow), 0 6px 24px -2px var(--accent-glow);
+  --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.04);
+  --shadow-inset-strong: inset 0 1px 0 rgba(255,255,255,0.08);
+
+  /* —— 动效曲线（自然、灵动） —— */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.55, 0, 0.7, 0.2);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-elastic: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* —— 时长 —— */
+  --t-instant: 80ms;
+  --t-fast: 140ms;
+  --t-base: 220ms;
+  --t-slow: 380ms;
+  --t-slower: 560ms;
+  --t-slowest: 800ms;
+
+  /* —— Z 轴 —— */
+  --z-base: 1;
+  --z-sticky: 50;
+  --z-overlay: 100;
+  --z-modal: 200;
+  --z-popover: 300;
+  --z-tooltip: 400;
+  --z-toast: 500;
+  --z-max: 999;
+
+  /* —— 布局指标 —— */
+  --sidebar-w: 288px;
+  --sidebar-w-collapsed: 76px;
+  --ctx-w: 320px;
+  --topbar-h: 60px;
+  --composer-min-h: 116px;
+
+  /* —— 玻璃质感 —— */
+  --glass-bg: rgba(22, 25, 39, 0.72);
+  --glass-bg-strong: rgba(22, 25, 39, 0.88);
+  --glass-blur: saturate(180%) blur(16px);
+  --glass-blur-strong: saturate(200%) blur(28px);
+
+  /* —— 网格背景 —— */
+  --grid-color: rgba(255, 255, 255, 0.022);
+  --grid-size: 32px;
+}

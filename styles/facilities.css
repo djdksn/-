@@ -1,0 +1,254 @@
+/* ==========================================================
+ * facilities.css — 设施名录
+ * ========================================================== */
+
+.facilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
+  gap: var(--sp-8);
+}
+
+.fac-card {
+  position: relative;
+  display: flex; flex-direction: column;
+  padding: var(--sp-8);
+  background: linear-gradient(180deg, var(--ink-800), var(--ink-850));
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  transition: transform var(--t-base) var(--ease-out), border-color var(--t-base), box-shadow var(--t-base);
+  overflow: hidden;
+  isolation: isolate;
+}
+.fac-card::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  opacity: 0;
+  transition: opacity var(--t-base);
+  background:
+    radial-gradient(circle at 0% 0%, var(--card-tone, var(--accent-glow)), transparent 55%);
+}
+.fac-card::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--card-tone, var(--accent)), transparent);
+  transform: scaleX(0);
+  transition: transform var(--t-slow) var(--ease-spring);
+}
+.fac-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-base);
+  box-shadow: var(--shadow-lg);
+}
+.fac-card:hover::before { opacity: 0.18; }
+.fac-card:hover::after { transform: scaleX(1); }
+
+.fac-card-tone-sakura { --card-tone: var(--sakura-400); }
+.fac-card-tone-wisteria { --card-tone: var(--wisteria-300); }
+.fac-card-tone-moss { --card-tone: var(--moss-300); }
+.fac-card-tone-amber { --card-tone: var(--amber-300); }
+.fac-card-tone-vermil { --card-tone: var(--vermil-300); }
+.fac-card-tone-ink { --card-tone: var(--ink-200); }
+
+.fac-card-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--sp-5);
+  margin-bottom: var(--sp-7);
+}
+.fac-card-icon {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-soft);
+  color: var(--card-tone);
+  flex-shrink: 0;
+  transition: transform var(--t-base) var(--ease-spring), background var(--t-base);
+}
+.fac-card-icon svg { width: 20px; height: 20px; }
+.fac-card:hover .fac-card-icon {
+  transform: rotate(-6deg) scale(1.05);
+  background: rgba(255,255,255,0.08);
+}
+
+.fac-card-type {
+  display: inline-flex; align-items: center;
+  height: 22px;
+  padding: 0 var(--sp-5);
+  border-radius: var(--r-full);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.12em;
+  background: rgba(255,255,255,0.04);
+  color: var(--fg-tertiary);
+  border: 1px solid var(--border-soft);
+}
+
+.fac-card-name {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: var(--fs-lg);
+  color: var(--fg-primary);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.fac-card-area {
+  font-size: var(--fs-xs);
+  color: var(--fg-quaternary);
+  letter-spacing: 0.06em;
+  margin-bottom: var(--sp-5);
+}
+.fac-card-desc {
+  font-family: var(--font-serif);
+  font-size: var(--fs-sm);
+  color: var(--fg-tertiary);
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--sp-7);
+}
+.fac-card-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: var(--sp-6);
+  border-top: 1px dashed var(--border-faint);
+}
+.fac-card-orgs {
+  display: flex; gap: -6px; align-items: center;
+}
+.fac-card-orgs .avatar-sm {
+  margin-left: -8px;
+  border: 2px solid var(--ink-850);
+}
+.fac-card-orgs .avatar-sm:first-child { margin-left: 0; }
+.fac-card-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: var(--fs-xs);
+  color: var(--card-tone);
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  transition: gap var(--t-fast);
+}
+.fac-card-link svg { width: 12px; height: 12px; transition: transform var(--t-fast); }
+.fac-card:hover .fac-card-link { gap: var(--sp-3); }
+.fac-card:hover .fac-card-link svg { transform: translateX(2px); }
+
+/* —— 工具栏 —— */
+.fac-toolbar {
+  display: flex; align-items: center; gap: var(--sp-6);
+  padding: 0 0 var(--sp-10);
+  border-bottom: 1px solid var(--border-faint);
+  margin-bottom: var(--sp-10);
+}
+.fac-search {
+  position: relative;
+  flex: 1;
+  max-width: 320px;
+}
+.fac-search svg {
+  position: absolute; left: var(--sp-7); top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px;
+  color: var(--fg-quaternary);
+}
+.fac-search input {
+  width: 100%; height: 34px;
+  padding: 0 var(--sp-7) 0 var(--sp-12);
+  background: var(--ink-900);
+  border: 1px solid var(--border-base);
+  border-radius: var(--r-md);
+  color: var(--fg-primary);
+  font-size: var(--fs-sm);
+  outline: 0;
+}
+.fac-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+
+.fac-filter {
+  display: flex; gap: 2px;
+}
+
+/* —— 设施详情：组织列表 —— */
+.fac-detail-head {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: var(--sp-7);
+  padding: var(--sp-10) var(--sp-12) var(--sp-8);
+  background: linear-gradient(180deg, rgba(255,107,154,0.06), transparent);
+  border-bottom: 1px solid var(--border-faint);
+}
+.fac-detail-name { font-family: var(--font-serif); font-size: var(--fs-2xl); font-weight: 600; color: var(--fg-primary); margin-bottom: 4px; }
+.fac-detail-area { font-size: var(--fs-xs); color: var(--fg-tertiary); letter-spacing: 0.08em; margin-bottom: var(--sp-5); }
+.fac-detail-desc { font-family: var(--font-serif); font-size: var(--fs-sm); color: var(--fg-secondary); line-height: var(--lh-relaxed); }
+
+.fac-detail-meta {
+  display: flex; flex-wrap: wrap; gap: var(--sp-5);
+  margin-top: var(--sp-7);
+}
+.fac-meta-pill {
+  display: inline-flex; align-items: center; gap: var(--sp-3);
+  padding: 4px var(--sp-6);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-full);
+  font-size: var(--fs-xs);
+  color: var(--fg-tertiary);
+}
+.fac-meta-pill svg { width: 12px; height: 12px; opacity: 0.7; }
+
+.fac-detail-section { padding: var(--sp-10) var(--sp-12); }
+.fac-detail-section-title {
+  display: flex; align-items: center; gap: var(--sp-5);
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: var(--fs-md);
+  color: var(--fg-primary);
+  margin-bottom: var(--sp-7);
+  letter-spacing: 0.04em;
+}
+.fac-detail-section-title::before {
+  content: ""; width: 3px; height: 14px;
+  background: linear-gradient(180deg, var(--sakura-400), var(--wisteria-400));
+  border-radius: var(--r-full);
+}
+.fac-detail-section-meta {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+  color: var(--fg-quaternary);
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+}
+
+.fac-org-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sp-5);
+}
+.fac-org-item {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: var(--sp-6);
+  padding: var(--sp-7);
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-soft);
+  cursor: pointer;
+  transition: all var(--t-fast);
+}
+.fac-org-item:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.fac-org-info { min-width: 0; }
+.fac-org-name {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--fg-primary);
+  margin-bottom: 2px;
+}
+.fac-org-lead {
+  font-size: var(--fs-xs);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.06em;
+}
+.fac-org-arrow {
+  color: var(--fg-quaternary);
+  display: grid; place-items: center;
+  transition: transform var(--t-fast), color var(--t-fast);
+}
+.fac-org-arrow svg { width: 14px; height: 14px; }
+.fac-org-item:hover .fac-org-arrow { color: var(--accent); transform: translateX(2px); }

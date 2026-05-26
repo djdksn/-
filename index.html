@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#1a1d29" />
+<title>樱栖学园 · 编年志</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles/tokens.css" />
+<link rel="stylesheet" href="styles/base.css" />
+<link rel="stylesheet" href="styles/layout.css" />
+<link rel="stylesheet" href="styles/chat.css" />
+<link rel="stylesheet" href="styles/components.css" />
+<link rel="stylesheet" href="styles/modal.css" />
+<link rel="stylesheet" href="styles/facilities.css" />
+<link rel="stylesheet" href="styles/organizations.css" />
+<link rel="stylesheet" href="styles/roster.css" />
+<link rel="stylesheet" href="styles/courses.css" />
+<link rel="stylesheet" href="styles/rules-editor.css" />
+<link rel="stylesheet" href="styles/form-editor.css" />
+<link rel="stylesheet" href="styles/notifications.css" />
+<link rel="stylesheet" href="styles/sillytavern.css" />
+</head>
+<body>
+<!-- 装饰背景层 -->
+<div class="bg-canvas" aria-hidden="true">
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-noise"></div>
+</div>
+
+<!-- 应用主容器 -->
+<div class="app-shell" id="app-shell">
+
+  <!-- 左侧导航 -->
+  <aside class="sidebar" id="primary-sidebar" aria-label="主导航">
+    <header class="sidebar-header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 3l3.5 7.1 7.8 1.1-5.65 5.5 1.34 7.8L16 20.8l-6.99 3.7 1.34-7.8L4.7 11.2l7.8-1.1L16 3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <circle cx="16" cy="16" r="2.2" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">樱栖学园</div>
+          <div class="brand-sub">Sakura-su · Chronicle</div>
+        </div>
+      </div>
+      <button class="sidebar-collapse" id="sidebar-collapse" aria-label="折叠侧边栏" data-tip="折叠">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </header>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">世界档案</div>
+      <nav class="nav-list" role="list">
+        <button class="nav-item" data-modal="facilities" data-shortcut="F">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6M10 11h.01M14 11h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">设施名录</span>
+            <span class="nav-desc">学园建筑与场所</span>
+          </span>
+          <span class="nav-meta">12</span>
+        </button>
+        <button class="nav-item" data-modal="organizations" data-shortcut="O">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a4 4 0 0 0-3-3.87M9 20H4v-2a4 4 0 0 1 3-3.87M16 3.13a4 4 0 0 1 0 7.75M9 7a4 4 0 1 0 8 0 4 4 0 0 0-8 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">组织名录</span>
+            <span class="nav-desc">部活、委员会与社团</span>
+          </span>
+          <span class="nav-meta">8</span>
+        </button>
+        <button class="nav-item" data-modal="roster" data-shortcut="R">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">花名册</span>
+            <span class="nav-desc">人物全息档案</span>
+          </span>
+          <span class="nav-meta">23</span>
+        </button>
+        <button class="nav-item" data-modal="courses" data-shortcut="C">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l10 6-10 6L2 9l10-6z" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 12v5c3 2 9 2 12 0v-5M22 9v5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">课程列表</span>
+            <span class="nav-desc">公共 · 社团 · 特殊</span>
+          </span>
+          <span class="nav-meta">11</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">规则与流程</div>
+      <nav class="nav-list" role="list">
+        <button class="nav-item" data-modal="rules-editor" data-shortcut="D">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 4h7l4 4v12a2 2 0 0 1-2 2H9M9 4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2M9 4v3a2 2 0 0 1-2 2H4M4 9v9a2 2 0 0 0 2 2h3M11 14h6M11 18h4M14 8h2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">规章文档制作器</span>
+            <span class="nav-desc">树形大纲 · 动态注入</span>
+          </span>
+        </button>
+        <button class="nav-item" data-modal="form-editor" data-shortcut="A">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M12 12h4M12 16h4M8 12h.01M8 16h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">申请表制作器</span>
+            <span class="nav-desc">可视化表单 · 审批流程</span>
+          </span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="sidebar-section sidebar-section-bottom">
+      <div class="sidebar-label">叙事进度</div>
+      <div class="progress-card">
+        <div class="progress-card-row">
+          <span class="progress-card-key">学期</span>
+          <span class="progress-card-val">第二学期 · 第3周</span>
+        </div>
+        <div class="progress-card-row">
+          <span class="progress-card-key">日期</span>
+          <span class="progress-card-val">2026年5月26日（周二）</span>
+        </div>
+        <div class="progress-card-row">
+          <span class="progress-card-key">天气</span>
+          <span class="progress-card-val">晴 · 微风</span>
+        </div>
+        <div class="progress-meter">
+          <div class="progress-meter-bar" style="--p:64%"><span></span></div>
+          <div class="progress-meter-text"><span>主线进度</span><span>64%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="sidebar-footer">
+      <button class="footer-btn" id="settings-btn" data-tip="设置 ⌘,">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.36.16.66.42.85.74"/></svg>
+      </button>
+      <button class="footer-btn" id="theme-btn" data-tip="切换主题">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="footer-btn" id="archive-btn" data-tip="存档">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="footer-btn" id="lorebook-btn" data-tip="世界书管理">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </button>
+      <button class="footer-btn" id="variables-btn" data-tip="变量管理">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7V4h16v3M9 21h6M12 17v4"/><path d="M8 7v4a4 4 0 0 0 8 0V7"/></svg>
+      </button>
+      <div class="footer-spacer"></div>
+      <div class="footer-status">
+        <span class="status-dot"></span>
+        <span class="status-text">连线中</span>
+      </div>
+    </footer>
+  </aside>
+
+  <!-- 主对话区 -->
+  <main class="main-pane" id="main-pane">
+    <header class="main-topbar">
+      <div class="topbar-left">
+        <button class="iconbtn" id="open-sidebar" aria-label="展开侧边栏" data-tip="展开">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+        </button>
+        <div class="scene-crumb">
+          <span class="crumb-tag">场景</span>
+          <span class="crumb-divider"></span>
+          <span class="crumb-name">旧馆图书室 · 西窗席</span>
+          <span class="crumb-meta">放学后 16:42</span>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <div class="weather-strip" aria-hidden="true">
+          <span class="weather-sun"></span>
+          <span class="weather-text">阳光斜照 · 25℃</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="chip-btn" id="ctx-toggle" data-tip="上下文面板">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3v18M3 7h6M3 12h6M3 17h6M14 7h7M14 12h7M14 17h4" stroke-linecap="round"/></svg>
+          <span>上下文</span>
+          <span class="chip-num">7</span>
+        </button>
+        <button class="chip-btn" id="quick-actions" data-tip="快捷动作">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>动作</span>
+        </button>
+        <button class="iconbtn iconbtn-primary" id="new-turn" data-tip="新一轮">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="chat-shell" id="chat-shell">
+      <div class="chat-stream" id="chat-stream"><!-- 由 chat.js 注入 --></div>
+
+      <div class="chat-suggest" id="chat-suggest" aria-label="即时建议">
+        <span class="suggest-label">灵感</span>
+        <button class="suggest-pill" data-fill="（向千夏会长靠近半步）你最近有些累吧。">递上一杯麦茶</button>
+        <button class="suggest-pill" data-fill="我可以帮你看看这份社团申请表。">主动接过文件</button>
+        <button class="suggest-pill" data-fill="（沉默地翻开手中的诗集）">继续读手中的诗</button>
+        <button class="suggest-pill" data-fill="窗外的银杏开始变色了，你注意到了吗？">把话题引向窗外</button>
+      </div>
+    </div>
+
+    <footer class="composer" id="composer">
+      <div class="composer-shell">
+        <div class="composer-row composer-row-top">
+          <div class="composer-mode" role="tablist" aria-label="叙述模式">
+            <button class="mode-tab is-active" data-mode="say" role="tab" aria-selected="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>对话</span>
+            </button>
+            <button class="mode-tab" data-mode="act" role="tab" aria-selected="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>动作</span>
+            </button>
+            <button class="mode-tab" data-mode="think" role="tab" aria-selected="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9.66 18H14.34A2 2 0 0 0 16 16.59V14a4 4 0 1 0-8 0v2.59A2 2 0 0 0 9.66 18zM12 22v-2M9 22h6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>内心</span>
+            </button>
+            <button class="mode-tab" data-mode="cmd" role="tab" aria-selected="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 17l6-6-6-6M12 19h8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>命令</span>
+            </button>
+          </div>
+          <div class="composer-context">
+            <span class="ctx-tag" data-tip="当前激活的世界书条目数">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              <span>世界书 · 7</span>
+            </span>
+            <span class="ctx-tag" data-tip="将随发言注入的规章">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6"/></svg>
+              <span>规章 · 校规</span>
+            </span>
+            <span class="ctx-tag ctx-tag-pending" data-tip="审批中的申请数">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <span>申请 · 2 待处理</span>
+            </span>
+          </div>
+        </div>
+        <div class="composer-row composer-row-input">
+          <button class="composer-icon" data-tip="附加场景物" aria-label="附加">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="composer-input-wrap">
+            <span class="composer-prefix" id="composer-prefix">说</span>
+            <textarea
+              id="composer-input"
+              class="composer-input"
+              rows="1"
+              placeholder="向旧馆图书室的人或物说点什么……（Shift+Enter 换行 · Enter 发送）"
+              spellcheck="false"
+            ></textarea>
+            <div class="composer-meta">
+              <span class="meta-counter" id="char-counter">0</span>
+              <span class="meta-divider"></span>
+              <span class="meta-tag">主视角</span>
+            </div>
+          </div>
+          <button class="composer-icon" id="dice-btn" data-tip="掷骰决定">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h.01M16 8h.01M8 16h.01M16 16h.01M12 12h.01"/></svg>
+          </button>
+          <button class="composer-send" id="composer-send">
+            <span>发出</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- 右侧上下文面板 -->
+  <aside class="ctx-pane" id="ctx-pane" aria-label="上下文">
+    <header class="ctx-pane-head">
+      <div class="ctx-pane-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>
+        <span>当前情境</span>
+      </div>
+      <button class="iconbtn iconbtn-ghost" id="ctx-close" aria-label="收起">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </header>
+    <div class="ctx-pane-body" id="ctx-pane-body"><!-- 由 main.js 注入 --></div>
+  </aside>
+</div>
+
+<!-- 模态框宿主 -->
+<div class="modal-host" id="modal-host" aria-hidden="true"></div>
+
+<!-- 通知宿主 -->
+<div class="toast-host" id="toast-host" aria-live="polite" aria-atomic="false"></div>
+
+<!-- 全局命令面板 -->
+<div class="palette-host" id="palette-host" aria-hidden="true"></div>
+
+<!-- 工具提示宿主 -->
+<div class="tooltip-host" id="tooltip-host"></div>
+
+<!-- 涟漪层 -->
+<div class="ripple-host" id="ripple-host" aria-hidden="true"></div>
+
+<script src="scripts/icons.js"></script>
+<script src="scripts/data.js"></script>
+<script src="scripts/notifications.js"></script>
+<script src="scripts/tooltip.js"></script>
+<script src="scripts/modal.js"></script>
+<script src="scripts/chat.js"></script>
+<script src="scripts/facilities.js"></script>
+<script src="scripts/organizations.js"></script>
+<script src="scripts/roster.js"></script>
+<script src="scripts/courses.js"></script>
+<script src="scripts/rules-editor.js"></script>
+<script src="scripts/form-editor.js"></script>
+<script src="scripts/main.js"></script>
+</body>
+</html>

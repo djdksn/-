@@ -1,0 +1,263 @@
+/* scripts/roster.js — 花名册 */
+(function () {
+  let modal = null;
+
+  function open() {
+    modal = GameModal.open({
+      size: 'xl', icon: 'user',
+      title: '花名册',
+      subtitle: 'Personae of the Academy',
+      headerExtra: `
+        <button class="chip-btn" data-tip="按组织归类">${GameIcons.get('layers')}<span>按组织归类</span></button>
+        <button class="chip-btn" data-tip="新增角色">${GameIcons.get('plus')}<span>新增</span></button>
+      `,
+      body: shellHtml(),
+      fullPane: true,
+    });
+    bindList();
+    selectChar(GameData.characters[0].id);
+  }
+
+  function openWithCharacter(id) {
+    open();
+    selectChar(id);
+  }
+
+  function shellHtml() {
+    // 按组织归类（同一人多组织 -> 多次出现）
+    const groupMap = new Map();
+    GameData.organizations.forEach(o => groupMap.set(o.id, []));
+    const looseGroup = []; // 无任何组织的人
+    GameData.characters.forEach(c => {
+      if (!c.orgs || c.orgs.length === 0) { looseGroup.push({ char: c, role: '游民' }); return; }
+      c.orgs.forEach(r => {
+        if (groupMap.has(r.org)) groupMap.get(r.org).push({ char: c, role: r.role });
+      });
+    });
+
+    const groupsHtml = GameData.organizations.map(o => {
+      const arr = groupMap.get(o.id);
+      if (!arr || arr.length === 0) return '';
+      const items = arr.map(({ char: c, role }) => `
+        <div class="roster-item" data-id="${c.id}">
+          <div class="avatar avatar-sm tone-${c.tone}">${c.avatar}</div>
+          <div>
+            <div class="roster-item-name">${c.name}</div>
+            <div class="roster-item-role">${role}</div>
+          </div>
+        </div>
+      `).join('');
+      return `
+        <div class="roster-group">
+          <div class="roster-group-head">
+            ${o.short}
+            <span class="roster-group-count">${arr.length}</span>
+          </div>
+          ${items}
+        </div>
+      `;
+    }).join('');
+
+    const looseHtml = looseGroup.length ? `
+      <div class="roster-group">
+        <div class="roster-group-head">无所属<span class="roster-group-count">${looseGroup.length}</span></div>
+        ${looseGroup.map(({ char: c }) => `
+          <div class="roster-item" data-id="${c.id}">
+            <div class="avatar avatar-sm tone-${c.tone}">${c.avatar}</div>
+            <div>
+              <div class="roster-item-name">${c.name}</div>
+              <div class="roster-item-role">游民</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>` : '';
+
+    return `
+      <div class="roster-shell">
+        <aside class="roster-list-pane">
+          <div class="roster-toolbar">
+            <div class="org-search">
+              ${GameIcons.get('search')}
+              <input id="roster-search" type="text" placeholder="搜索人物……" />
+            </div>
+          </div>
+          <div class="roster-list" id="roster-list">${groupsHtml}${looseHtml}</div>
+        </aside>
+        <section class="dossier" id="dossier"></section>
+      </div>
+    `;
+  }
+
+  function bindList() {
+    const list = modal.el.querySelector('#roster-list');
+    list.addEventListener('click', e => {
+      const it = e.target.closest('.roster-item');
+      if (it) selectChar(it.getAttribute('data-id'));
+    });
+    modal.el.querySelector('#roster-search').addEventListener('input', e => {
+      const v = e.target.value.trim();
+      list.querySelectorAll('.roster-item').forEach(it => {
+        const c = GameData.characters.find(x => x.id === it.getAttribute('data-id'));
+        it.style.display = (c.name + c.kana).includes(v) ? '' : 'none';
+      });
+    });
+  }
+
+  function selectChar(id) {
+    modal.el.querySelectorAll('.roster-item').forEach(it => {
+      it.classList.toggle('is-active', it.getAttribute('data-id') === id);
+    });
+    const c = GameData.characters.find(x => x.id === id);
+    if (!c) return;
+
+    const orgsHtml = c.orgs.map(r => {
+      const o = GameData.organizations.find(x => x.id === r.org);
+      if (!o) return '';
+      return `
+        <div class="dossier-org-row" data-id="${o.id}">
+          <div class="avatar tone-${o.tone}">${o.short.slice(0,1)}</div>
+          <div class="dossier-org-info">
+            <div class="dossier-org-name">${o.name}</div>
+            <div class="dossier-org-meta">${o.type} · ${o.lead}</div>
+          </div>
+          <span class="dossier-org-role">${r.role}</span>
+        </div>
+      `;
+    }).join('') || '<div class="empty"><div class="empty-text">暂无所属组织</div></div>';
+
+    const relsHtml = (c.relations || []).map(r => {
+      const other = GameData.characters.find(x => x.id === r.who);
+      if (!other) return '';
+      return `
+        <div class="relation-card" data-id="${other.id}">
+          <div class="avatar avatar-sm tone-${other.tone}">${other.avatar}</div>
+          <div class="relation-card-info">
+            <div class="relation-card-head">
+              <span class="relation-card-name">${other.name}</span>
+              <span class="relation-label">${r.label}</span>
+            </div>
+            <div class="relation-card-text">"${r.text}"</div>
+          </div>
+          <button class="iconbtn iconbtn-ghost" data-tip="跳转档案">${GameIcons.get('arrowRight')}</button>
+        </div>
+      `;
+    }).join('') || '<div class="empty"><div class="empty-text">尚未建立特殊关系</div></div>';
+
+    const dossier = modal.el.querySelector('#dossier');
+    dossier.innerHTML = `
+      <header class="dossier-head">
+        <div class="dossier-portrait" data-tone="${c.tone}">${c.avatar}</div>
+        <div>
+          <div class="dossier-id">DOSSIER · ${c.id.toUpperCase()}</div>
+          <div class="dossier-name">${c.name}</div>
+          <div class="dossier-kana">${c.kana}</div>
+          <div class="dossier-tagline">「${c.tagline}」</div>
+          <div class="dossier-stats">
+            <div class="dossier-stat"><span class="dossier-stat-k">年龄</span><span class="dossier-stat-v">${c.age}</span></div>
+            <div class="dossier-stat"><span class="dossier-stat-k">在读</span><span class="dossier-stat-v">${c.year}</span></div>
+            <div class="dossier-stat"><span class="dossier-stat-k">身高</span><span class="dossier-stat-v">${c.height}</span></div>
+            <div class="dossier-stat"><span class="dossier-stat-k">所属</span><span class="dossier-stat-v">${c.orgs.length} 个组织</span></div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="dossier-tabs" id="dossier-tabs">
+        <button class="tab-btn is-active" data-tab="profile">资料</button>
+        <button class="tab-btn" data-tab="orgs">任职</button>
+        <button class="tab-btn" data-tab="relations">关系</button>
+        <button class="tab-btn" data-tab="lore">秘事</button>
+      </nav>
+
+      <div class="dossier-body" id="dossier-body" data-tab="profile">
+        <div class="dossier-section">
+          <div class="dossier-section-label">${GameIcons.get('eye')}<span>外貌</span></div>
+          <div class="dossier-section-content">${c.look}</div>
+        </div>
+        <div class="dossier-section">
+          <div class="dossier-section-label">${GameIcons.get('user')}<span>体态</span></div>
+          <div class="dossier-section-content">${c.build}</div>
+        </div>
+        <div class="dossier-section">
+          <div class="dossier-section-label">${GameIcons.get('palette')}<span>穿着</span></div>
+          <div class="dossier-section-content">${c.wear}</div>
+        </div>
+        <div class="dossier-section">
+          <div class="dossier-section-label">${GameIcons.get('sparkle')}<span>内心</span></div>
+          <div class="dossier-section-content" style="font-style: italic; color: var(--wisteria-200);">「${c.thoughts}」</div>
+        </div>
+      </div>
+    `;
+
+    bindTabs(c, orgsHtml, relsHtml);
+    dossier.querySelectorAll('.dossier-org-row').forEach(it => {
+      it.addEventListener('click', () => {
+        const oid = it.getAttribute('data-id');
+        modal.close();
+        setTimeout(() => GameOrganizations.openWithId(oid), 240);
+      });
+    });
+  }
+
+  function bindTabs(c, orgsHtml, relsHtml) {
+    const tabs = modal.el.querySelector('#dossier-tabs');
+    const body = modal.el.querySelector('#dossier-body');
+    const profileHtml = body.innerHTML;
+    tabs.addEventListener('click', e => {
+      const b = e.target.closest('.tab-btn');
+      if (!b) return;
+      tabs.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('is-active'));
+      b.classList.add('is-active');
+      const tab = b.getAttribute('data-tab');
+      body.setAttribute('data-tab', tab);
+      if (tab === 'profile') {
+        body.innerHTML = profileHtml;
+      } else if (tab === 'orgs') {
+        body.innerHTML = `
+          <div class="dossier-section" style="grid-template-columns: 1fr;">
+            <div class="dossier-orgs">${orgsHtml}</div>
+          </div>
+        `;
+        body.querySelectorAll('.dossier-org-row').forEach(it => {
+          it.addEventListener('click', () => {
+            const oid = it.getAttribute('data-id');
+            modal.close();
+            setTimeout(() => GameOrganizations.openWithId(oid), 240);
+          });
+        });
+      } else if (tab === 'relations') {
+        body.innerHTML = `
+          <div class="dossier-section" style="grid-template-columns: 1fr;">
+            <div class="relations-list">${relsHtml}</div>
+          </div>
+        `;
+        body.querySelectorAll('.relation-card').forEach(it => {
+          it.addEventListener('click', () => {
+            selectChar(it.getAttribute('data-id'));
+            modal.el.querySelector('.dossier').scrollTop = 0;
+          });
+        });
+      } else if (tab === 'lore') {
+        body.innerHTML = `
+          <div class="dossier-section">
+            <div class="dossier-section-label">${GameIcons.get('flame')}<span>特殊设定</span></div>
+            <div class="dossier-section-content">${c.special || '——'}</div>
+          </div>
+          <div class="dossier-section">
+            <div class="dossier-section-label">${GameIcons.get('book')}<span>佚事</span></div>
+            <div class="dossier-section-content" style="font-style: italic; color: var(--fg-tertiary);">
+              ${c.tagline}<br><br>
+              收藏夹中存有 3 段未公开的对白。点击下方按钮以解锁阅读。
+              <div style="margin-top: var(--sp-6); display: flex; gap: var(--sp-5);">
+                <button class="btn btn-ghost btn-sm">${GameIcons.get('lock')}<span>第一夜：钟声</span></button>
+                <button class="btn btn-ghost btn-sm">${GameIcons.get('lock')}<span>雨季笔记</span></button>
+                <button class="btn btn-ghost btn-sm">${GameIcons.get('lock')}<span>未发出的信</span></button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    });
+  }
+
+  window.GameRoster = { open, openWithCharacter };
+})();

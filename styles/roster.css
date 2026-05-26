@@ -1,0 +1,306 @@
+/* ==========================================================
+ * roster.css — 花名册（人物全息档案）
+ * ========================================================== */
+
+.roster-shell {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: minmax(0, 1fr);
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+.roster-list-pane {
+  border-right: 1px solid var(--border-faint);
+  background: var(--ink-900);
+  display: flex; flex-direction: column;
+  min-height: 0;
+}
+
+.roster-toolbar {
+  padding: var(--sp-7);
+  border-bottom: 1px solid var(--border-faint);
+  display: flex; flex-direction: column; gap: var(--sp-5);
+}
+
+.roster-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-3);
+}
+
+.roster-group {
+  margin-bottom: var(--sp-7);
+}
+.roster-group-head {
+  display: flex; align-items: center; gap: var(--sp-4);
+  padding: var(--sp-5) var(--sp-6);
+  margin-bottom: 2px;
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-quaternary);
+  font-weight: 600;
+}
+.roster-group-head::after {
+  content: ""; flex: 1; height: 1px;
+  background: var(--border-faint);
+}
+.roster-group-count {
+  display: inline-grid; place-items: center;
+  min-width: 20px; height: 16px; padding: 0 4px;
+  background: var(--bg-elevated);
+  border-radius: var(--r-xs);
+  font-size: var(--fs-2xs);
+  font-family: var(--font-mono);
+  color: var(--fg-tertiary);
+  letter-spacing: 0;
+}
+
+.roster-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: var(--sp-5);
+  padding: var(--sp-4) var(--sp-6);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background var(--t-fast);
+  align-items: center;
+}
+.roster-item:hover { background: var(--bg-hover); }
+.roster-item.is-active {
+  background: linear-gradient(90deg, rgba(255,107,154,0.10), rgba(106,85,214,0.05));
+  box-shadow: inset 0 0 0 1px rgba(255,107,154,0.18);
+}
+.roster-item-name { font-size: var(--fs-sm); font-weight: 500; color: var(--fg-primary); letter-spacing: 0.04em; }
+.roster-item-role { font-size: var(--fs-2xs); color: var(--fg-quaternary); letter-spacing: 0.04em; }
+
+/* —— 详情：全息档案 —— */
+.dossier {
+  flex: 1;
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,107,154,0.05), transparent 60%),
+    var(--ink-850);
+}
+
+.dossier-head {
+  position: relative;
+  padding: var(--sp-12) var(--sp-12) var(--sp-10);
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: var(--sp-10);
+  align-items: center;
+  border-bottom: 1px solid var(--border-faint);
+}
+
+.dossier-portrait {
+  width: 120px; height: 152px;
+  border-radius: var(--r-lg);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--ink-700), var(--ink-800));
+  border: 1px solid var(--border-base);
+  display: grid; place-items: center;
+  font-family: var(--font-serif);
+  font-size: 64px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0;
+  box-shadow: var(--shadow-lg), var(--shadow-inset);
+}
+.dossier-portrait[data-tone="sakura"] { background: linear-gradient(135deg, var(--sakura-400), var(--sakura-700)); }
+.dossier-portrait[data-tone="wisteria"] { background: linear-gradient(135deg, var(--wisteria-300), var(--wisteria-600)); }
+.dossier-portrait[data-tone="moss"] { background: linear-gradient(135deg, var(--moss-300), var(--moss-500)); }
+.dossier-portrait[data-tone="amber"] { background: linear-gradient(135deg, var(--amber-200), var(--amber-500)); color: #5a3500; }
+.dossier-portrait[data-tone="ink"] { background: linear-gradient(135deg, var(--ink-400), var(--ink-700)); color: var(--ink-25); }
+.dossier-portrait[data-tone="vermil"] { background: linear-gradient(135deg, var(--vermil-300), var(--vermil-500)); }
+.dossier-portrait::before {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.18), transparent 60%),
+    repeating-linear-gradient(45deg, transparent 0 9px, rgba(255,255,255,0.025) 9px 10px);
+}
+.dossier-portrait::after {
+  content: ""; position: absolute;
+  left: 6px; top: 6px; right: 6px; bottom: 6px;
+  border-radius: calc(var(--r-lg) - 4px);
+  border: 1px solid rgba(255,255,255,0.12);
+  pointer-events: none;
+}
+
+.dossier-id {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.18em;
+  color: var(--fg-quaternary);
+  text-transform: uppercase;
+  margin-bottom: var(--sp-3);
+}
+.dossier-name {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--fs-3xl);
+  color: var(--fg-primary);
+  letter-spacing: 0.06em;
+  margin-bottom: 2px;
+}
+.dossier-kana {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.18em;
+  margin-bottom: var(--sp-7);
+}
+.dossier-tagline {
+  display: inline-block;
+  padding: 4px var(--sp-7);
+  border-radius: var(--r-full);
+  background: rgba(255,107,154,0.08);
+  border: 1px solid rgba(255,107,154,0.18);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-sm);
+  color: var(--sakura-200);
+  letter-spacing: 0.04em;
+}
+
+.dossier-stats {
+  margin-top: var(--sp-8);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--border-soft);
+  padding-top: var(--sp-7);
+}
+.dossier-stat {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 0 var(--sp-7);
+  border-right: 1px solid var(--border-faint);
+}
+.dossier-stat:last-child { border-right: 0; }
+.dossier-stat:first-child { padding-left: 0; }
+.dossier-stat-k { font-size: var(--fs-2xs); letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-quaternary); }
+.dossier-stat-v { font-family: var(--font-serif); font-size: var(--fs-md); color: var(--fg-primary); font-weight: 500; }
+
+/* —— Tabs —— */
+.dossier-tabs {
+  display: flex; align-items: center;
+  background: linear-gradient(180deg, var(--ink-850), var(--ink-900));
+  border-bottom: 1px solid var(--border-faint);
+  padding: 0 var(--sp-12);
+  position: sticky; top: 0; z-index: 5;
+}
+
+.dossier-body {
+  padding: var(--sp-12);
+  display: flex; flex-direction: column; gap: var(--sp-12);
+}
+
+.dossier-section {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: var(--sp-10);
+  align-items: start;
+  padding-bottom: var(--sp-10);
+  border-bottom: 1px dashed var(--border-faint);
+}
+.dossier-section:last-child { border-bottom: 0; }
+.dossier-section-label {
+  display: flex; align-items: center; gap: var(--sp-5);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.dossier-section-label svg { width: 14px; height: 14px; opacity: 0.7; }
+.dossier-section-content {
+  font-family: var(--font-serif);
+  font-size: var(--fs-base);
+  line-height: var(--lh-loose);
+  color: var(--fg-secondary);
+}
+
+/* —— 任职列表 —— */
+.dossier-orgs {
+  display: flex; flex-direction: column; gap: var(--sp-5);
+}
+.dossier-org-row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  gap: var(--sp-5);
+  padding: var(--sp-5) var(--sp-7);
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-soft);
+  cursor: pointer;
+  transition: all var(--t-fast);
+  align-items: center;
+}
+.dossier-org-row:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--accent);
+  transform: translateX(2px);
+}
+.dossier-org-info { min-width: 0; }
+.dossier-org-name { font-size: var(--fs-sm); font-weight: 500; color: var(--fg-primary); }
+.dossier-org-meta { font-size: var(--fs-2xs); color: var(--fg-tertiary); letter-spacing: 0.06em; }
+.dossier-org-role {
+  display: inline-block;
+  padding: 2px var(--sp-5);
+  background: rgba(255,107,154,0.10);
+  border-radius: var(--r-xs);
+  color: var(--sakura-200);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.06em;
+}
+
+/* —— 关系网络 —— */
+.relations-list {
+  display: flex; flex-direction: column; gap: var(--sp-5);
+}
+.relation-card {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  gap: var(--sp-6);
+  padding: var(--sp-6);
+  background: linear-gradient(180deg, var(--ink-800), var(--ink-850));
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-md);
+  align-items: start;
+  cursor: pointer;
+  transition: all var(--t-fast);
+}
+.relation-card:hover {
+  border-color: var(--border-base);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.relation-card-info { min-width: 0; }
+.relation-card-head {
+  display: flex; align-items: center; gap: var(--sp-4);
+  margin-bottom: 4px;
+}
+.relation-card-name { font-size: var(--fs-sm); font-weight: 500; color: var(--fg-primary); letter-spacing: 0.04em; }
+.relation-card-text {
+  font-family: var(--font-serif);
+  font-size: var(--fs-xs);
+  font-style: italic;
+  color: var(--fg-tertiary);
+  line-height: var(--lh-relaxed);
+}
+.relation-label {
+  display: inline-block;
+  padding: 2px var(--sp-5);
+  background: linear-gradient(135deg, rgba(255,107,154,0.10), rgba(106,85,214,0.10));
+  border-radius: var(--r-xs);
+  color: var(--sakura-200);
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.08em;
+}

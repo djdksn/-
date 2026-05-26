@@ -1,0 +1,246 @@
+/* ==========================================================
+ * modal.css — 模态框系统
+ * ========================================================== */
+
+.modal-host {
+  position: fixed; inset: 0;
+  z-index: var(--z-modal);
+  pointer-events: none;
+}
+
+.modal-backdrop {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(12, 14, 22, 0.6), rgba(0,0,0,0.85));
+  backdrop-filter: blur(8px) saturate(140%);
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease-soft);
+  pointer-events: auto;
+}
+.modal-backdrop.is-open { opacity: 1; }
+
+.modal {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%) scale(0.96);
+  opacity: 0;
+  pointer-events: auto;
+  display: flex; flex-direction: column;
+  background: var(--ink-900);
+  border: 1px solid var(--border-base);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-2xl);
+  overflow: hidden;
+  transition: opacity var(--t-base) var(--ease-soft), transform var(--t-slow) var(--ease-spring);
+  max-width: calc(100vw - 80px);
+  max-height: calc(100vh - 80px);
+}
+.modal.is-open {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.modal-sm { width: 460px; }
+.modal-md { width: 680px; }
+.modal-lg { width: 960px; min-height: 540px; }
+.modal-xl { width: 1200px; min-height: 640px; }
+.modal-full { width: calc(100vw - 80px); height: calc(100vh - 80px); }
+
+/* —— 头部 —— */
+.modal-head {
+  position: relative;
+  display: flex; align-items: center;
+  padding: var(--sp-10) var(--sp-12);
+  background:
+    linear-gradient(180deg, var(--ink-850), var(--ink-900)),
+    radial-gradient(circle at 0% 0%, rgba(255,107,154,0.06), transparent 50%);
+  border-bottom: 1px solid var(--border-faint);
+  gap: var(--sp-8);
+  flex-shrink: 0;
+}
+.modal-head::before {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.4;
+}
+
+.modal-icon {
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--ink-700), var(--ink-800));
+  border: 1px solid var(--border-base);
+  color: var(--accent);
+  flex-shrink: 0;
+  position: relative;
+}
+.modal-icon::after {
+  content: ""; position: absolute; inset: -1px;
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--sakura-400), var(--wisteria-400));
+  opacity: 0.18;
+  filter: blur(8px);
+  z-index: -1;
+}
+.modal-icon svg { width: 22px; height: 22px; }
+
+.modal-title-block { flex: 1; min-width: 0; }
+.modal-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: var(--fs-xl);
+  color: var(--fg-primary);
+  letter-spacing: 0.06em;
+  display: flex; align-items: center; gap: var(--sp-5);
+}
+.modal-subtitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-sm);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.12em;
+  margin-top: 2px;
+}
+
+.modal-actions {
+  display: flex; align-items: center; gap: var(--sp-5);
+  flex-shrink: 0;
+}
+
+.modal-close {
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  border-radius: var(--r-md);
+  color: var(--fg-tertiary);
+  transition: all var(--t-fast);
+}
+.modal-close:hover {
+  background: rgba(238,90,90,0.10);
+  color: var(--vermil-300);
+  transform: rotate(90deg);
+}
+.modal-close svg { width: 16px; height: 16px; }
+
+/* —— 主体 —— */
+.modal-body {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  min-height: 0;
+}
+/* 全栏模式：内部 shell 自管滚动，body 不滚 */
+.modal-body:not(.modal-body-pad) {
+  overflow: hidden;
+}
+.modal-body-pad { padding: var(--sp-12); }
+
+/* —— Footer —— */
+.modal-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sp-7) var(--sp-12);
+  background: var(--ink-850);
+  border-top: 1px solid var(--border-faint);
+  gap: var(--sp-7);
+  flex-shrink: 0;
+}
+.modal-foot-info {
+  font-size: var(--fs-xs);
+  color: var(--fg-quaternary);
+  letter-spacing: 0.04em;
+}
+.modal-foot-actions {
+  display: flex; gap: var(--sp-5);
+}
+
+/* —— 三栏布局（适用于规章/申请表制作器） —— */
+.modal-three-pane {
+  display: grid;
+  grid-template-columns: 240px 1fr 320px;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+.three-pane-left,
+.three-pane-mid,
+.three-pane-right {
+  display: flex; flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.three-pane-left { border-right: 1px solid var(--border-faint); background: var(--ink-900); }
+.three-pane-mid { background: var(--ink-850); }
+.three-pane-right { border-left: 1px solid var(--border-faint); background: var(--ink-900); }
+
+.pane-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--sp-7) var(--sp-8);
+  border-bottom: 1px solid var(--border-faint);
+  flex-shrink: 0;
+}
+.pane-head-title {
+  display: flex; align-items: center; gap: var(--sp-4);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fg-quaternary);
+  font-weight: 600;
+}
+.pane-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--sp-7);
+}
+
+/* —— 模态内 Toast/Inline Notice —— */
+.inline-notice {
+  display: flex; align-items: flex-start; gap: var(--sp-5);
+  padding: var(--sp-6) var(--sp-8);
+  border-radius: var(--r-md);
+  background: rgba(106,85,214,0.06);
+  border: 1px solid rgba(106,85,214,0.18);
+  color: var(--fg-secondary);
+  font-size: var(--fs-xs);
+}
+.inline-notice-icon { color: var(--wisteria-300); margin-top: 1px; }
+.inline-notice-icon svg { width: 14px; height: 14px; }
+.inline-notice-body { flex: 1; line-height: var(--lh-relaxed); }
+.inline-notice-title { color: var(--fg-primary); font-weight: 500; margin-bottom: 2px; }
+.inline-notice.warn { background: rgba(255,174,66,0.06); border-color: rgba(255,174,66,0.22); }
+.inline-notice.warn .inline-notice-icon { color: var(--amber-300); }
+.inline-notice.success { background: rgba(95,201,154,0.06); border-color: rgba(95,201,154,0.22); }
+.inline-notice.success .inline-notice-icon { color: var(--moss-300); }
+
+/* —— 模态内 Toolbar —— */
+.toolbar {
+  display: flex; align-items: center; gap: var(--sp-5);
+  padding: var(--sp-5) var(--sp-8);
+  background: var(--ink-850);
+  border-bottom: 1px solid var(--border-faint);
+}
+.toolbar-divider { width: 1px; height: 18px; background: var(--border-base); margin: 0 var(--sp-2); }
+.toolbar-spacer { flex: 1; }
+
+.toolbar-btn {
+  display: inline-flex; align-items: center; gap: var(--sp-3);
+  padding: 5px var(--sp-6);
+  border-radius: var(--r-sm);
+  color: var(--fg-secondary);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  transition: all var(--t-fast);
+}
+.toolbar-btn svg { width: 13px; height: 13px; }
+.toolbar-btn:hover { background: var(--bg-hover); color: var(--accent); }
+.toolbar-btn.is-active { background: var(--bg-active); color: var(--accent); }
+
+/* —— 命令面板（全局搜索） —— */
+.palette-host {
+  position: fixed; inset: 0;
+  z-index: var(--z-modal);
+  pointer-events: none;
+}
+
+/* —— 模态滚动响应 —— */
+@media (max-width: 1024px) {
+  .modal-three-pane { grid-template-columns: 200px 1fr 280px; }
+}
