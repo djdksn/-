@@ -976,84 +976,107 @@ export function openPresets() {
 export function openVariables() {
   const chat = store.activeChat;
   const s = store.settings || DEFAULT_SETTINGS;
-  const defaultVars = s.defaultVariables || {};
+  const schema = s.variableSchema || [];
   const chatVars = chat?.variables || {};
   const rules = s.variableRules || { extractFromResponse: true, useSecondaryApi: false, allowedKeys: [] };
-  let activeTab = 'default';
 
-  function buildVarRows(vars, prefix) {
-    const entries = Object.entries(vars);
-    if (entries.length === 0) return '<p style="color:var(--fg-tertiary);font-size:13px;">暂无变量</p>';
-    return entries.map(([k, v]) => `
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-        <input type="text" value="${esc(k)}" class="st-var-key" data-prefix="${prefix}" data-oldkey="${esc(k)}" style="flex:1;padding:6px 8px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;" placeholder="变量名">
-        <input type="text" value="${esc(String(v))}" class="st-var-val" data-prefix="${prefix}" data-key="${esc(k)}" style="flex:1;padding:6px 8px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;" placeholder="值">
-        <button class="btn-sm st-var-del" data-prefix="${prefix}" data-key="${esc(k)}" style="color:var(--amber-400);">删除</button>
-      </div>
-    `).join('');
-  }
-
-  function buildDefaultTab() {
-    return `
-      <div>
-        <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">默认变量将在创建新对话时自动注入。修改此处不会影响已有对话。</p>
-        <div id="st-vars-list-default">${buildVarRows(defaultVars, 'default')}</div>
-        <button class="btn-sm st-var-add" data-prefix="default" style="margin-top:8px;">+ 添加</button>
+  function buildSchemaRows() {
+    if (schema.length === 0) return '<p style="color:var(--fg-tertiary);font-size:13px;">暂无变量定义。点击下方按钮添加。</p>';
+    return schema.map((def, i) => {
+      const isNum = def.type === 'number';
+      return `
+      <div style="padding:10px 12px;margin:6px 0;background:var(--ink-800);border-radius:6px;border:1px solid var(--ink-600);">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap;">
+          <input type="text" value="${esc(def.key)}" class="st-schema-key" data-idx="${i}" style="width:100px;padding:5px 8px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:13px;" placeholder="变量名">
+          <select class="st-schema-type" data-idx="${i}" style="padding:5px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+            <option value="number" ${def.type==='number'?'selected':''}>数字</option>
+            <option value="string" ${def.type==='string'?'selected':''}>文本</option>
+            <option value="boolean" ${def.type==='boolean'?'selected':''}>布尔</option>
+          </select>
+          <input type="text" value="${esc(def.label || '')}" class="st-schema-label" data-idx="${i}" style="width:80px;padding:5px 8px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:13px;" placeholder="标签">
+          ${isNum ? `
+            <input type="number" value="${def.min ?? ''}" class="st-schema-min" data-idx="${i}" style="width:60px;padding:5px 4px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:12px;" placeholder="min">
+            <span style="color:var(--fg-quaternary);font-size:12px;">~</span>
+            <input type="number" value="${def.max ?? ''}" class="st-schema-max" data-idx="${i}" style="width:60px;padding:5px 4px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:12px;" placeholder="max">
+          ` : ''}
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span style="font-size:11px;color:var(--fg-quaternary);">默认:</span>
+          <input type="${isNum?'number':'text'}" value="${esc(String(def.default ?? (isNum?0:'')))}" class="st-schema-default" data-idx="${i}" style="width:${isNum?'80px':'120px'};padding:5px 8px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:13px;">
+          <span style="font-size:11px;color:var(--fg-quaternary);margin-left:8px;">更新:</span>
+          <select class="st-schema-mode" data-idx="${i}" style="padding:5px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+            <option value="set" ${def.updateMode==='set'?'selected':''}>覆盖</option>
+            <option value="add" ${def.updateMode==='add'?'selected':''}>叠加</option>
+          </select>
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;margin-left:8px;">
+            <input type="checkbox" class="st-schema-enabled" data-idx="${i}" ${def.enabled!==false?'checked':''}> 启用
+          </label>
+          <button class="btn-sm st-schema-del" data-idx="${i}" style="color:var(--amber-400);margin-left:auto;">删除</button>
+        </div>
       </div>`;
+    }).join('');
   }
 
-  function buildChatTab() {
-    if (!chat) return '<p style="color:var(--fg-tertiary);">暂无活跃对话。请先创建对话或切换到默认变量标签。</p>';
-    return `
-      <div>
-        <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">当前对话「${esc(chat.name)}」的变量。AI 回复中的 &lt;vars&gt; 标签会自动更新此处。</p>
-        <div id="st-vars-list-chat">${buildVarRows(chatVars, 'chat')}</div>
-        <button class="btn-sm st-var-add" data-prefix="chat" style="margin-top:8px;">+ 添加</button>
+  function buildChatTabContent() {
+    if (!chat) return '<p style="color:var(--fg-tertiary);">暂无活跃对话。请先创建对话或切换到变量定义标签。</p>';
+    const entries = Object.entries(chatVars);
+    if (entries.length === 0) return '<p style="color:var(--fg-tertiary);font-size:13px;">暂无变量值。在"变量定义"中配置后创建新对话即可看到初始值。</p>';
+    return entries.map(([k, v]) => {
+      const def = schema.find(d => d.key === k);
+      const typeStr = def ? (def.type==='number'?'数字':def.type==='boolean'?'布尔':'文本') : '未知';
+      const modeStr = def ? (def.updateMode==='add'?'叠加':'覆盖') : '覆盖';
+      return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;padding:8px 12px;background:var(--ink-800);border-radius:6px;">
+        <div style="flex:1;">
+          <strong style="font-size:13px;">${esc(k)}</strong>
+          ${def ? `<span style="margin-left:8px;font-size:11px;color:var(--fg-quaternary);">${esc(def.label||'')} · ${typeStr} · ${modeStr}${def.min!==undefined?' · ['+def.min+','+def.max+']':''}</span>` : ''}
+        </div>
+        <input type="text" value="${esc(String(v))}" class="st-chat-val" data-key="${esc(k)}" style="width:120px;padding:5px 8px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:13px;">
+        <button class="btn-sm st-chat-del" data-key="${esc(k)}" style="color:var(--amber-400);">删除</button>
       </div>`;
+    }).join('');
   }
 
-  function buildRulesTab() {
+  function buildRulesTabContent() {
     const allowedKeys = (rules.allowedKeys || []).join(', ');
     return `
       <div style="display:flex;flex-direction:column;gap:12px;">
-        <p style="font-size:12px;color:var(--fg-tertiary);">配置 AI 回复中变量提取的行为。回复中的 <code style="background:var(--ink-700);padding:1px 4px;border-radius:3px;">&lt;vars&gt;{"HP": 38}&lt;/vars&gt;</code> 标签会被解析并更新变量。</p>
+        <p style="font-size:12px;color:var(--fg-tertiary);">全局规则控制 LLM 回复中的 <code style="background:var(--ink-700);padding:1px 4px;border-radius:3px;">&lt;vars&gt;</code> 标签如何更新变量。per-variable 约束在上方"变量定义"标签中配置。</p>
         <label style="font-size:13px;display:flex;align-items:center;gap:8px;">
           <input type="checkbox" id="st-rule-extract" ${rules.extractFromResponse !== false ? 'checked' : ''}> 从回复中提取变量
         </label>
         <label style="font-size:13px;display:flex;align-items:center;gap:8px;">
-          <input type="checkbox" id="st-rule-secondary" ${rules.useSecondaryApi ? 'checked' : ''}> 使用次 API 提取变量 (需配置次 API)
+          <input type="checkbox" id="st-rule-secondary" ${rules.useSecondaryApi ? 'checked' : ''}> 使用次 API 提取变量 (需在设置中配置次 API)
         </label>
-        <label class="st-field"><span class="st-field-label">允许更新的变量 (逗号分隔，留空表示全部允许)</span>
+        <label class="st-field"><span class="st-field-label">白名单 (逗号分隔，留空 = 全部允许)</span>
           <input id="st-rule-keys" type="text" value="${esc(allowedKeys)}" placeholder="HP, 金钱, 好感度" style="width:100%;padding:6px 8px;margin-top:4px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
         </label>
-        <div style="font-size:12px;color:var(--fg-quaternary);margin-top:4px;">
-          支持格式: <code>&lt;vars&gt;{"key": value}&lt;/vars&gt;</code> (JSON 对象) 或 <code>&lt;var name="key" value="val"/&gt;</code>
+        <div style="font-size:12px;color:var(--fg-quaternary);margin-top:4px;line-height:1.6;">
+          支持的 LLM 输出格式:<br>
+          <code>&lt;vars&gt;{"HP": 38, "金钱": +100}&lt;/vars&gt;</code> — JSON 对象，叠加模式在值前加 +/- 号<br>
+          <code>&lt;var name="好感度" value="+5" /&gt;</code> — XML 属性式
         </div>
       </div>`;
   }
 
-  function buildContent(tab) {
-    switch (tab) {
-      case 'default': return buildDefaultTab();
-      case 'chat': return buildChatTab();
-      case 'rules': return buildRulesTab();
-      default: return '';
-    }
-  }
-
   const body = `
-    <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--ink-600);padding-bottom:8px;">
-      <button class="st-var-tab btn-tab" data-st-var-tab="default" style="background:var(--ink-600);color:var(--fg-primary);padding:4px 10px;border-radius:4px;border:none;font-size:13px;cursor:pointer;">默认变量</button>
+    <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--ink-600);padding-bottom:8px;flex-wrap:wrap;">
+      <button class="st-var-tab btn-tab" data-st-var-tab="schema" style="background:var(--ink-600);color:var(--fg-primary);padding:4px 10px;border-radius:4px;border:none;font-size:13px;cursor:pointer;">变量定义</button>
       <button class="st-var-tab btn-tab" data-st-var-tab="chat" style="background:transparent;color:var(--fg-tertiary);padding:4px 10px;border-radius:4px;border:none;font-size:13px;cursor:pointer;">对话变量${chat ? ' · '+esc(chat.name) : ''}</button>
       <button class="st-var-tab btn-tab" data-st-var-tab="rules" style="background:transparent;color:var(--fg-tertiary);padding:4px 10px;border-radius:4px;border:none;font-size:13px;cursor:pointer;">更新规则</button>
     </div>
-    <div id="st-var-content">${buildContent('default')}</div>
+    <div id="st-var-content">
+      <div>
+        <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">定义游戏世界中的可变数据。新建对话时自动按默认值初始化。</p>
+        <div id="st-schema-list">${buildSchemaRows()}</div>
+        <button id="st-schema-add" class="btn-sm" style="margin-top:8px;">+ 添加变量</button>
+      </div>
+    </div>
   `;
 
   const modal = GameModal.open({
-    size: 'md',
-    title: '变量管理',
-    subtitle: `默认 ${Object.keys(defaultVars).length} 项${chat ? ' | 对话 ' + Object.keys(chatVars).length + ' 项' : ''}`,
+    size: 'lg',
+    title: '变量系统',
+    subtitle: `${schema.length} 个定义${chat ? ' | 对话 ' + Object.keys(chatVars).length + ' 项' : ''}`,
     body,
   });
 
@@ -1064,28 +1087,38 @@ function wireVarEvents(modal) {
   const el = modal.el;
   if (!el) return;
 
-  function saveDefaultVars() {
-    const next = {};
-    el.querySelectorAll('.st-var-key[data-prefix="default"]').forEach((kInp, i) => {
-      const vInps = el.querySelectorAll('.st-var-val[data-prefix="default"]');
-      const vInp = vInps[i];
-      if (kInp && vInp && kInp.value.trim()) {
-        const num = Number(vInp.value);
-        next[kInp.value.trim()] = Number.isNaN(num) ? vInp.value : num;
+  function saveSchema() {
+    const schema = [];
+    const keys = el.querySelectorAll('.st-schema-key');
+    keys.forEach((kInp, i) => {
+      const type = el.querySelectorAll('.st-schema-type')[i]?.value || 'number';
+      const label = el.querySelectorAll('.st-schema-label')[i]?.value || '';
+      const minEl = el.querySelectorAll('.st-schema-min')[i];
+      const maxEl = el.querySelectorAll('.st-schema-max')[i];
+      const defaultEl = el.querySelectorAll('.st-schema-default')[i];
+      const mode = el.querySelectorAll('.st-schema-mode')[i]?.value || 'set';
+      const enabled = el.querySelectorAll('.st-schema-enabled')[i]?.checked !== false;
+      const key = kInp.value.trim();
+      if (!key) return;
+      const def = { key, type, label, default: type === 'number' ? Number(defaultEl?.value || 0) : (defaultEl?.value || ''), updateMode: mode, enabled };
+      if (type === 'number') {
+        if (minEl && minEl.value !== '') def.min = Number(minEl.value);
+        if (maxEl && maxEl.value !== '') def.max = Number(maxEl.value);
       }
+      schema.push(def);
     });
-    store.updateSettings({ defaultVariables: next });
+    store.updateSettings({ variableSchema: schema });
   }
 
   function saveChatVars() {
     if (!store.activeChat) return;
     const next = {};
-    el.querySelectorAll('.st-var-key[data-prefix="chat"]').forEach((kInp, i) => {
-      const vInps = el.querySelectorAll('.st-var-val[data-prefix="chat"]');
-      const vInp = vInps[i];
-      if (kInp && vInp && kInp.value.trim()) {
-        const num = Number(vInp.value);
-        next[kInp.value.trim()] = Number.isNaN(num) ? vInp.value : num;
+    el.querySelectorAll('.st-chat-val').forEach(inp => {
+      const key = inp.getAttribute('data-key');
+      const raw = inp.value;
+      if (key) {
+        const num = Number(raw);
+        next[key] = Number.isNaN(num) ? raw : num;
       }
     });
     store.setChatVariables(next);
@@ -1099,50 +1132,50 @@ function wireVarEvents(modal) {
     store.updateSettings({ variableRules: { extractFromResponse: extract, useSecondaryApi: secondary, allowedKeys } });
   }
 
-  // Type-change on inputs saves
-  el.querySelectorAll('.st-var-key, .st-var-val').forEach(inp => {
-    inp.addEventListener('change', () => {
-      if (inp.getAttribute('data-prefix') === 'default') saveDefaultVars();
-      else saveChatVars();
+  // Schema field changes
+  el.querySelectorAll('.st-schema-key, .st-schema-type, .st-schema-label, .st-schema-min, .st-schema-max, .st-schema-default, .st-schema-mode, .st-schema-enabled').forEach(inp => {
+    inp.addEventListener('change', saveSchema);
+  });
+
+  // Delete schema entry
+  el.querySelectorAll('.st-schema-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.getAttribute('data-idx'));
+      const schema = store.settings?.variableSchema || [];
+      schema.splice(idx, 1);
+      store.updateSettings({ variableSchema: [...schema] });
+      modal.close();
+      openVariables();
     });
   });
 
-  // Delete buttons
-  el.querySelectorAll('.st-var-del').forEach(btn => {
+  // Add schema entry
+  const addBtn = el.querySelector('#st-schema-add');
+  if (addBtn) addBtn.addEventListener('click', () => {
+    const schema = store.settings?.variableSchema || [];
+    schema.push({ key: 'new_var', type: 'number', label: '', default: 0, updateMode: 'set', enabled: true });
+    store.updateSettings({ variableSchema: [...schema] });
+    modal.close();
+    openVariables();
+  });
+
+  // Chat variable editing
+  el.querySelectorAll('.st-chat-val').forEach(inp => {
+    inp.addEventListener('change', saveChatVars);
+  });
+  el.querySelectorAll('.st-chat-del').forEach(btn => {
     btn.addEventListener('click', () => {
-      const prefix = btn.getAttribute('data-prefix');
+      if (!store.activeChat) return;
       const key = btn.getAttribute('data-key');
-      if (prefix === 'default') {
-        const vars = { ...(store.settings?.defaultVariables || {}) };
-        delete vars[key];
-        store.updateSettings({ defaultVariables: vars });
-      } else if (prefix === 'chat' && store.activeChat) {
-        const vars = { ...(store.activeChat.variables || {}) };
-        delete vars[key];
-        store.setChatVariables(vars);
-      }
+      const vars = { ...(store.activeChat.variables || {}) };
+      delete vars[key];
+      store.setChatVariables(vars);
       modal.close();
       openVariables();
     });
   });
 
-  // Add buttons
-  el.querySelectorAll('.st-var-add').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const prefix = btn.getAttribute('data-prefix');
-      if (prefix === 'default') {
-        const vars = { ...(store.settings?.defaultVariables || {}), 'new_var': '' };
-        store.updateSettings({ defaultVariables: vars });
-      } else if (prefix === 'chat' && store.activeChat) {
-        const vars = { ...(store.activeChat.variables || {}), 'new_var': '' };
-        store.setChatVariables(vars);
-      }
-      modal.close();
-      openVariables();
-    });
-  });
-
-  // Rule inputs
+  // Rules
   const ruleExtract = el.querySelector('#st-rule-extract');
   if (ruleExtract) ruleExtract.addEventListener('change', saveRules);
   const ruleSecondary = el.querySelector('#st-rule-secondary');
@@ -1154,15 +1187,12 @@ function wireVarEvents(modal) {
   el.querySelectorAll('.st-var-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       const tab = btn.getAttribute('data-st-var-tab');
-      // Save current tab's data before switching
-      const currentContent = el.querySelector('#st-var-content');
-      if (currentContent) {
-        if (currentContent.querySelector('.st-var-key[data-prefix="default"]')) saveDefaultVars();
-        if (currentContent.querySelector('.st-var-key[data-prefix="chat"]')) saveChatVars();
-        if (currentContent.querySelector('#st-rule-extract')) saveRules();
-      }
+      // Save current data
+      if (el.querySelector('.st-schema-key')) saveSchema();
+      if (el.querySelector('.st-chat-val')) saveChatVars();
+      if (el.querySelector('#st-rule-extract')) saveRules();
 
-      // Update tab buttons
+      // Update tab styles
       el.querySelectorAll('.st-var-tab').forEach(b => {
         b.style.background = 'transparent';
         b.style.color = 'var(--fg-tertiary)';
@@ -1170,66 +1200,101 @@ function wireVarEvents(modal) {
       btn.style.background = 'var(--ink-600)';
       btn.style.color = 'var(--fg-primary)';
 
-      // Rebuild content
       const content = el.querySelector('#st-var-content');
       if (!content) return;
 
       const chat = store.activeChat;
       const s = store.settings || DEFAULT_SETTINGS;
-      const defaultVars = s.defaultVariables || {};
+      const schema = s.variableSchema || [];
       const chatVars = chat?.variables || {};
       const rules = s.variableRules || { extractFromResponse: true, useSecondaryApi: false, allowedKeys: [] };
 
-      function buildVarRows(vars, prefix) {
-        const entries = Object.entries(vars);
-        if (entries.length === 0) return '<p style="color:var(--fg-tertiary);font-size:13px;">暂无变量</p>';
-        return entries.map(([k, v]) => `
-          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-            <input type="text" value="${esc(k)}" class="st-var-key" data-prefix="${prefix}" data-oldkey="${esc(k)}" style="flex:1;padding:6px 8px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;" placeholder="变量名">
-            <input type="text" value="${esc(String(v))}" class="st-var-val" data-prefix="${prefix}" data-key="${esc(k)}" style="flex:1;padding:6px 8px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;" placeholder="值">
-            <button class="btn-sm st-var-del" data-prefix="${prefix}" data-key="${esc(k)}" style="color:var(--amber-400);">删除</button>
-          </div>
-        `).join('');
-      }
-
-      switch (tab) {
-        case 'default':
+      if (tab === 'schema') {
+        const rows = schema.length === 0
+          ? '<p style="color:var(--fg-tertiary);font-size:13px;">暂无变量定义。</p>'
+          : schema.map((def, i) => {
+              const isNum = def.type === 'number';
+              return `
+              <div style="padding:10px 12px;margin:6px 0;background:var(--ink-800);border-radius:6px;border:1px solid var(--ink-600);">
+                <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap;">
+                  <input type="text" value="${esc(def.key)}" class="st-schema-key" data-idx="${i}" style="width:100px;padding:5px 8px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:13px;">
+                  <select class="st-schema-type" data-idx="${i}" style="padding:5px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+                    <option value="number" ${def.type==='number'?'selected':''}>数字</option>
+                    <option value="string" ${def.type==='string'?'selected':''}>文本</option>
+                    <option value="boolean" ${def.type==='boolean'?'selected':''}>布尔</option>
+                  </select>
+                  <input type="text" value="${esc(def.label||'')}" class="st-schema-label" data-idx="${i}" style="width:80px;padding:5px 8px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:13px;" placeholder="标签">
+                  ${isNum ? `
+                    <input type="number" value="${def.min??''}" class="st-schema-min" data-idx="${i}" style="width:60px;padding:5px 4px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:12px;" placeholder="min">
+                    <span style="color:var(--fg-quaternary);">~</span>
+                    <input type="number" value="${def.max??''}" class="st-schema-max" data-idx="${i}" style="width:60px;padding:5px 4px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:12px;" placeholder="max">
+                  ` : ''}
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <span style="font-size:11px;color:var(--fg-quaternary);">默认:</span>
+                  <input type="${isNum?'number':'text'}" value="${esc(String(def.default??(isNum?0:'')))}" class="st-schema-default" data-idx="${i}" style="width:${isNum?'80px':'120px'};padding:5px 8px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:13px;">
+                  <span style="font-size:11px;color:var(--fg-quaternary);margin-left:8px;">更新:</span>
+                  <select class="st-schema-mode" data-idx="${i}" style="padding:5px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+                    <option value="set" ${def.updateMode==='set'?'selected':''}>覆盖</option>
+                    <option value="add" ${def.updateMode==='add'?'selected':''}>叠加</option>
+                  </select>
+                  <label style="font-size:12px;display:flex;align-items:center;gap:4px;margin-left:8px;">
+                    <input type="checkbox" class="st-schema-enabled" data-idx="${i}" ${def.enabled!==false?'checked':''}> 启用
+                  </label>
+                  <button class="btn-sm st-schema-del" data-idx="${i}" style="color:var(--amber-400);margin-left:auto;">删除</button>
+                </div>
+              </div>`;
+            }).join('');
+        content.innerHTML = `
+          <div>
+            <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">定义游戏世界中的可变数据。</p>
+            <div id="st-schema-list">${rows}</div>
+            <button id="st-schema-add" class="btn-sm" style="margin-top:8px;">+ 添加变量</button>
+          </div>`;
+      } else if (tab === 'chat') {
+        if (!chat) {
+          content.innerHTML = '<p style="color:var(--fg-tertiary);">暂无活跃对话。请先创建对话或切换到变量定义标签。</p>';
+        } else {
+          const entries = Object.entries(chatVars);
+          const rows = entries.length === 0
+            ? '<p style="color:var(--fg-tertiary);font-size:13px;">暂无变量值。</p>'
+            : entries.map(([k, v]) => {
+                const def = schema.find(d => d.key === k);
+                const typeStr = def ? (def.type==='number'?'数字':def.type==='boolean'?'布尔':'文本') : '?';
+                const modeStr = def ? (def.updateMode==='add'?'叠加':'覆盖') : '?';
+                return `<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;padding:8px 12px;background:var(--ink-800);border-radius:6px;">
+                  <div style="flex:1;">
+                    <strong style="font-size:13px;">${esc(k)}</strong>
+                    ${def ? `<span style="margin-left:8px;font-size:11px;color:var(--fg-quaternary);">${esc(def.label||'')} · ${typeStr} · ${modeStr}${def.min!==undefined?' · ['+def.min+','+def.max+']':''}</span>` : ''}
+                  </div>
+                  <input type="text" value="${esc(String(v))}" class="st-chat-val" data-key="${esc(k)}" style="width:120px;padding:5px 8px;background:var(--ink-700);border:1px solid var(--ink-500);border-radius:4px;color:var(--fg-primary);font-size:13px;">
+                  <button class="btn-sm st-chat-del" data-key="${esc(k)}" style="color:var(--amber-400);">删除</button>
+                </div>`;
+              }).join('');
           content.innerHTML = `
             <div>
-              <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">默认变量将在创建新对话时自动注入。</p>
-              <div id="st-vars-list-default">${buildVarRows(defaultVars, 'default')}</div>
-              <button class="btn-sm st-var-add" data-prefix="default" style="margin-top:8px;">+ 添加</button>
+              <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">当前对话「${esc(chat.name)}」的运行时变量值。</p>
+              <div>${rows}</div>
             </div>`;
-          break;
-        case 'chat':
-          content.innerHTML = chat
-            ? `<div>
-                <p style="font-size:12px;color:var(--fg-tertiary);margin-bottom:12px;">当前对话「${esc(chat.name)}」的变量。</p>
-                <div id="st-vars-list-chat">${buildVarRows(chatVars, 'chat')}</div>
-                <button class="btn-sm st-var-add" data-prefix="chat" style="margin-top:8px;">+ 添加</button>
-              </div>`
-            : '<p style="color:var(--fg-tertiary);">暂无活跃对话。请先创建对话或切换到默认变量标签。</p>';
-          break;
-        case 'rules': {
-          const allowedKeys = (rules.allowedKeys || []).join(', ');
-          content.innerHTML = `
-            <div style="display:flex;flex-direction:column;gap:12px;">
-              <p style="font-size:12px;color:var(--fg-tertiary);">配置 AI 回复中变量提取的行为。</p>
-              <label style="font-size:13px;display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" id="st-rule-extract" ${rules.extractFromResponse !== false ? 'checked' : ''}> 从回复中提取变量
-              </label>
-              <label style="font-size:13px;display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" id="st-rule-secondary" ${rules.useSecondaryApi ? 'checked' : ''}> 使用次 API 提取变量
-              </label>
-              <label class="st-field"><span class="st-field-label">允许更新的变量 (逗号分隔，留空表示全部允许)</span>
-                <input id="st-rule-keys" type="text" value="${esc(allowedKeys)}" placeholder="HP, 金钱, 好感度" style="width:100%;padding:6px 8px;margin-top:4px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
-              </label>
-            </div>`;
-          break;
         }
+      } else if (tab === 'rules') {
+        const allowedKeys = (rules.allowedKeys || []).join(', ');
+        content.innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <p style="font-size:12px;color:var(--fg-tertiary);">per-variable 约束在"变量定义"中配置。</p>
+            <label style="font-size:13px;display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="st-rule-extract" ${rules.extractFromResponse !== false ? 'checked' : ''}> 从回复中提取变量
+            </label>
+            <label style="font-size:13px;display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="st-rule-secondary" ${rules.useSecondaryApi ? 'checked' : ''}> 使用次 API 提取变量
+            </label>
+            <label class="st-field"><span class="st-field-label">白名单 (逗号分隔)</span>
+              <input id="st-rule-keys" type="text" value="${esc(allowedKeys)}" placeholder="HP, 金钱, 好感度" style="width:100%;padding:6px 8px;margin-top:4px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
+            </label>
+          </div>`;
       }
 
-      // Re-wire events for the new content
+      // Re-wire
       wireVarEvents(modal);
     });
   });

@@ -15,7 +15,7 @@ import {
 import { createDefaultLorebook } from './sillytavern/editor-utils.js';
 import { createDefaultPreset } from './sillytavern/types.js';
 import { assemblePrompt } from './sillytavern/prompt-assembler.js';
-import { aggregateEvents, applyParsedToChat } from './sillytavern/variables.js';
+import { aggregateEvents } from './sillytavern/variables.js';
 import { StreamTagParser } from './sillytavern/stream-parser.js';
 import { createApiRouter } from './sillytavern/api-router.js';
 
@@ -84,7 +84,15 @@ class SillytavernStore {
   // ========== CHAT ACTIONS ==========
   async createChat(name, options) {
     if (!this.settings) throw new Error('Settings not loaded');
-    const defaultVars = this.settings.defaultVariables || {};
+    // Derive default variables from variableSchema
+    const schema = this.settings.variableSchema || [];
+    const defaultVars = {};
+    for (const def of schema) {
+      if (def.enabled !== false) defaultVars[def.key] = def.default ?? (def.type === 'number' ? 0 : '');
+    }
+    // Fallback to legacy defaultVariables if no schema
+    const legacyDefaults = this.settings.defaultVariables || {};
+    const merged = { ...legacyDefaults, ...defaultVars };
     const chat = {
       id: crypto.randomUUID(),
       name: name || `${this.settings.characterName} - 新对话`,
@@ -93,7 +101,7 @@ class SillytavernStore {
       userName: this.settings.userName,
       presetId: options?.presetId ?? this.settings.activePresetId ?? null,
       lorebookIds: options?.lorebookIds ?? this.settings.activeLorebookIds ?? [],
-      variables: JSON.parse(JSON.stringify(defaultVars)),
+      variables: JSON.parse(JSON.stringify(merged)),
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -227,7 +235,8 @@ class SillytavernStore {
       eventBuf.push(...tail);
     }
     const parsed = aggregateEvents(eventBuf);
-    const { nextVariables, snapshot } = applyParsedToChat(updatedChat.variables ?? {}, parsed);
+    const nextVariables = this._applyVariableRules(updatedChat.variables ?? {}, parsed.varsCommands);
+    const snapshot = JSON.parse(JSON.stringify(nextVariables));
 
     const assistantMsg = {
       id: crypto.randomUUID(),
@@ -294,6 +303,48 @@ class SillytavernStore {
         this.streamState.options = [...this.streamState.options, ev.line];
       }
     }
+  }
+
+  /** Apply variable update rules: whitelist, type coercion, min/max clamp, add vs set */
+  _applyVariableRules(currentVars, parsedVars) {
+    const rules = this.settings?.variableRules || {};
+    if (rules.extractFromResponse === false) return currentVars;
+
+    const schema = this.settings?.variableSchema || [];
+    const allowedKeys = rules.allowedKeys || [];
+    const schemaMap = {};
+    for (const def of schema) schemaMap[def.key] = def;
+
+    const next = { ...currentVars };
+    for (const [key, rawValue] of Object.entries(parsedVars.merge || {})) {
+      // Whitelist check
+      if (allowedKeys.length > 0 && !allowedKeys.includes(key)) continue;
+
+      const def = schemaMap[key];
+      let value = rawValue;
+
+      // Type coercion
+      if (def?.type === 'number') {
+        value = Number(rawValue);
+        if (Number.isNaN(value)) continue;
+      } else if (def?.type === 'boolean') {
+        value = Boolean(rawValue);
+      }
+
+      // Update mode: add vs set
+      if (def?.updateMode === 'add' && typeof next[key] === 'number' && typeof value === 'number') {
+        value = next[key] + value;
+      }
+
+      // Clamp
+      if (def?.type === 'number') {
+        if (def.min !== undefined && value < def.min) value = def.min;
+        if (def.max !== undefined && value > def.max) value = def.max;
+      }
+
+      next[key] = value;
+    }
+    return next;
   }
 
   // ========== SETTINGS / PRESET / LOREBOOK MUTATIONS ==========

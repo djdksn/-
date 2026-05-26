@@ -61,6 +61,7 @@ export const DEFAULT_SETTINGS = {
     useSecondaryApi: false,
     allowedKeys: [],
   },
+  variableSchema: [],
 };
 
 export const DEFAULT_PROMPT_ORDER = [
