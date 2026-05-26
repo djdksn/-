@@ -62,6 +62,16 @@ export const DEFAULT_SETTINGS = {
     allowedKeys: [],
   },
   variableSchema: [],
+  // ========== Extension layer ==========
+  globalVariables: {},
+  globalVariableSchema: [],
+  templateEngine: {
+    enabled: true,
+    renderLorebook: true,
+    renderPreset: true,
+  },
+  enabledScriptIds: [],
+  enabledTemplateIds: [],
 };
 
 export const DEFAULT_PROMPT_ORDER = [

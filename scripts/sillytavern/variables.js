@@ -23,10 +23,11 @@ export function mergeVariables(base = {}, updates = {}) {
   return { ...base, ...updates };
 }
 
-export function formatVariablesForPrompt(variables) {
-  const entries = Object.entries(variables);
+export function formatVariablesForPrompt(variables, globalVariables) {
+  const merged = { ...(globalVariables || {}), ...(variables || {}) };
+  const entries = Object.entries(merged);
   if (entries.length === 0) return '';
-  const lines = entries.map(([k, v]) => `${k}: ${v}`);
+  const lines = entries.map(([k, v]) => `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`);
   return `[当前状态]\n${lines.join('\n')}`;
 }
 

@@ -257,13 +257,21 @@
     }
     const mode = document.querySelector('.mode-tab.is-active').getAttribute('data-mode');
 
+    // Slash command intercept: cmd mode OR raw text starting with '/'
+    if (mode === 'cmd' || v.startsWith('/')) {
+      const line = v.startsWith('/') ? v : '/' + v;
+      runSlash(line);
+      input.value = '';
+      autoSize();
+      return;
+    }
+
     // If store is ready, use real LLM
     if (store && store.activeChat && store.settings?.api?.apiKey) {
       const tag = ({ say: '对话', act: '动作', think: '内心', cmd: '命令' })[mode];
       let content = v;
       if (mode === 'act') content = `（${v}）`;
       else if (mode === 'think') content = `【内心】${v}`;
-      else if (mode === 'cmd') content = `/${v}`;
 
       store.sendGameMessage(content).catch(err => {
         if (typeof GameNotify !== 'undefined') GameNotify.error('发送失败', err.message);
@@ -312,6 +320,38 @@
       input.focus();
     });
   });
+
+  // —— Slash command runner —— //
+  async function runSlash(line) {
+    let dispatch;
+    try {
+      const mod = await import('./sillytavern/slash-commands.js');
+      dispatch = mod.dispatch;
+    } catch (err) {
+      if (typeof GameNotify !== 'undefined') GameNotify.error('斜杠命令加载失败', err.message);
+      return;
+    }
+    const result = await dispatch(line, store);
+    appendSlashEcho(line, result);
+    if (result && typeof GameNotify !== 'undefined') {
+      if (result.ok) GameNotify.success('命令执行', truncate(result.text || '', 80));
+      else GameNotify.warn('命令未执行', truncate(result.text || '', 80));
+    }
+  }
+
+  function appendSlashEcho(line, result) {
+    const div = document.createElement('div');
+    div.className = 'bubble narration';
+    const ok = result?.ok !== false;
+    div.innerHTML = `
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--wisteria-200);margin-bottom:4px;">${escapeHtml(line)}</div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:${ok ? 'var(--fg-secondary)' : 'var(--amber-300)'};white-space:pre-wrap;">${escapeHtml(result?.text || '(无返回)')}</div>
+    `;
+    stream.appendChild(div);
+    requestAnimationFrame(() => { scrollDown(); });
+  }
+
+  function truncate(s, n) { return s.length > n ? s.slice(0, n - 1) + '…' : s; }
 
   // —— 选项点击 —— //
   stream.addEventListener('click', e => {

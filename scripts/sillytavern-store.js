@@ -11,6 +11,8 @@ import {
   getPresets, savePreset as dbSavePreset, deletePreset as dbDeletePreset,
   getSettings, saveSettings as dbSaveSettings,
   getChats, saveChat as dbSaveChat, deleteChat as dbDeleteChat,
+  getScripts, saveScript as dbSaveScript, deleteScript as dbDeleteScript,
+  getTemplates, saveTemplate as dbSaveTemplate, deleteTemplate as dbDeleteTemplate,
 } from './sillytavern/database.js';
 import { createDefaultLorebook } from './sillytavern/editor-utils.js';
 import { createDefaultPreset } from './sillytavern/types.js';
@@ -18,6 +20,9 @@ import { assemblePrompt } from './sillytavern/prompt-assembler.js';
 import { aggregateEvents } from './sillytavern/variables.js';
 import { StreamTagParser } from './sillytavern/stream-parser.js';
 import { createApiRouter } from './sillytavern/api-router.js';
+import { emit, EVENTS } from './sillytavern/event-bus.js';
+import { bindStore as bindExtensionStore } from './sillytavern/extension-api.js';
+import { loadScripts as loadScriptDefs } from './sillytavern/script-runtime.js';
 
 class SillytavernStore {
   constructor() {
@@ -28,6 +33,8 @@ class SillytavernStore {
     this.presets = [];
     this.settings = null;
     this.chats = [];
+    this.scripts = [];
+    this.templates = [];
     this.activeChatId = null;
     this.initialized = false;
     this.isSending = false;
@@ -62,17 +69,29 @@ class SillytavernStore {
   // ========== INIT ==========
   async loadAll() {
     await initializeDatabase();
-    const [l, p, s, c] = await Promise.all([
+    const [l, p, s, c, sc, tp] = await Promise.all([
       getLorebooks(), getPresets(), getSettings(), getChats(),
+      getScripts(), getTemplates(),
     ]);
     this.lorebooks = l;
     this.presets = p;
     this.settings = s ? { ...DEFAULT_SETTINGS, ...s } : { ...DEFAULT_SETTINGS };
     this.chats = c;
+    this.scripts = sc;
+    this.templates = tp;
     if (c.length > 0) this.activeChatId = c[0].id;
     this._router = createApiRouter(this.settings.api);
+    bindExtensionStore(this);
+    this._reloadEnabledScripts();
     this.initialized = true;
+    emit(EVENTS.APP_INIT, { lorebooks: l.length, presets: p.length, scripts: sc.length, templates: tp.length });
     this._notify();
+  }
+
+  _reloadEnabledScripts() {
+    const enabledIds = new Set(this.settings?.enabledScriptIds || []);
+    const defs = (this.scripts || []).filter(s => s.enabled !== false && (enabledIds.size === 0 || enabledIds.has(s.id)));
+    loadScriptDefs(defs);
   }
 
   // ========== DERIVED GETTERS ==========
@@ -178,6 +197,7 @@ class SillytavernStore {
     let updatedChat = { ...chat, messages: [...chat.messages, userMsg], updatedAt: Date.now() };
     await this._db.table('chats').put(updatedChat);
     this.chats = this.chats.map(c => c.id === updatedChat.id ? updatedChat : c);
+    await emit(EVENTS.MESSAGE_USER, { chatId: updatedChat.id, message: userMsg });
     this._notify();
 
     const activeLorebookIds = new Set(this.settings.activeLorebookIds ?? []);
@@ -189,7 +209,8 @@ class SillytavernStore {
       return;
     }
 
-    const { messages } = assemblePrompt({
+    // ===== prompt:before — scripts may mutate the payload =====
+    const promptOpts = {
       userInput: userText,
       history: updatedChat.messages,
       preset: activePreset,
@@ -198,7 +219,14 @@ class SillytavernStore {
       characterName: this.settings.characterName,
       extraVariables: updatedChat.variables,
       formatPrompt: this.settings.formatPromptTemplate,
-    });
+      globalVariables: this.settings.globalVariables || {},
+      templateEngineSettings: this.settings.templateEngine,
+    };
+    await emit(EVENTS.PROMPT_BEFORE, promptOpts);
+
+    const assembled = assemblePrompt(promptOpts);
+    const { messages } = assembled;
+    await emit(EVENTS.PROMPT_AFTER, { messages, matchedEntries: assembled.matchedEntries });
 
     // Start streaming
     const tags = this.settings.customTags ?? [...DEFAULT_TAGS];
@@ -219,6 +247,7 @@ class SillytavernStore {
           const events = this._parser.feed(delta);
           eventBuf.push(...events);
           this._applyEvents(events);
+          emit(EVENTS.STREAM_CHUNK, { delta, state: this.streamState });
           this._notify();
         },
       });
@@ -237,6 +266,7 @@ class SillytavernStore {
     const parsed = aggregateEvents(eventBuf);
     const nextVariables = this._applyVariableRules(updatedChat.variables ?? {}, parsed.varsCommands);
     const snapshot = JSON.parse(JSON.stringify(nextVariables));
+    await emit(EVENTS.STREAM_DONE, { parsed, varsAfter: snapshot });
 
     const assistantMsg = {
       id: crypto.randomUUID(),
@@ -260,6 +290,7 @@ class SillytavernStore {
     this.chats = this.chats.map(c => c.id === finalChat.id ? finalChat : c);
     this.streamState = { thinking: '', maintext: '', options: [], sum: '', varsRaw: '', isStreaming: false };
     this.isSending = false;
+    await emit(EVENTS.MESSAGE_ASSISTANT, { chatId: finalChat.id, message: assistantMsg });
     this._notify();
   }
 
@@ -422,6 +453,47 @@ class SillytavernStore {
     const next = { ...chat, variables: vars, updatedAt: Date.now() };
     await this._db.table('chats').put(next);
     this.chats = this.chats.map(c => c.id === next.id ? next : c);
+    emit(EVENTS.VARS_CHANGE, { scope: 'chat', vars });
+    this._notify();
+  }
+
+  // ========== SCRIPTS ==========
+  async saveScript(script) {
+    const next = { ...script, updatedAt: Date.now() };
+    if (!next.id) next.id = crypto.randomUUID();
+    if (!next.createdAt) next.createdAt = Date.now();
+    await dbSaveScript(next);
+    const exists = this.scripts.some(s => s.id === next.id);
+    this.scripts = exists
+      ? this.scripts.map(s => s.id === next.id ? next : s)
+      : [...this.scripts, next];
+    this._reloadEnabledScripts();
+    this._notify();
+    return next;
+  }
+  async deleteScript(id) {
+    await dbDeleteScript(id);
+    this.scripts = this.scripts.filter(s => s.id !== id);
+    this._reloadEnabledScripts();
+    this._notify();
+  }
+
+  // ========== TEMPLATES ==========
+  async saveTemplate(template) {
+    const next = { ...template, updatedAt: Date.now() };
+    if (!next.id) next.id = crypto.randomUUID();
+    if (!next.createdAt) next.createdAt = Date.now();
+    await dbSaveTemplate(next);
+    const exists = this.templates.some(t => t.id === next.id);
+    this.templates = exists
+      ? this.templates.map(t => t.id === next.id ? next : t)
+      : [...this.templates, next];
+    this._notify();
+    return next;
+  }
+  async deleteTemplate(id) {
+    await dbDeleteTemplate(id);
+    this.templates = this.templates.filter(t => t.id !== id);
     this._notify();
   }
 

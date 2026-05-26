@@ -207,6 +207,16 @@
     }
   });
 
+  document.getElementById('extensions-btn').addEventListener('click', async () => {
+    try {
+      const ui = await import('./sillytavern-extensions-ui.js');
+      ui.openExtensions();
+    } catch (err) {
+      console.error('[SillyTavern] Failed to open extensions:', err);
+      GameNotify.info('扩展中心', '加载中，请稍后再试。');
+    }
+  });
+
   // —— 全局快捷键 —— //
   document.addEventListener('keydown', e => {
     if (e.target.matches('input, textarea')) return;
