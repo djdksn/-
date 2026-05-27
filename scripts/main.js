@@ -1,5 +1,5 @@
 /* scripts/main.js — 入口与全局连线 (ES module, SillyTavern v3 integrated) */
-import { openSettings, openLorebooks } from './sillytavern-ui.js';
+import { openSettings, openLorebooks, openPresets } from './sillytavern-ui.js';
 import { store } from './sillytavern-store.js';
 import { exportAllData } from './sillytavern/database.js';
 
@@ -88,7 +88,7 @@ function renderCtxPane() {
           <div class="ctx-item-meta" style="margin-top: var(--sp-3);">
             <span>${chat ? chat.messages.length + ' 条消息' : '无活跃对话'}</span>
             <span class="ctx-item-meta-dot"></span>
-            <span>预设: ${escapeHtml(s.activePreset?.name || '默认')}</span>
+            <span>预设: </span><button id="ctx-open-presets" style="all:unset;cursor:pointer;color:var(--fg-tertiary);text-decoration:underline;text-underline-offset:2px;" title="管理预设">${escapeHtml(s.activePreset?.name || '默认')}</button>
           </div>
         </div>
         <div class="ctx-item" style="margin-top: var(--sp-4);">
@@ -125,6 +125,13 @@ window.__updateCtxPane = renderCtxPane;
 
 ctxClose.addEventListener('click', () => shell.classList.toggle('ctx-collapsed'));
 ctxToggle.addEventListener('click', () => shell.classList.toggle('ctx-collapsed'));
+
+// 预设入口 — 用事件委托因为 renderCtxPane 会重建 DOM
+ctxBody.addEventListener('click', (e) => {
+  if (e.target.id === 'ctx-open-presets') {
+    openPresets();
+  }
+});
 
 // —— 顶栏其它按钮 —— //
 document.getElementById('quick-actions').addEventListener('click', () => {
