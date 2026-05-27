@@ -22,6 +22,7 @@ import { createDefaultRegexScript, getRegexedString, REGEX_PLACEMENT } from './s
 import { execute as executeCommand, parse as parseCommand } from './sillytavern/slash-commands.js';
 import { renderTemplate } from './sillytavern/ejs-engine.js';
 import { runTriggered } from './sillytavern/script-manager.js';
+import { processUpdateVariables } from './sillytavern/mvu-engine.js';
 
 class SillytavernStore {
   constructor() {
@@ -279,6 +280,29 @@ class SillytavernStore {
       .filter(e => (e.type === 'tag-chunk' || e.type === 'raw') && e.tag !== 'w2g')
       .map(e => e.chunk)
       .join('');
+
+    // MVU: process <UpdateVariable> blocks before EJS post-processing
+    let mvuResults = [];
+    try {
+      const mvuResult = processUpdateVariables(rawContent, {
+        chat: updatedChat,
+        msgId: 'assistant-temp',
+      });
+      rawContent = mvuResult.cleanedContent;
+      mvuResults = mvuResult.results;
+      if (mvuResults.length > 0) {
+        updatedChat = {
+          ...updatedChat,
+          variables: { ...updatedChat.variables },
+        };
+        console.log('[MVU] Processed %d UpdateVariable block(s):',
+          mvuResults.length,
+          mvuResults.map(r => `${r.patchesApplied} patches, ${r.errors.length} errors`).join('; ')
+        );
+      }
+    } catch (err) {
+      console.error('[Store] MVU processing error:', err);
+    }
 
     // EJS post-processing on assistant reply
     try {
