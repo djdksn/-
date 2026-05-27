@@ -239,6 +239,13 @@ document.addEventListener('keydown', e => {
       console.log('[SillyTavern] API configured for DeepSeek');
     }
 
+    // Always keep format prompt template up to date
+    const { DEFAULT_FORMAT_PROMPT } = await import('./sillytavern/types.js');
+    if (store.settings?.formatPromptTemplate !== DEFAULT_FORMAT_PROMPT) {
+      await store.updateSettings({ formatPromptTemplate: DEFAULT_FORMAT_PROMPT });
+      console.log('[SillyTavern] Format prompt template updated');
+    }
+
     // Seed lorebook entries (变量更新规则, 变量列表, 系统规则, 初始变量)
     await seedLorebooksIfNeeded(store);
 
@@ -254,7 +261,7 @@ document.addEventListener('keydown', e => {
     }
 
     // One-time: reset test messages and re-inject fresh variables
-    const RESET_KEY = 'sakurasu.chat.reset.v2';
+    const RESET_KEY = 'sakurasu.chat.reset.v3';
     if (!localStorage.getItem(RESET_KEY)) {
       const chat = store.activeChat;
       if (chat && chat.messages?.length > 0) {

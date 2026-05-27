@@ -889,7 +889,7 @@ export function injectVariablesIntoChat(store, chatId) {
   console.log('[init-variables] Variables injected into chat:', chatId);
 }
 
-function deepMerge(base, override) {
+export function deepMerge(base, override) {
   const result = { ...base };
   for (const key of Object.keys(override)) {
     if (override[key] && typeof override[key] === 'object' && !Array.isArray(override[key])

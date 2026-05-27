@@ -51,7 +51,7 @@ function applyOp(op, chat, msgId) {
         return { success: false, op: op.op, path: dotPath, error: 'value rejected by schema' };
       }
       value = sc.coerced;
-      const flags = op.op === 'add' ? 'n' : undefined;
+      const flags = op.op === 'add' ? 'nx' : undefined;
       const result = variableStore.setVarSync(dotPath, value, flags ? { flags } : null, chat, msgId);
       return { success: result !== undefined, op: op.op, path: dotPath };
     }

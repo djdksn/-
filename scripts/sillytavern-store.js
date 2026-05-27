@@ -23,6 +23,7 @@ import { execute as executeCommand, parse as parseCommand } from './sillytavern/
 import { renderTemplate } from './sillytavern/ejs-engine.js';
 import { runTriggered } from './sillytavern/script-manager.js';
 import { processUpdateVariables } from './sillytavern/mvu-engine.js';
+import { deepMerge } from './sillytavern/init-variables.js';
 
 class SillytavernStore {
   constructor() {
@@ -303,6 +304,18 @@ class SillytavernStore {
       }
     } catch (err) {
       console.error('[Store] MVU processing error:', err);
+    }
+
+    // Process <vars> JSON block — deep-merge into chat variables
+    try {
+      if (this.streamState.varsRaw && this.streamState.varsRaw.trim()) {
+        const varsJson = JSON.parse(this.streamState.varsRaw.trim());
+        const merged = deepMerge(updatedChat.variables || {}, varsJson);
+        updatedChat = { ...updatedChat, variables: merged };
+        console.log('[Store] <vars> merged into chat variables:', Object.keys(varsJson));
+      }
+    } catch (err) {
+      console.warn('[Store] <vars> parse error (skipped):', err.message);
     }
 
     // EJS post-processing on assistant reply
