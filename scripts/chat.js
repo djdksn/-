@@ -11,16 +11,15 @@
 
   // —— 初始 seed 对话 —— //
   const seedTurns = [
-    { type: 'divider', text: '序章 · 旧馆图书室' },
-    { type: 'narration', html: '<em>放学后的旧馆图书室，木质百叶斜切下午的光。</em><br>你与会长之间隔着一张矮书桌，她正翻阅一份社团申请。' },
-    { type: 'msg', who: '一之濑 千夏', role: '学生会会长 · 高三 一组', tone: 'sakura', from: 'npc',
+    { type: 'divider', text: '序章 · 樱丘大学校门口' },
+    { type: 'narration', html: '<em>四月早晨的风还带着凉意。你站在樱丘大学的正门前，樱花色地砖在脚下铺展，中央石碑刻着「求真、自律、开放」。</em><br>校门内侧站着一个人——黑发低马尾，左臂戴着学生会臂章。' },
+    { type: 'msg', who: '绫濑 雪乃', role: '学生会会长 · 大二', tone: 'wisteria', from: 'npc',
       content: `
-        <p>「<span class="kw">钟楼天台通行</span>这一栏，你写得有些含糊呢。」</p>
-        <p>她抬眼看你，指尖点在你递交的申请书上。<span class="action">（窗外有一只黄莺在啼。）</span></p>
-        <div class="rule-cite">
-          <div class="rule-cite-tag">规章 · 校规 §3.7</div>
-          <div>夜间登台需注明同行者及具体事由。三人以上同行须由风纪委另出具陪同记录。</div>
-        </div>
+        <p>「你就是<strong>程励行</strong>同学吧。我是绫濑雪乃，学生会会长。」</p>
+        <p>她翻动手中的文件夹，语气平稳得像在读一份实验说明。<span class="action">（那双眼睛在评估你——冷静，但并非冷漠。）</span></p>
+        <p>「樱丘大学过去只招收女性。你是文部科学省特批的第一例男性学生。这意味着全校的课程体系、社团活动、甚至保健室的体检流程，都将因为你而产生新的变量。」</p>
+        <p>她合上文件夹，朝你微微颔首。<span class="action">（校门口的樱花落在她的肩章上。）</span></p>
+        <p>「欢迎来到樱丘大学。接下来的四年，请多关照。」</p>
       `,
     },
   ];
