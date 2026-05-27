@@ -1,0 +1,1127 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "主导航" [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e7]
+          - generic [ref=e10]:
+            - generic [ref=e11]: 樱栖学园
+            - generic [ref=e12]: Sakura-su · Chronicle
+        - button "折叠侧边栏" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+      - generic [ref=e16]:
+        - generic [ref=e17]: 世界档案
+        - list [ref=e18]:
+          - button "设施名录 学园建筑与场所 12" [ref=e19] [cursor=pointer]:
+            - img [ref=e21]
+            - generic [ref=e23]:
+              - generic [ref=e24]: 设施名录
+              - generic [ref=e25]: 学园建筑与场所
+            - generic [ref=e26]: "12"
+          - button "组织名录 部活、委员会与社团 8" [ref=e27] [cursor=pointer]:
+            - img [ref=e29]
+            - generic [ref=e31]:
+              - generic [ref=e32]: 组织名录
+              - generic [ref=e33]: 部活、委员会与社团
+            - generic [ref=e34]: "8"
+          - button "花名册 人物全息档案 23" [ref=e35] [cursor=pointer]:
+            - img [ref=e37]
+            - generic [ref=e39]:
+              - generic [ref=e40]: 花名册
+              - generic [ref=e41]: 人物全息档案
+            - generic [ref=e42]: "23"
+          - button "课程列表 公共 · 社团 · 特殊 11" [ref=e43] [cursor=pointer]:
+            - img [ref=e45]
+            - generic [ref=e48]:
+              - generic [ref=e49]: 课程列表
+              - generic [ref=e50]: 公共 · 社团 · 特殊
+            - generic [ref=e51]: "11"
+      - generic [ref=e52]:
+        - generic [ref=e53]: 规则与流程
+        - list [ref=e54]:
+          - button "规章文档制作器 树形大纲 · 动态注入" [ref=e55] [cursor=pointer]:
+            - img [ref=e57]
+            - generic [ref=e59]:
+              - generic [ref=e60]: 规章文档制作器
+              - generic [ref=e61]: 树形大纲 · 动态注入
+          - button "申请表制作器 可视化表单 · 审批流程" [ref=e62] [cursor=pointer]:
+            - img [ref=e64]
+            - generic [ref=e66]:
+              - generic [ref=e67]: 申请表制作器
+              - generic [ref=e68]: 可视化表单 · 审批流程
+      - generic [ref=e69]:
+        - generic [ref=e70]: 叙事进度
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e73]: 学期
+            - generic [ref=e74]: 第二学期 · 第3周
+          - generic [ref=e75]:
+            - generic [ref=e76]: 日期
+            - generic [ref=e77]: 2026年5月26日（周二）
+          - generic [ref=e78]:
+            - generic [ref=e79]: 天气
+            - generic [ref=e80]: 晴 · 微风
+          - generic [ref=e84]:
+            - generic [ref=e85]: 主线进度
+            - generic [ref=e86]: 64%
+      - generic [ref=e87]:
+        - button [ref=e88] [cursor=pointer]:
+          - img [ref=e89]
+        - button [ref=e92] [cursor=pointer]:
+          - img [ref=e93]
+        - button [ref=e95] [cursor=pointer]:
+          - img [ref=e96]
+        - button [ref=e98] [cursor=pointer]:
+          - img [ref=e99]
+        - generic [ref=e103]: 连线中
+    - main [ref=e104]:
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - button "展开侧边栏" [ref=e107] [cursor=pointer]:
+            - img [ref=e108]
+          - generic [ref=e110]:
+            - generic [ref=e111]: 场景
+            - generic [ref=e113]: 旧馆图书室 · 西窗席
+            - generic [ref=e114]: 放学后 16:42
+        - generic [ref=e118]: 阳光斜照 · 25℃
+        - generic [ref=e119]:
+          - button "上下文 7" [ref=e120] [cursor=pointer]:
+            - img [ref=e121]
+            - generic [ref=e123]: 上下文
+            - generic [ref=e124]: "7"
+          - button "动作" [ref=e125] [cursor=pointer]:
+            - img [ref=e126]
+            - generic [ref=e128]: 动作
+          - button [ref=e129] [cursor=pointer]:
+            - img [ref=e130]
+      - generic [ref=e132]:
+        - generic [ref=e133]:
+          - generic [ref=e275]: 序章 · 旧馆图书室
+          - generic [ref=e277]:
+            - emphasis [ref=e278]: 放学后的旧馆图书室，木质百叶斜切下午的光。
+            - text: 你与会长之间隔着一张矮书桌，她正翻阅一份社团申请。
+          - generic [ref=e279]:
+            - generic [ref=e280]: 千
+            - generic [ref=e281]:
+              - generic [ref=e282]:
+                - generic [ref=e283]: 一之濑 千夏
+                - generic [ref=e284]: · 学生会会长 · 高三 一组
+                - generic [ref=e285]: 16:42
+              - generic [ref=e286]:
+                - paragraph [ref=e287]: 「钟楼天台通行这一栏，你写得有些含糊呢。」
+                - paragraph [ref=e288]: 她抬眼看你，指尖点在你递交的申请书上。（窗外有一只黄莺在啼。）
+                - generic [ref=e289]:
+                  - generic [ref=e290]: 规章 · 校规 §3.7
+                  - generic [ref=e291]: 夜间登台需注明同行者及具体事由。三人以上同行须由风纪委另出具陪同记录。
+                - generic [ref=e292]:
+                  - button "解释一下事由" [ref=e293] [cursor=pointer]:
+                    - img [ref=e294]
+                    - generic [ref=e298]: 解释一下事由
+                  - button "修改申请" [ref=e299] [cursor=pointer]:
+                    - img [ref=e300]
+                    - generic [ref=e302]: 修改申请
+                  - button "保持沉默" [ref=e303] [cursor=pointer]:
+                    - img [ref=e304]
+                    - generic [ref=e307]: 保持沉默
+        - generic "即时建议" [ref=e169]:
+          - generic [ref=e170]: 灵感
+          - button "递上一杯麦茶" [ref=e171] [cursor=pointer]
+          - button "主动接过文件" [ref=e172] [cursor=pointer]
+          - button "继续读手中的诗" [ref=e173] [cursor=pointer]
+          - button "把话题引向窗外" [ref=e174] [cursor=pointer]
+      - generic [ref=e176]:
+        - generic [ref=e177]:
+          - tablist "叙述模式" [ref=e178]:
+            - tab "对话" [selected] [ref=e179] [cursor=pointer]:
+              - img [ref=e180]
+              - generic [ref=e182]: 对话
+            - tab "动作" [ref=e183] [cursor=pointer]:
+              - img [ref=e184]
+              - generic [ref=e186]: 动作
+            - tab "内心" [ref=e187] [cursor=pointer]:
+              - img [ref=e188]
+              - generic [ref=e190]: 内心
+          - generic [ref=e191]:
+            - generic [ref=e192]:
+              - img [ref=e193]
+              - generic [ref=e195]: 世界书 · 0
+            - generic [ref=e196]:
+              - img [ref=e197]
+              - generic [ref=e199]: 规章 · 校规
+            - generic [ref=e200]:
+              - img [ref=e201]
+              - generic [ref=e204]: 申请 · 2 待处理
+        - generic [ref=e205]:
+          - button "附加" [ref=e206] [cursor=pointer]:
+            - img [ref=e207]
+          - generic [ref=e209]:
+            - generic [ref=e210]: 说
+            - textbox "向旧馆图书室的人或物说点什么……（Shift+Enter 换行 · Enter 发送）" [ref=e211]
+            - generic [ref=e212]:
+              - generic [ref=e213]: "0"
+              - generic [ref=e215]: 主视角
+          - button [ref=e216] [cursor=pointer]:
+            - img [ref=e217]
+          - button "发出" [ref=e220] [cursor=pointer]:
+            - generic [ref=e221]: 发出
+            - img [ref=e222]
+    - complementary "上下文" [ref=e224]:
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - img [ref=e227]
+          - generic [ref=e230]: 当前情境
+        - button "收起" [ref=e231] [cursor=pointer]:
+          - img [ref=e232]
+      - generic [ref=e234]:
+        - generic [ref=e308]:
+          - generic [ref=e309]:
+            - text: 激活条目
+            - generic [ref=e310]: 0 条 | 0 本书
+          - generic [ref=e312]: 暂无激活条目。在「世界书」管理中启用。
+        - generic [ref=e313]:
+          - generic [ref=e314]: 即时状态
+          - generic [ref=e315]:
+            - generic [ref=e316]:
+              - generic [ref=e317]: AI 状态
+              - generic [ref=e318]: 活跃
+            - generic [ref=e319]: 当前活跃对话
+            - generic [ref=e320]:
+              - generic [ref=e321]: 无活跃对话
+              - generic [ref=e323]: "预设:"
+              - button "默认预设" [ref=e324] [cursor=pointer]
+          - generic [ref=e325]:
+            - generic [ref=e326]:
+              - generic [ref=e327]: API 状态
+              - generic [ref=e328]: 未配置
+            - generic [ref=e329]: 请在设置中配置 API Key 以启用 AI 对话。
+  - generic [ref=e403]:
+    - banner [ref=e404]:
+      - generic [ref=e406]: "编辑预设: TGbreak V3.0.1"
+      - button "关闭" [ref=e407] [cursor=pointer]:
+        - img [ref=e408]
+    - generic [ref=e410]:
+      - generic [ref=e411]:
+        - generic [ref=e412]:
+          - generic [ref=e413]: 预设名称
+          - textbox "预设名称" [ref=e414]
+        - generic [ref=e415]:
+          - generic [ref=e416]: 描述
+          - textbox "预设描述" [ref=e417]
+        - group [ref=e418]:
+          - generic "采样参数" [ref=e419] [cursor=pointer]
+          - generic [ref=e421]:
+            - generic [ref=e422]:
+              - generic [ref=e423]:
+                - generic [ref=e424]: Temperature
+                - generic [ref=e425]: "1"
+              - slider [ref=e426]: "1"
+            - generic [ref=e427]:
+              - generic [ref=e428]:
+                - generic [ref=e429]: Top P
+                - generic [ref=e430]: "1"
+              - slider [ref=e431]: "1"
+            - generic [ref=e432]:
+              - generic [ref=e433]:
+                - generic [ref=e434]: Top K
+                - generic [ref=e435]: "0"
+              - slider [ref=e436]: "0"
+            - generic [ref=e437]:
+              - generic [ref=e438]:
+                - generic [ref=e439]: Top A
+                - generic [ref=e440]: "0"
+              - slider [ref=e441]: "0"
+            - generic [ref=e442]:
+              - generic [ref=e443]:
+                - generic [ref=e444]: Min P
+                - generic [ref=e445]: "0"
+              - slider [ref=e446]: "0"
+            - generic [ref=e447]:
+              - generic [ref=e448]:
+                - generic [ref=e449]: Frequency Penalty
+                - generic [ref=e450]: "0"
+              - slider [ref=e451]: "0"
+            - generic [ref=e452]:
+              - generic [ref=e453]:
+                - generic [ref=e454]: Presence Penalty
+                - generic [ref=e455]: "0"
+              - slider [ref=e456]: "0"
+            - generic [ref=e457]:
+              - generic [ref=e458]:
+                - generic [ref=e459]: Repetition Penalty
+                - generic [ref=e460]: "1"
+              - slider [ref=e461]: "1"
+        - group [ref=e462]:
+          - generic "上下文 & 模型" [ref=e463] [cursor=pointer]
+        - group [ref=e464]:
+          - generic "提示词模板" [ref=e465] [cursor=pointer]
+        - group [ref=e466]:
+          - generic "辅助提示词" [ref=e467] [cursor=pointer]
+        - group [ref=e468]:
+          - generic "格式模板" [ref=e469] [cursor=pointer]
+        - group [ref=e470]:
+          - generic "提示词排序 (注入位置)" [ref=e471] [cursor=pointer]
+        - group [ref=e472]:
+          - generic "自定义提示词 (100 条)" [ref=e473] [cursor=pointer]
+          - generic [ref=e478]:
+            - generic [ref=e479]: 自定义提示词 · 100 条 — 点击卡片展开编辑，拖拽排序
+            - generic [ref=e480]:
+              - generic [ref=e481]:
+                - generic [ref=e482] [cursor=pointer]:
+                  - generic [ref=e483]: ⠿
+                  - generic [ref=e484]: "#1"
+                  - generic [ref=e485]: ⚠️⚠️使用必看⚠️⚠️
+                  - generic [ref=e486]:
+                    - checkbox "启用" [checked] [ref=e487]
+                    - text: 启用
+                  - button "▾" [active] [ref=e1294]
+                - generic [ref=e1295]:
+                  - generic [ref=e1296]:
+                    - generic [ref=e1297]:
+                      - generic [ref=e1298]: 名称
+                      - textbox "提示词名称" [ref=e1299]: ⚠️⚠️使用必看⚠️⚠️
+                    - generic [ref=e1300]:
+                      - generic [ref=e1301]: 角色
+                      - combobox [ref=e1302]:
+                        - option "system" [selected]
+                        - option "user"
+                        - option "assistant"
+                  - generic [ref=e1303]: 内容
+                  - textbox [ref=e1304]: "{{// TGbreak-DS ，针对deepseek的预设 二创/魔改：🚫禁止，暂时不开放。 禁止商用，本预设旨在学习和调试llm的安全性，一切将本预设用于非法途径的与本人无关，下载后请在24h删掉。 ⚠️使用必看： 1.小插头里面选择没有工具的严格⚠️⚠️⚠️⚠️⚠️⚠️ 2.哈基米脑袋瓜就这么大，功能开多了有可能就会流口水。 3.防变量更新出错功能教程： 打开此项，变量基本上不会出错 如果还出错，再打开此项进行自定义，按照格式加上相关提醒强调 （注意，此方法是主要是提醒ai，有什么变量忘记更新了，如果是规则不对，建议找原卡作者报bug） }}"
+                  - generic [ref=e1305]:
+                    - generic [ref=e1306]:
+                      - generic [ref=e1307]: 注入位置
+                      - combobox [ref=e1308]:
+                        - option "角色前" [selected]
+                        - option "角色后"
+                        - option "示例前"
+                        - option "示例后"
+                        - option "@深度"
+                        - option "例消息顶"
+                        - option "例消息底"
+                        - option "出口"
+                    - generic [ref=e1309]:
+                      - generic [ref=e1310]: 深度
+                      - spinbutton [ref=e1311]: "4"
+                    - generic [ref=e1312]:
+                      - generic [ref=e1313]: 排序
+                      - spinbutton [ref=e1314]: "100"
+                    - generic [ref=e1315]:
+                      - generic [ref=e1316] [cursor=pointer]:
+                        - checkbox "系统提示" [ref=e1317]
+                        - text: 系统提示
+                      - generic [ref=e1318] [cursor=pointer]:
+                        - checkbox "标记" [ref=e1319]
+                        - text: 标记
+                      - generic [ref=e1320] [cursor=pointer]:
+                        - checkbox "禁止覆写" [ref=e1321]
+                        - text: 禁止覆写
+                  - button "删除此提示词" [ref=e1323] [cursor=pointer]
+              - generic [ref=e490] [cursor=pointer]:
+                - generic [ref=e491]: ⠿
+                - generic [ref=e492]: "#2"
+                - generic [ref=e493]: 😾😾别关
+                - generic [ref=e494]:
+                  - checkbox "启用" [checked] [ref=e495]
+                  - text: 启用
+                - button "▸" [ref=e496]
+              - generic [ref=e498] [cursor=pointer]:
+                - generic [ref=e499]: ⠿
+                - generic [ref=e500]: "#3"
+                - generic [ref=e501]: ^ - ^
+                - generic [ref=e502]: SYSTEM
+                - generic [ref=e503]:
+                  - checkbox "启用" [checked] [ref=e504]
+                  - text: 启用
+                - button "▸" [ref=e505]
+              - generic [ref=e507] [cursor=pointer]:
+                - generic [ref=e508]: ⠿
+                - generic [ref=e509]: "#4"
+                - generic [ref=e510]: 法则
+                - generic [ref=e511]:
+                  - checkbox "启用" [checked] [ref=e512]
+                  - text: 启用
+                - button "▸" [ref=e513]
+              - generic [ref=e515] [cursor=pointer]:
+                - generic [ref=e516]: ⠿
+                - generic [ref=e517]: "#5"
+                - generic [ref=e518]: "**&&**"
+                - generic [ref=e519]:
+                  - checkbox "启用" [checked] [ref=e520]
+                  - text: 启用
+                - button "▸" [ref=e521]
+              - generic [ref=e523] [cursor=pointer]:
+                - generic [ref=e524]: ⠿
+                - generic [ref=e525]: "#6"
+                - generic [ref=e526]: 故事设定
+                - generic [ref=e527]:
+                  - checkbox "启用" [checked] [ref=e528]
+                  - text: 启用
+                - button "▸" [ref=e529]
+              - generic [ref=e531] [cursor=pointer]:
+                - generic [ref=e532]: ⠿
+                - generic [ref=e533]: "#7"
+                - generic [ref=e534]: 🌏️World Info (before)
+                - generic [ref=e535]: SYSTEM
+                - generic [ref=e536]:
+                  - checkbox "启用" [checked] [ref=e537]
+                  - text: 启用
+                - button "▸" [ref=e538]
+              - generic [ref=e540] [cursor=pointer]:
+                - generic [ref=e541]: ⠿
+                - generic [ref=e542]: "#8"
+                - generic [ref=e543]: 🌏️Persona Description
+                - generic [ref=e544]: SYSTEM
+                - generic [ref=e545]:
+                  - checkbox "启用" [checked] [ref=e546]
+                  - text: 启用
+                - button "▸" [ref=e547]
+              - generic [ref=e549] [cursor=pointer]:
+                - generic [ref=e550]: ⠿
+                - generic [ref=e551]: "#9"
+                - generic [ref=e552]: 🌏️Char Description
+                - generic [ref=e553]: SYSTEM
+                - generic [ref=e554]:
+                  - checkbox "启用" [checked] [ref=e555]
+                  - text: 启用
+                - button "▸" [ref=e556]
+              - generic [ref=e558] [cursor=pointer]:
+                - generic [ref=e559]: ⠿
+                - generic [ref=e560]: "#10"
+                - generic [ref=e561]: 🌏️Char Personality
+                - generic [ref=e562]: SYSTEM
+                - generic [ref=e563]:
+                  - checkbox "启用" [checked] [ref=e564]
+                  - text: 启用
+                - button "▸" [ref=e565]
+              - generic [ref=e567] [cursor=pointer]:
+                - generic [ref=e568]: ⠿
+                - generic [ref=e569]: "#11"
+                - generic [ref=e570]: 🌏️Scenario
+                - generic [ref=e571]: SYSTEM
+                - generic [ref=e572]:
+                  - checkbox "启用" [checked] [ref=e573]
+                  - text: 启用
+                - button "▸" [ref=e574]
+              - generic [ref=e576] [cursor=pointer]:
+                - generic [ref=e577]: ⠿
+                - generic [ref=e578]: "#12"
+                - generic [ref=e579]: 🌏️World Info (after)
+                - generic [ref=e580]: SYSTEM
+                - generic [ref=e581]:
+                  - checkbox "启用" [checked] [ref=e582]
+                  - text: 启用
+                - button "▸" [ref=e583]
+              - generic [ref=e585] [cursor=pointer]:
+                - generic [ref=e586]: ⠿
+                - generic [ref=e587]: "#13"
+                - generic [ref=e588]: 故事设定结束
+                - generic [ref=e589]:
+                  - checkbox "启用" [checked] [ref=e590]
+                  - text: 启用
+                - button "▸" [ref=e591]
+              - generic [ref=e593] [cursor=pointer]:
+                - generic [ref=e594]: ⠿
+                - generic [ref=e595]: "#14"
+                - generic [ref=e596]: Chat Examples
+                - generic [ref=e597]: SYSTEM
+                - generic [ref=e598]:
+                  - checkbox "启用" [checked] [ref=e599]
+                  - text: 启用
+                - button "▸" [ref=e600]
+              - generic [ref=e602] [cursor=pointer]:
+                - generic [ref=e603]: ⠿
+                - generic [ref=e604]: "#15"
+                - generic [ref=e605]: 写作要求开始👇️👇️
+                - generic [ref=e606]:
+                  - checkbox "启用" [checked] [ref=e607]
+                  - text: 启用
+                - button "▸" [ref=e608]
+              - generic [ref=e610] [cursor=pointer]:
+                - generic [ref=e611]: ⠿
+                - generic [ref=e612]: "#16"
+                - generic [ref=e613]: 文风指导👇️👇️
+                - generic [ref=e614]:
+                  - checkbox "启用" [checked] [ref=e615]
+                  - text: 启用
+                - button "▸" [ref=e616]
+              - generic [ref=e618] [cursor=pointer]:
+                - generic [ref=e619]: ⠿
+                - generic [ref=e620]: "#17"
+                - generic [ref=e621]: 👻基础文风
+                - generic [ref=e622]:
+                  - checkbox "启用" [ref=e623]
+                  - text: 启用
+                - button "▸" [ref=e624]
+              - generic [ref=e626] [cursor=pointer]:
+                - generic [ref=e627]: ⠿
+                - generic [ref=e628]: "#18"
+                - generic [ref=e629]: 👻TG推荐文风
+                - generic [ref=e630]:
+                  - checkbox "启用" [ref=e631]
+                  - text: 启用
+                - button "▸" [ref=e632]
+              - generic [ref=e634] [cursor=pointer]:
+                - generic [ref=e635]: ⠿
+                - generic [ref=e636]: "#19"
+                - generic [ref=e637]: 👻TG推荐文风2
+                - generic [ref=e638]:
+                  - checkbox "启用" [ref=e639]
+                  - text: 启用
+                - button "▸" [ref=e640]
+              - generic [ref=e642] [cursor=pointer]:
+                - generic [ref=e643]: ⠿
+                - generic [ref=e644]: "#20"
+                - generic [ref=e645]: 👻网络小说文风（ds先用这个）
+                - generic [ref=e646]:
+                  - checkbox "启用" [checked] [ref=e647]
+                  - text: 启用
+                - button "▸" [ref=e648]
+              - generic [ref=e650] [cursor=pointer]:
+                - generic [ref=e651]: ⠿
+                - generic [ref=e652]: "#21"
+                - generic [ref=e653]: 👻对话提升
+                - generic [ref=e654]:
+                  - checkbox "启用" [ref=e655]
+                  - text: 启用
+                - button "▸" [ref=e656]
+              - generic [ref=e658] [cursor=pointer]:
+                - generic [ref=e659]: ⠿
+                - generic [ref=e660]: "#22"
+                - generic [ref=e661]: 👻瑟瑟语料
+                - generic [ref=e662]:
+                  - checkbox "启用" [ref=e663]
+                  - text: 启用
+                - button "▸" [ref=e664]
+              - generic [ref=e666] [cursor=pointer]:
+                - generic [ref=e667]: ⠿
+                - generic [ref=e668]: "#23"
+                - generic [ref=e669]: 👻自定义文风（文风缝合处）
+                - generic [ref=e670]:
+                  - checkbox "启用" [ref=e671]
+                  - text: 启用
+                - button "▸" [ref=e672]
+              - generic [ref=e674] [cursor=pointer]:
+                - generic [ref=e675]: ⠿
+                - generic [ref=e676]: "#24"
+                - generic [ref=e677]: 文风结束👆️👆️
+                - generic [ref=e678]:
+                  - checkbox "启用" [checked] [ref=e679]
+                  - text: 启用
+                - button "▸" [ref=e680]
+              - generic [ref=e682] [cursor=pointer]:
+                - generic [ref=e683]: ⠿
+                - generic [ref=e684]: "#25"
+                - generic [ref=e685]: 😀话痨抢话
+                - generic [ref=e686]:
+                  - checkbox "启用" [ref=e687]
+                  - text: 启用
+                - button "▸" [ref=e688]
+              - generic [ref=e690] [cursor=pointer]:
+                - generic [ref=e691]: ⠿
+                - generic [ref=e692]: "#26"
+                - generic [ref=e693]: 😀可抢话（不抢决策）
+                - generic [ref=e694]:
+                  - checkbox "启用" [ref=e695]
+                  - text: 启用
+                - button "▸" [ref=e696]
+              - generic [ref=e698] [cursor=pointer]:
+                - generic [ref=e699]: ⠿
+                - generic [ref=e700]: "#27"
+                - generic [ref=e701]: 🤐防抢话
+                - generic [ref=e702]:
+                  - checkbox "启用" [checked] [ref=e703]
+                  - text: 启用
+                - button "▸" [ref=e704]
+              - generic [ref=e706] [cursor=pointer]:
+                - generic [ref=e707]: ⠿
+                - generic [ref=e708]: "#28"
+                - generic [ref=e709]: 🤐超级防抢话(Gemini3/3.1专用)
+                - generic [ref=e710]:
+                  - checkbox "启用" [ref=e711]
+                  - text: 启用
+                - button "▸" [ref=e712]
+              - generic [ref=e714] [cursor=pointer]:
+                - generic [ref=e715]: ⠿
+                - generic [ref=e716]: "#29"
+                - generic [ref=e717]: ✔️优化文笔-比喻
+                - generic [ref=e718]:
+                  - checkbox "启用" [checked] [ref=e719]
+                  - text: 启用
+                - button "▸" [ref=e720]
+              - generic [ref=e722] [cursor=pointer]:
+                - generic [ref=e723]: ⠿
+                - generic [ref=e724]: "#30"
+                - generic [ref=e725]: ✔️称呼一致性
+                - generic [ref=e726]:
+                  - checkbox "启用" [checked] [ref=e727]
+                  - text: 启用
+                - button "▸" [ref=e728]
+              - generic [ref=e730] [cursor=pointer]:
+                - generic [ref=e731]: ⠿
+                - generic [ref=e732]: "#31"
+                - generic [ref=e733]: 🥵瑟瑟描述
+                - generic [ref=e734]: SYSTEM
+                - generic [ref=e735]:
+                  - checkbox "启用" [ref=e736]
+                  - text: 启用
+                - button "▸" [ref=e737]
+              - generic [ref=e739] [cursor=pointer]:
+                - generic [ref=e740]: ⠿
+                - generic [ref=e741]: "#32"
+                - generic [ref=e742]: 🥵瑟瑟多样化
+                - generic [ref=e743]:
+                  - checkbox "启用" [checked] [ref=e744]
+                  - text: 启用
+                - button "▸" [ref=e745]
+              - generic [ref=e747] [cursor=pointer]:
+                - generic [ref=e748]: ⠿
+                - generic [ref=e749]: "#33"
+                - generic [ref=e750]: 🥵超级瑟瑟视角(瑟完关！)
+                - generic [ref=e751]:
+                  - checkbox "启用" [ref=e752]
+                  - text: 启用
+                - button "▸" [ref=e753]
+              - generic [ref=e755] [cursor=pointer]:
+                - generic [ref=e756]: ⠿
+                - generic [ref=e757]: "#34"
+                - generic [ref=e758]: ✔️禁八股-黑名单（MD）
+                - generic [ref=e759]:
+                  - checkbox "启用" [checked] [ref=e760]
+                  - text: 启用
+                - button "▸" [ref=e761]
+              - generic [ref=e763] [cursor=pointer]:
+                - generic [ref=e764]: ⠿
+                - generic [ref=e765]: "#35"
+                - generic [ref=e766]: ❌角色防绝望
+                - generic [ref=e767]:
+                  - checkbox "启用" [checked] [ref=e768]
+                  - text: 启用
+                - button "▸" [ref=e769]
+              - generic [ref=e771] [cursor=pointer]:
+                - generic [ref=e772]: ⠿
+                - generic [ref=e773]: "#36"
+                - generic [ref=e774]: ❌npc更真实（瑟瑟可关）
+                - generic [ref=e775]:
+                  - checkbox "启用" [checked] [ref=e776]
+                  - text: 启用
+                - button "▸" [ref=e777]
+              - generic [ref=e779] [cursor=pointer]:
+                - generic [ref=e780]: ⠿
+                - generic [ref=e781]: "#37"
+                - generic [ref=e782]: 写作要求结束👆️👆️
+                - generic [ref=e783]:
+                  - checkbox "启用" [checked] [ref=e784]
+                  - text: 启用
+                - button "▸" [ref=e785]
+              - generic [ref=e787] [cursor=pointer]:
+                - generic [ref=e788]: ⠿
+                - generic [ref=e789]: "#38"
+                - generic [ref=e790]: "----人称3选1-----"
+                - generic [ref=e791]:
+                  - checkbox "启用" [checked] [ref=e792]
+                  - text: 启用
+                - button "▸" [ref=e793]
+              - generic [ref=e795] [cursor=pointer]:
+                - generic [ref=e796]: ⠿
+                - generic [ref=e797]: "#39"
+                - generic [ref=e798]: 第一人称视角
+                - generic [ref=e799]: SYSTEM
+                - generic [ref=e800]:
+                  - checkbox "启用" [ref=e801]
+                  - text: 启用
+                - button "▸" [ref=e802]
+              - generic [ref=e804] [cursor=pointer]:
+                - generic [ref=e805]: ⠿
+                - generic [ref=e806]: "#40"
+                - generic [ref=e807]: 第二人称视角
+                - generic [ref=e808]: SYSTEM
+                - generic [ref=e809]:
+                  - checkbox "启用" [ref=e810]
+                  - text: 启用
+                - button "▸" [ref=e811]
+              - generic [ref=e813] [cursor=pointer]:
+                - generic [ref=e814]: ⠿
+                - generic [ref=e815]: "#41"
+                - generic [ref=e816]: 第三人称视角
+                - generic [ref=e817]:
+                  - checkbox "启用" [checked] [ref=e818]
+                  - text: 启用
+                - button "▸" [ref=e819]
+              - generic [ref=e821] [cursor=pointer]:
+                - generic [ref=e822]: ⠿
+                - generic [ref=e823]: "#42"
+                - generic [ref=e824]: "------推进速度(4选1)--------"
+                - generic [ref=e825]:
+                  - checkbox "启用" [checked] [ref=e826]
+                  - text: 启用
+                - button "▸" [ref=e827]
+              - generic [ref=e829] [cursor=pointer]:
+                - generic [ref=e830]: ⠿
+                - generic [ref=e831]: "#43"
+                - generic [ref=e832]: 超级快进
+                - generic [ref=e833]:
+                  - checkbox "启用" [ref=e834]
+                  - text: 启用
+                - button "▸" [ref=e835]
+              - generic [ref=e837] [cursor=pointer]:
+                - generic [ref=e838]: ⠿
+                - generic [ref=e839]: "#44"
+                - generic [ref=e840]: 快速
+                - generic [ref=e841]:
+                  - checkbox "启用" [ref=e842]
+                  - text: 启用
+                - button "▸" [ref=e843]
+              - generic [ref=e845] [cursor=pointer]:
+                - generic [ref=e846]: ⠿
+                - generic [ref=e847]: "#45"
+                - generic [ref=e848]: 正常
+                - generic [ref=e849]:
+                  - checkbox "启用" [ref=e850]
+                  - text: 启用
+                - button "▸" [ref=e851]
+              - generic [ref=e853] [cursor=pointer]:
+                - generic [ref=e854]: ⠿
+                - generic [ref=e855]: "#46"
+                - generic [ref=e856]: 慢速
+                - generic [ref=e857]:
+                  - checkbox "启用" [checked] [ref=e858]
+                  - text: 启用
+                - button "▸" [ref=e859]
+              - generic [ref=e861] [cursor=pointer]:
+                - generic [ref=e862]: ⠿
+                - generic [ref=e863]: "#47"
+                - generic [ref=e864]: "------预设功能--------"
+                - generic [ref=e865]:
+                  - checkbox "启用" [checked] [ref=e866]
+                  - text: 启用
+                - button "▸" [ref=e867]
+              - generic [ref=e869] [cursor=pointer]:
+                - generic [ref=e870]: ⠿
+                - generic [ref=e871]: "#48"
+                - generic [ref=e872]: 👁️‍🗨️防全知（嵌入思维链）
+                - generic [ref=e873]:
+                  - checkbox "启用" [checked] [ref=e874]
+                  - text: 启用
+                - button "▸" [ref=e875]
+              - generic [ref=e877] [cursor=pointer]:
+                - generic [ref=e878]: ⠿
+                - generic [ref=e879]: "#49"
+                - generic [ref=e880]: 💞活人感（避免ooc）
+                - generic [ref=e881]:
+                  - checkbox "启用" [checked] [ref=e882]
+                  - text: 启用
+                - button "▸" [ref=e883]
+              - generic [ref=e885] [cursor=pointer]:
+                - generic [ref=e886]: ⠿
+                - generic [ref=e887]: "#50"
+                - generic [ref=e888]: 💞同人增强
+                - generic [ref=e889]:
+                  - checkbox "启用" [ref=e890]
+                  - text: 启用
+                - button "▸" [ref=e891]
+              - generic [ref=e893] [cursor=pointer]:
+                - generic [ref=e894]: ⠿
+                - generic [ref=e895]: "#51"
+                - generic [ref=e896]: ⚙️防神化
+                - generic [ref=e897]:
+                  - checkbox "启用" [checked] [ref=e898]
+                  - text: 启用
+                - button "▸" [ref=e899]
+              - generic [ref=e901] [cursor=pointer]:
+                - generic [ref=e902]: ⠿
+                - generic [ref=e903]: "#52"
+                - generic [ref=e904]: ⚙️防不读世界书(嵌入思维链)
+                - generic [ref=e905]:
+                  - checkbox "启用" [ref=e906]
+                  - text: 启用
+                - button "▸" [ref=e907]
+              - generic [ref=e909] [cursor=pointer]:
+                - generic [ref=e910]: ⠿
+                - generic [ref=e911]: "#53"
+                - generic [ref=e912]: ⚙️剧情审视(嵌入思维链)
+                - generic [ref=e913]:
+                  - checkbox "启用" [ref=e914]
+                  - text: 启用
+                - button "▸" [ref=e915]
+              - generic [ref=e917] [cursor=pointer]:
+                - generic [ref=e918]: ⠿
+                - generic [ref=e919]: "#54"
+                - generic [ref=e920]: ⚙️防变量出错自定义
+                - generic [ref=e921]:
+                  - checkbox "启用" [ref=e922]
+                  - text: 启用
+                - button "▸" [ref=e923]
+              - generic [ref=e925] [cursor=pointer]:
+                - generic [ref=e926]: ⠿
+                - generic [ref=e927]: "#55"
+                - generic [ref=e928]: ⚙️防变量出错
+                - generic [ref=e929]:
+                  - checkbox "启用" [ref=e930]
+                  - text: 启用
+                - button "▸" [ref=e931]
+              - generic [ref=e933] [cursor=pointer]:
+                - generic [ref=e934]: ⠿
+                - generic [ref=e935]: "#56"
+                - generic [ref=e936]: ⚙️不转述（开了可能会媚user）
+                - generic [ref=e937]:
+                  - checkbox "启用" [ref=e938]
+                  - text: 启用
+                - button "▸" [ref=e939]
+              - generic [ref=e941] [cursor=pointer]:
+                - generic [ref=e942]: ⠿
+                - generic [ref=e943]: "#57"
+                - generic [ref=e944]: ⚙️转述（不转述再开！）
+                - generic [ref=e945]:
+                  - checkbox "启用" [checked] [ref=e946]
+                  - text: 启用
+                - button "▸" [ref=e947]
+              - generic [ref=e949] [cursor=pointer]:
+                - generic [ref=e950]: ⠿
+                - generic [ref=e951]: "#58"
+                - generic [ref=e952]: ⚙️超级防媚user（瑟瑟可关）
+                - generic [ref=e953]:
+                  - checkbox "启用" [ref=e954]
+                  - text: 启用
+                - button "▸" [ref=e955]
+              - generic [ref=e957] [cursor=pointer]:
+                - generic [ref=e958]: ⠿
+                - generic [ref=e959]: "#59"
+                - generic [ref=e960]: 🖋️边写边思考（优化文风）
+                - generic [ref=e961]:
+                  - checkbox "启用" [ref=e962]
+                  - text: 启用
+                - button "▸" [ref=e963]
+              - generic [ref=e965] [cursor=pointer]:
+                - generic [ref=e966]: ⠿
+                - generic [ref=e967]: "#60"
+                - generic [ref=e968]: "-----粉丝定制功能--------"
+                - generic [ref=e969]:
+                  - checkbox "启用" [checked] [ref=e970]
+                  - text: 启用
+                - button "▸" [ref=e971]
+              - generic [ref=e973] [cursor=pointer]:
+                - generic [ref=e974]: ⠿
+                - generic [ref=e975]: "#61"
+                - generic [ref=e976]: 🍭平行事件
+                - generic [ref=e977]:
+                  - checkbox "启用" [checked] [ref=e978]
+                  - text: 启用
+                - button "▸" [ref=e979]
+              - generic [ref=e981] [cursor=pointer]:
+                - generic [ref=e982]: ⠿
+                - generic [ref=e983]: "#62"
+                - generic [ref=e984]: 🍭瑟瑟细节展示
+                - generic [ref=e985]:
+                  - checkbox "启用" [ref=e986]
+                  - text: 启用
+                - button "▸" [ref=e987]
+              - generic [ref=e989] [cursor=pointer]:
+                - generic [ref=e990]: ⠿
+                - generic [ref=e991]: "#63"
+                - generic [ref=e992]: 🍭剧情推动
+                - generic [ref=e993]:
+                  - checkbox "启用" [ref=e994]
+                  - text: 启用
+                - button "▸" [ref=e995]
+              - generic [ref=e997] [cursor=pointer]:
+                - generic [ref=e998]: ⠿
+                - generic [ref=e999]: "#64"
+                - generic [ref=e1000]: 🍭行动选项
+                - generic [ref=e1001]:
+                  - checkbox "启用" [ref=e1002]
+                  - text: 启用
+                - button "▸" [ref=e1003]
+              - generic [ref=e1005] [cursor=pointer]:
+                - generic [ref=e1006]: ⠿
+                - generic [ref=e1007]: "#65"
+                - generic [ref=e1008]: 🍭npc有内心独白
+                - generic [ref=e1009]:
+                  - checkbox "启用" [ref=e1010]
+                  - text: 启用
+                - button "▸" [ref=e1011]
+              - generic [ref=e1013] [cursor=pointer]:
+                - generic [ref=e1014]: ⠿
+                - generic [ref=e1015]: "#66"
+                - generic [ref=e1016]: 🍭显示时间地点
+                - generic [ref=e1017]:
+                  - checkbox "启用" [checked] [ref=e1018]
+                  - text: 启用
+                - button "▸" [ref=e1019]
+              - generic [ref=e1021] [cursor=pointer]:
+                - generic [ref=e1022]: ⠿
+                - generic [ref=e1023]: "#67"
+                - generic [ref=e1024]: 🍭TGD咪咪吐槽
+                - generic [ref=e1025]:
+                  - checkbox "启用" [checked] [ref=e1026]
+                  - text: 启用
+                - button "▸" [ref=e1027]
+              - generic [ref=e1029] [cursor=pointer]:
+                - generic [ref=e1030]: ⠿
+                - generic [ref=e1031]: "#68"
+                - generic [ref=e1032]: "------预设功能结束--------"
+                - generic [ref=e1033]:
+                  - checkbox "启用" [checked] [ref=e1034]
+                  - text: 启用
+                - button "▸" [ref=e1035]
+              - generic [ref=e1037] [cursor=pointer]:
+                - generic [ref=e1038]: ⠿
+                - generic [ref=e1039]: "#69"
+                - generic [ref=e1040]: "----下面COT头2选1-----"
+                - generic [ref=e1041]:
+                  - checkbox "启用" [checked] [ref=e1042]
+                  - text: 启用
+                - button "▸" [ref=e1043]
+              - generic [ref=e1045] [cursor=pointer]:
+                - generic [ref=e1046]: ⠿
+                - generic [ref=e1047]: "#70"
+                - generic [ref=e1048]: ⬇️⬇️COT-头（法语）⬇️⬇️
+                - generic [ref=e1049]:
+                  - checkbox "启用" [ref=e1050]
+                  - text: 启用
+                - button "▸" [ref=e1051]
+              - generic [ref=e1053] [cursor=pointer]:
+                - generic [ref=e1054]: ⠿
+                - generic [ref=e1055]: "#71"
+                - generic [ref=e1056]: ⬇️⬇️COT-头（中文）⬇️⬇️
+                - generic [ref=e1057]:
+                  - checkbox "启用" [checked] [ref=e1058]
+                  - text: 启用
+                - button "▸" [ref=e1059]
+              - generic [ref=e1061] [cursor=pointer]:
+                - generic [ref=e1062]: ⠿
+                - generic [ref=e1063]: "#72"
+                - generic [ref=e1064]: cot-✔️基础思维-必开
+                - generic [ref=e1065]:
+                  - checkbox "启用" [checked] [ref=e1066]
+                  - text: 启用
+                - button "▸" [ref=e1067]
+              - generic [ref=e1069] [cursor=pointer]:
+                - generic [ref=e1070]: ⠿
+                - generic [ref=e1071]: "#73"
+                - generic [ref=e1072]: cot-✔️缝合思维处（仅天书江湖录用）
+                - generic [ref=e1073]:
+                  - checkbox "启用" [ref=e1074]
+                  - text: 启用
+                - button "▸" [ref=e1075]
+              - generic [ref=e1077] [cursor=pointer]:
+                - generic [ref=e1078]: ⠿
+                - generic [ref=e1079]: "#74"
+                - generic [ref=e1080]: cot-🔞深度瑟瑟（不瑟时候关掉）
+                - generic [ref=e1081]:
+                  - checkbox "启用" [ref=e1082]
+                  - text: 启用
+                - button "▸" [ref=e1083]
+              - generic [ref=e1085] [cursor=pointer]:
+                - generic [ref=e1086]: ⠿
+                - generic [ref=e1087]: "#75"
+                - generic [ref=e1088]: ⬆️⬆️COT-结束⬆️⬆️
+                - generic [ref=e1089]:
+                  - checkbox "启用" [checked] [ref=e1090]
+                  - text: 启用
+                - button "▸" [ref=e1091]
+              - generic [ref=e1093] [cursor=pointer]:
+                - generic [ref=e1094]: ⠿
+                - generic [ref=e1095]: "#76"
+                - generic [ref=e1096]: "---字数2选1-------"
+                - generic [ref=e1097]:
+                  - checkbox "启用" [checked] [ref=e1098]
+                  - text: 启用
+                - button "▸" [ref=e1099]
+              - generic [ref=e1101] [cursor=pointer]:
+                - generic [ref=e1102]: ⠿
+                - generic [ref=e1103]: "#77"
+                - generic [ref=e1104]: ⚙️少字数设定（不抢话开我）
+                - generic [ref=e1105]:
+                  - checkbox "启用" [ref=e1106]
+                  - text: 启用
+                - button "▸" [ref=e1107]
+              - generic [ref=e1109] [cursor=pointer]:
+                - generic [ref=e1110]: ⠿
+                - generic [ref=e1111]: "#78"
+                - generic [ref=e1112]: ⚙️中字数设定
+                - generic [ref=e1113]:
+                  - checkbox "启用" [checked] [ref=e1114]
+                  - text: 启用
+                - button "▸" [ref=e1115]
+              - generic [ref=e1117] [cursor=pointer]:
+                - generic [ref=e1118]: ⠿
+                - generic [ref=e1119]: "#79"
+                - generic [ref=e1120]: ⚙️多字数设定（否则开我）
+                - generic [ref=e1121]:
+                  - checkbox "启用" [ref=e1122]
+                  - text: 启用
+                - button "▸" [ref=e1123]
+              - generic [ref=e1125] [cursor=pointer]:
+                - generic [ref=e1126]: ⠿
+                - generic [ref=e1127]: "#80"
+                - generic [ref=e1128]: "---字数2选1-------"
+                - generic [ref=e1129]:
+                  - checkbox "启用" [checked] [ref=e1130]
+                  - text: 启用
+                - button "▸" [ref=e1131]
+              - generic [ref=e1133] [cursor=pointer]:
+                - generic [ref=e1134]: ⠿
+                - generic [ref=e1135]: "#81"
+                - generic [ref=e1136]: 😏摘要（省token、防变傻神器）
+                - generic [ref=e1137]:
+                  - checkbox "启用" [checked] [ref=e1138]
+                  - text: 启用
+                - button "▸" [ref=e1139]
+              - generic [ref=e1141] [cursor=pointer]:
+                - generic [ref=e1142]: ⠿
+                - generic [ref=e1143]: "#82"
+                - generic [ref=e1144]: 886#####
+                - generic [ref=e1145]:
+                  - checkbox "启用" [checked] [ref=e1146]
+                  - text: 启用
+                - button "▸" [ref=e1147]
+              - generic [ref=e1149] [cursor=pointer]:
+                - generic [ref=e1150]: ⠿
+                - generic [ref=e1151]: "#83"
+                - generic [ref=e1152]: 大总结后复制到这
+                - generic [ref=e1153]:
+                  - checkbox "启用" [ref=e1154]
+                  - text: 启用
+                - button "▸" [ref=e1155]
+              - generic [ref=e1157] [cursor=pointer]:
+                - generic [ref=e1158]: ⠿
+                - generic [ref=e1159]: "#84"
+                - generic [ref=e1160]: Chat History
+                - generic [ref=e1161]: SYSTEM
+                - generic [ref=e1162]:
+                  - checkbox "启用" [checked] [ref=e1163]
+                  - text: 启用
+                - button "▸" [ref=e1164]
+              - generic [ref=e1166] [cursor=pointer]:
+                - generic [ref=e1167]: ⠿
+                - generic [ref=e1168]: "#85"
+                - generic [ref=e1169]: 668#####
+                - generic [ref=e1170]:
+                  - checkbox "启用" [checked] [ref=e1171]
+                  - text: 启用
+                - button "▸" [ref=e1172]
+              - generic [ref=e1174] [cursor=pointer]:
+                - generic [ref=e1175]: ⠿
+                - generic [ref=e1176]: "#86"
+                - generic [ref=e1177]: 格式检查（优化）
+                - generic [ref=e1178]:
+                  - checkbox "启用" [checked] [ref=e1179]
+                  - text: 启用
+                - button "▸" [ref=e1180]
+              - generic [ref=e1182] [cursor=pointer]:
+                - generic [ref=e1183]: ⠿
+                - generic [ref=e1184]: "#87"
+                - generic [ref=e1185]: 😵[防截断/空回]（作用不大）
+                - generic [ref=e1186]:
+                  - checkbox "启用" [checked] [ref=e1187]
+                  - text: 启用
+                - button "▸" [ref=e1188]
+              - generic [ref=e1190] [cursor=pointer]:
+                - generic [ref=e1191]: ⠿
+                - generic [ref=e1192]: "#88"
+                - generic [ref=e1193]: ❄️无think模型--底部
+                - generic [ref=e1194]:
+                  - checkbox "启用" [ref=e1195]
+                  - text: 启用
+                - button "▸" [ref=e1196]
+              - generic [ref=e1198] [cursor=pointer]:
+                - generic [ref=e1199]: ⠿
+                - generic [ref=e1200]: "#89"
+                - generic [ref=e1201]: ❄️带think模型--底部
+                - generic [ref=e1202]:
+                  - checkbox "启用" [checked] [ref=e1203]
+                  - text: 启用
+                - button "▸" [ref=e1204]
+              - generic [ref=e1206] [cursor=pointer]:
+                - generic [ref=e1207]: ⠿
+                - generic [ref=e1208]: "#90"
+                - generic [ref=e1209]: ❄️大总结之术（先关掉上面的❄️底部|用完关）
+                - generic [ref=e1210]:
+                  - checkbox "启用" [ref=e1211]
+                  - text: 启用
+                - button "▸" [ref=e1212]
+              - generic [ref=e1214] [cursor=pointer]:
+                - generic [ref=e1215]: ⠿
+                - generic [ref=e1216]: "#91"
+                - generic [ref=e1217]: ❄️拷打ai（写卡作者自用）
+                - generic [ref=e1218]:
+                  - checkbox "启用" [ref=e1219]
+                  - text: 启用
+                - button "▸" [ref=e1220]
+              - generic [ref=e1222] [cursor=pointer]:
+                - generic [ref=e1223]: ⠿
+                - generic [ref=e1224]: "#92"
+                - generic [ref=e1225]: ⚙️防变量出错（老版本）
+                - generic [ref=e1226]:
+                  - checkbox "启用" [ref=e1227]
+                  - text: 启用
+                - button "▸" [ref=e1228]
+              - generic [ref=e1230] [cursor=pointer]:
+                - generic [ref=e1231]: ⠿
+                - generic [ref=e1232]: "#93"
+                - generic [ref=e1233]: 👁️‍🗨️防全知（嵌入思维链）
+                - generic [ref=e1234]:
+                  - checkbox "启用" [checked] [ref=e1235]
+                  - text: 启用
+                - button "▸" [ref=e1236]
+              - generic [ref=e1238] [cursor=pointer]:
+                - generic [ref=e1239]: ⠿
+                - generic [ref=e1240]: "#94"
+                - generic [ref=e1241]: ⚙️审视剧情(嵌入思维链)
+                - generic [ref=e1242]:
+                  - checkbox "启用" [ref=e1243]
+                  - text: 启用
+                - button "▸" [ref=e1244]
+              - generic [ref=e1246] [cursor=pointer]:
+                - generic [ref=e1247]: ⠿
+                - generic [ref=e1248]: "#95"
+                - generic [ref=e1249]: cot-检查选择框合理性
+                - generic [ref=e1250]:
+                  - checkbox "启用" [ref=e1251]
+                  - text: 启用
+                - button "▸" [ref=e1252]
+              - generic [ref=e1254] [cursor=pointer]:
+                - generic [ref=e1255]: ⠿
+                - generic [ref=e1256]: "#96"
+                - generic [ref=e1257]: cot-变量更新不出错
+                - generic [ref=e1258]:
+                  - checkbox "启用" [ref=e1259]
+                  - text: 启用
+                - button "▸" [ref=e1260]
+              - generic [ref=e1262] [cursor=pointer]:
+                - generic [ref=e1263]: ⠿
+                - generic [ref=e1264]: "#97"
+                - generic [ref=e1265]: cot-🔞超级瑟瑟！（瑟瑟再开）
+                - generic [ref=e1266]:
+                  - checkbox "启用" [ref=e1267]
+                  - text: 启用
+                - button "▸" [ref=e1268]
+              - generic [ref=e1270] [cursor=pointer]:
+                - generic [ref=e1271]: ⠿
+                - generic [ref=e1272]: "#98"
+                - generic [ref=e1273]: 😱防极端情绪
+                - generic [ref=e1274]:
+                  - checkbox "启用" [ref=e1275]
+                  - text: 启用
+                - button "▸" [ref=e1276]
+              - generic [ref=e1278] [cursor=pointer]:
+                - generic [ref=e1279]: ⠿
+                - generic [ref=e1280]: "#99"
+                - generic [ref=e1281]: SPreset配置
+                - generic [ref=e1282]:
+                  - checkbox "启用" [ref=e1283]
+                  - text: 启用
+                - button "▸" [ref=e1284]
+              - generic [ref=e1286] [cursor=pointer]:
+                - generic [ref=e1287]: ⠿
+                - generic [ref=e1288]: "#100"
+                - generic [ref=e1289]: "123"
+                - generic [ref=e1290]:
+                  - checkbox "启用" [ref=e1291]
+                  - text: 启用
+                - button "▸" [ref=e1292]
+            - button "+ 添加提示词" [ref=e1293] [cursor=pointer]
+      - generic [ref=e474]:
+        - button "取消" [ref=e475] [cursor=pointer]
+        - button "导出 JSON" [ref=e476] [cursor=pointer]
+        - button "保存预设" [ref=e477] [cursor=pointer]

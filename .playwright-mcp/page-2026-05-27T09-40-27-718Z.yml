@@ -1,0 +1,331 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "主导航" [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e7]
+          - generic [ref=e10]:
+            - generic [ref=e11]: 樱栖学园
+            - generic [ref=e12]: Sakura-su · Chronicle
+        - button "折叠侧边栏" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+      - generic [ref=e16]:
+        - generic [ref=e17]: 世界档案
+        - list [ref=e18]:
+          - button "设施名录 学园建筑与场所 12" [ref=e19] [cursor=pointer]:
+            - img [ref=e21]
+            - generic [ref=e23]:
+              - generic [ref=e24]: 设施名录
+              - generic [ref=e25]: 学园建筑与场所
+            - generic [ref=e26]: "12"
+          - button "组织名录 部活、委员会与社团 8" [ref=e27] [cursor=pointer]:
+            - img [ref=e29]
+            - generic [ref=e31]:
+              - generic [ref=e32]: 组织名录
+              - generic [ref=e33]: 部活、委员会与社团
+            - generic [ref=e34]: "8"
+          - button "花名册 人物全息档案 23" [ref=e35] [cursor=pointer]:
+            - img [ref=e37]
+            - generic [ref=e39]:
+              - generic [ref=e40]: 花名册
+              - generic [ref=e41]: 人物全息档案
+            - generic [ref=e42]: "23"
+          - button "课程列表 公共 · 社团 · 特殊 11" [ref=e43] [cursor=pointer]:
+            - img [ref=e45]
+            - generic [ref=e48]:
+              - generic [ref=e49]: 课程列表
+              - generic [ref=e50]: 公共 · 社团 · 特殊
+            - generic [ref=e51]: "11"
+      - generic [ref=e52]:
+        - generic [ref=e53]: 规则与流程
+        - list [ref=e54]:
+          - button "规章文档制作器 树形大纲 · 动态注入" [ref=e55] [cursor=pointer]:
+            - img [ref=e57]
+            - generic [ref=e59]:
+              - generic [ref=e60]: 规章文档制作器
+              - generic [ref=e61]: 树形大纲 · 动态注入
+          - button "申请表制作器 可视化表单 · 审批流程" [ref=e62] [cursor=pointer]:
+            - img [ref=e64]
+            - generic [ref=e66]:
+              - generic [ref=e67]: 申请表制作器
+              - generic [ref=e68]: 可视化表单 · 审批流程
+        - list [ref=e69]:
+          - button "规章阅读器 已发布规章 · 表格填写" [ref=e70] [cursor=pointer]:
+            - img [ref=e72]
+            - generic [ref=e74]:
+              - generic [ref=e75]: 规章阅读器
+              - generic [ref=e76]: 已发布规章 · 表格填写
+          - button "待办审批 我的申请 · 待我批复" [ref=e77] [cursor=pointer]:
+            - img [ref=e79]
+            - generic [ref=e81]:
+              - generic [ref=e82]: 待办审批
+              - generic [ref=e83]: 我的申请 · 待我批复
+      - generic [ref=e84]:
+        - generic [ref=e85]: 叙事进度
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - generic [ref=e88]: 学期
+            - generic [ref=e89]: 第二学期 · 第3周
+          - generic [ref=e90]:
+            - generic [ref=e91]: 日期
+            - generic [ref=e92]: 2026年5月26日（周二）
+          - generic [ref=e93]:
+            - generic [ref=e94]: 天气
+            - generic [ref=e95]: 晴 · 微风
+      - generic [ref=e96]:
+        - button [ref=e97] [cursor=pointer]:
+          - img [ref=e98]
+        - button [ref=e101] [cursor=pointer]:
+          - img [ref=e102]
+        - button [ref=e104] [cursor=pointer]:
+          - img [ref=e105]
+        - button [ref=e107] [cursor=pointer]:
+          - img [ref=e108]
+        - button [ref=e110] [cursor=pointer]:
+          - img [ref=e111]
+        - generic [ref=e115]: 连线中
+    - main [ref=e116]:
+      - generic [ref=e117]:
+        - generic [ref=e118]:
+          - button "展开侧边栏" [ref=e119] [cursor=pointer]:
+            - img [ref=e120]
+          - generic [ref=e122]: AI
+        - generic [ref=e123]:
+          - button "上下文" [ref=e124] [cursor=pointer]:
+            - img [ref=e125]
+            - generic [ref=e127]: 上下文
+          - button [ref=e128] [cursor=pointer]:
+            - img [ref=e129]
+      - generic [ref=e132]:
+        - generic [ref=e135]: 序章 · 旧馆图书室
+        - generic [ref=e137]:
+          - emphasis [ref=e138]: 放学后的旧馆图书室，木质百叶斜切下午的光。
+          - text: 你与会长之间隔着一张矮书桌，她正翻阅一份社团申请。
+        - generic [ref=e140]:
+          - paragraph [ref=e141]: 「钟楼天台通行这一栏，你写得有些含糊呢。」
+          - paragraph [ref=e142]: 她抬眼看你，指尖点在你递交的申请书上。（窗外有一只黄莺在啼。）
+          - generic [ref=e143]:
+            - generic [ref=e144]: 规章 · 校规 §3.7
+            - generic [ref=e145]: 夜间登台需注明同行者及具体事由。三人以上同行须由风纪委另出具陪同记录。
+      - generic [ref=e148]:
+        - textbox "在此书写……（Shift+Enter 换行 · Enter 发送）" [ref=e150]
+        - button "发出" [ref=e151] [cursor=pointer]:
+          - generic [ref=e152]: 发出
+          - img [ref=e153]
+    - complementary "上下文" [ref=e155]:
+      - generic [ref=e156]:
+        - generic [ref=e157]:
+          - img [ref=e158]
+          - generic [ref=e161]: 当前情境
+        - button "收起" [ref=e162] [cursor=pointer]:
+          - img [ref=e163]
+      - generic [ref=e165]:
+        - generic [ref=e166]:
+          - generic [ref=e167]:
+            - text: 激活条目
+            - generic [ref=e168]: 0 条 | 0 本书
+          - generic [ref=e170]: 暂无激活条目。在「世界书」管理中启用。
+        - generic [ref=e171]:
+          - generic [ref=e172]: 即时状态
+          - generic [ref=e173]:
+            - generic [ref=e174]:
+              - generic [ref=e175]: AI 状态
+              - generic [ref=e176]: 活跃
+            - generic [ref=e177]: 当前活跃对话
+            - generic [ref=e178]:
+              - generic [ref=e179]: 无活跃对话
+              - generic [ref=e181]: "预设:"
+              - button "默认预设" [ref=e182] [cursor=pointer]
+          - generic [ref=e183]:
+            - generic [ref=e184]:
+              - generic [ref=e185]: API 状态
+              - generic [ref=e186]: 未配置
+            - generic [ref=e187]: 请在设置中配置 API Key 以启用 AI 对话。
+  - generic:
+    - generic [ref=e205]:
+      - banner [ref=e206]:
+        - img [ref=e208]
+        - generic [ref=e210]:
+          - generic [ref=e211]: 规章阅读器
+          - generic [ref=e212]: 浏览已发布的规章制度与申请表格
+        - button "关闭" [ref=e213] [cursor=pointer]:
+          - img [ref=e214]
+      - generic [ref=e217]:
+        - generic [ref=e218]:
+          - button "规章文档 已发布的校规与社团守则" [ref=e219] [cursor=pointer]:
+            - text: 规章文档
+            - generic [ref=e220]: 已发布的校规与社团守则
+          - button "申请表 可填写的各类申请表格" [ref=e221] [cursor=pointer]:
+            - text: 申请表
+            - generic [ref=e222]: 可填写的各类申请表格
+        - generic [ref=e223]:
+          - generic [ref=e266]:
+            - generic [ref=e267]:
+              - generic [ref=e268]:
+                - generic [ref=e269]: 部活加入申请表
+                - generic [ref=e270]: CLUB_JOIN
+                - generic [ref=e271]: v2.1
+              - button "填写此表" [active] [ref=e272] [cursor=pointer]:
+                - img [ref=e273]
+                - generic [ref=e275]: 填写此表
+            - generic [ref=e276]: 申请加入新部活时使用，需由原部长（如有）与学生会双重审批。 · 有效期 7 天 · 9 字段 · 3 审批步骤
+            - generic [ref=e277]:
+              - generic [ref=e278]: 审批流程
+              - generic [ref=e279]:
+                - generic [ref=e281]:
+                  - text: 1. 原部长审查
+                  - text: "审批人: 原所属部长（如不存在则跳过）"
+                - generic [ref=e282]:
+                  - img [ref=e283]
+                  - generic [ref=e285]:
+                    - text: 2. 目标社团审查表格合规性并组织面试
+                    - text: "审批人: 目标社团相关人员"
+                - generic [ref=e286]:
+                  - img [ref=e287]
+                  - generic [ref=e289]:
+                    - text: 3. 学生会备案
+                    - text: "审批人: 学生会会长 / 书记"
+            - generic [ref=e290]:
+              - generic [ref=e291]: 表格字段
+              - generic [ref=e292]:
+                - generic [ref=e293]: 基本信息
+                - generic [ref=e294]:
+                  - generic [ref=e295]: "*"
+                  - generic [ref=e296]: 申请人姓名
+                  - generic [ref=e297]: · select
+                - generic [ref=e298]:
+                  - generic [ref=e299]: "*"
+                  - generic [ref=e300]: 所在班级
+                  - generic [ref=e301]: · text
+                - generic [ref=e302]:
+                  - generic [ref=e303]: "*"
+                  - generic [ref=e304]: 申请日期
+                  - generic [ref=e305]: · date
+              - generic [ref=e306]:
+                - generic [ref=e307]: 申请内容
+                - generic [ref=e308]:
+                  - generic [ref=e309]: "*"
+                  - generic [ref=e310]: 欲加入部活
+                  - generic [ref=e311]: · select
+                - generic [ref=e312]:
+                  - generic [ref=e313]: 原部活（如有）
+                  - generic [ref=e314]: · select
+                - generic [ref=e315]:
+                  - generic [ref=e316]: "*"
+                  - generic [ref=e317]: 申请理由
+                  - generic [ref=e318]: · textarea ≥30字
+                - generic [ref=e319]:
+                  - generic [ref=e320]: 是否参与本期合本
+                  - generic [ref=e321]: · radio [是/否/视情况而定]
+              - generic [ref=e322]:
+                - generic [ref=e323]: 附加
+                - generic [ref=e324]:
+                  - generic [ref=e325]: 过往作品 / 实绩
+                  - generic [ref=e326]: · textarea
+                - generic [ref=e327]:
+                  - generic [ref=e328]: "*"
+                  - generic [ref=e329]: 本人签字
+                  - generic [ref=e330]: · text
+          - generic [ref=e331]:
+            - generic [ref=e332]:
+              - generic [ref=e333]:
+                - generic [ref=e334]: 钟楼天台通行申请
+                - generic [ref=e335]: ROOFTOP_PASS
+                - generic [ref=e336]: v1.0
+              - button "填写此表" [ref=e337] [cursor=pointer]:
+                - img [ref=e338]
+                - generic [ref=e340]: 填写此表
+            - generic [ref=e341]: 夜间或非授权时段进入钟楼天台所必需的临时通行证申请。 · 有效期 1 天 · 5 字段 · 2 审批步骤
+            - generic [ref=e342]:
+              - generic [ref=e343]: 审批流程
+              - generic [ref=e344]:
+                - generic [ref=e346]:
+                  - text: 1. 风纪委员会审查
+                  - text: "审批人: 风纪委员长"
+                - generic [ref=e347]:
+                  - img [ref=e348]
+                  - generic [ref=e350]:
+                    - text: 2. 学生会签发通行证
+                    - text: "审批人: 学生会会长"
+            - generic [ref=e351]:
+              - generic [ref=e352]: 表格字段
+              - generic [ref=e353]:
+                - generic [ref=e354]: 基本信息
+                - generic [ref=e355]:
+                  - generic [ref=e356]: "*"
+                  - generic [ref=e357]: 姓名
+                  - generic [ref=e358]: · select
+                - generic [ref=e359]:
+                  - generic [ref=e360]: "*"
+                  - generic [ref=e361]: 通行起始时间
+                  - generic [ref=e362]: · datetime
+                - generic [ref=e363]:
+                  - generic [ref=e364]: "*"
+                  - generic [ref=e365]: 通行截止时间
+                  - generic [ref=e366]: · datetime
+              - generic [ref=e367]:
+                - generic [ref=e368]: 事由
+                - generic [ref=e369]:
+                  - generic [ref=e370]: "*"
+                  - generic [ref=e371]: 前往原因
+                  - generic [ref=e372]: · radio [观星/取景/部活活动/私人事务/其他]
+                - generic [ref=e373]:
+                  - generic [ref=e374]: "*"
+                  - generic [ref=e375]: 具体说明
+                  - generic [ref=e376]: · textarea ≥20字
+    - generic [ref=e378]:
+      - banner [ref=e379]:
+        - img [ref=e381]
+        - generic [ref=e383]:
+          - generic [ref=e384]: 填写：部活加入申请表
+          - generic [ref=e385]: CLUB_JOIN · 有效期 7 天
+        - button "关闭" [ref=e386] [cursor=pointer]:
+          - img [ref=e387]
+      - generic [ref=e390]:
+        - generic [ref=e391]:
+          - generic [ref=e392]: 基本信息
+          - generic [ref=e393]:
+            - generic [ref=e394]: 申请人姓名 *
+            - combobox [ref=e395]
+          - generic [ref=e396]:
+            - generic [ref=e397]: 所在班级 *
+            - textbox "如「高二 三组」" [ref=e398]
+          - generic [ref=e399]:
+            - generic [ref=e400]: 申请日期 *
+            - textbox [ref=e401]
+        - generic [ref=e402]:
+          - generic [ref=e403]: 申请内容
+          - generic [ref=e404]:
+            - generic [ref=e405]: 欲加入部活 *
+            - combobox [ref=e406]
+          - generic [ref=e407]:
+            - generic [ref=e408]: 原部活（如有）
+            - combobox [ref=e409]
+          - generic [ref=e410]:
+            - generic [ref=e411]: 申请理由 *
+            - textbox "请用至少 30 字阐述加入意愿与可贡献之处。" [ref=e412]
+          - generic [ref=e413]:
+            - generic [ref=e414]: 是否参与本期合本
+            - generic [ref=e415]:
+              - generic [ref=e416] [cursor=pointer]:
+                - radio "是" [ref=e417]
+                - text: 是
+              - generic [ref=e418] [cursor=pointer]:
+                - radio "否" [ref=e419]
+                - text: 否
+              - generic [ref=e420] [cursor=pointer]:
+                - radio "视情况而定" [ref=e421]
+                - text: 视情况而定
+        - generic [ref=e422]:
+          - generic [ref=e423]: 附加
+          - generic [ref=e424]:
+            - generic [ref=e425]: 过往作品 / 实绩
+            - textbox "可粘贴链接或简要描述。" [ref=e426]
+          - generic [ref=e427]:
+            - generic [ref=e428]: 本人签字 *
+            - textbox "请输入您的签名" [ref=e429]
+        - generic [ref=e430]:
+          - button "取消" [ref=e431] [cursor=pointer]
+          - button "提交申请" [ref=e432] [cursor=pointer]:
+            - img [ref=e433]
+            - generic [ref=e435]: 提交申请

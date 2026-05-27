@@ -1,0 +1,133 @@
+- generic [ref=e2]:
+  - complementary "主导航" [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e7]
+        - generic [ref=e10]:
+          - generic [ref=e11]: 樱栖学园
+          - generic [ref=e12]: Sakura-su · Chronicle
+      - button "折叠侧边栏" [ref=e13] [cursor=pointer]:
+        - img [ref=e14]
+    - generic [ref=e16]:
+      - generic [ref=e17]: 世界档案
+      - list [ref=e18]:
+        - button "设施名录 学园建筑与场所 12" [ref=e19] [cursor=pointer]:
+          - img [ref=e21]
+          - generic [ref=e23]:
+            - generic [ref=e24]: 设施名录
+            - generic [ref=e25]: 学园建筑与场所
+          - generic [ref=e26]: "12"
+        - button "组织名录 部活、委员会与社团 8" [ref=e27] [cursor=pointer]:
+          - img [ref=e29]
+          - generic [ref=e31]:
+            - generic [ref=e32]: 组织名录
+            - generic [ref=e33]: 部活、委员会与社团
+          - generic [ref=e34]: "8"
+        - button "花名册 人物全息档案 23" [ref=e35] [cursor=pointer]:
+          - img [ref=e37]
+          - generic [ref=e39]:
+            - generic [ref=e40]: 花名册
+            - generic [ref=e41]: 人物全息档案
+          - generic [ref=e42]: "23"
+        - button "课程列表 公共 · 社团 · 特殊 11" [ref=e43] [cursor=pointer]:
+          - img [ref=e45]
+          - generic [ref=e48]:
+            - generic [ref=e49]: 课程列表
+            - generic [ref=e50]: 公共 · 社团 · 特殊
+          - generic [ref=e51]: "11"
+    - generic [ref=e52]:
+      - generic [ref=e53]: 规则与流程
+      - list [ref=e54]:
+        - button "规章文档制作器 树形大纲 · 动态注入" [ref=e55] [cursor=pointer]:
+          - img [ref=e57]
+          - generic [ref=e59]:
+            - generic [ref=e60]: 规章文档制作器
+            - generic [ref=e61]: 树形大纲 · 动态注入
+        - button "申请表制作器 可视化表单 · 审批流程" [ref=e62] [cursor=pointer]:
+          - img [ref=e64]
+          - generic [ref=e66]:
+            - generic [ref=e67]: 申请表制作器
+            - generic [ref=e68]: 可视化表单 · 审批流程
+    - generic [ref=e69]:
+      - generic [ref=e70]: 叙事进度
+      - generic [ref=e71]:
+        - generic [ref=e72]:
+          - generic [ref=e73]: 学期
+          - generic [ref=e74]: 第二学期 · 第3周
+        - generic [ref=e75]:
+          - generic [ref=e76]: 日期
+          - generic [ref=e77]: 2026年5月26日（周二）
+        - generic [ref=e78]:
+          - generic [ref=e79]: 天气
+          - generic [ref=e80]: 晴 · 微风
+        - generic [ref=e84]:
+          - generic [ref=e85]: 主线进度
+          - generic [ref=e86]: 64%
+    - generic [ref=e87]:
+      - button [ref=e88] [cursor=pointer]:
+        - img [ref=e89]
+      - button [ref=e92] [cursor=pointer]:
+        - img [ref=e93]
+      - button [ref=e95] [cursor=pointer]:
+        - img [ref=e96]
+      - button [ref=e98] [cursor=pointer]:
+        - img [ref=e99]
+      - generic [ref=e103]: 连线中
+  - main [ref=e104]:
+    - generic [ref=e105]:
+      - generic [ref=e106]:
+        - button "展开侧边栏" [ref=e107] [cursor=pointer]:
+          - img [ref=e108]
+        - generic [ref=e110]: AI
+      - generic [ref=e111]:
+        - button "上下文" [active] [ref=e112] [cursor=pointer]:
+          - img [ref=e113]
+          - generic [ref=e115]: 上下文
+        - button [ref=e116] [cursor=pointer]:
+          - img [ref=e117]
+    - generic [ref=e120]:
+      - generic [ref=e194]: 序章 · 旧馆图书室
+      - generic [ref=e196]:
+        - emphasis [ref=e197]: 放学后的旧馆图书室，木质百叶斜切下午的光。
+        - text: 你与会长之间隔着一张矮书桌，她正翻阅一份社团申请。
+      - generic [ref=e199]:
+        - paragraph [ref=e200]: 「钟楼天台通行这一栏，你写得有些含糊呢。」
+        - paragraph [ref=e201]: 她抬眼看你，指尖点在你递交的申请书上。（窗外有一只黄莺在啼。）
+        - generic [ref=e202]:
+          - generic [ref=e203]: 规章 · 校规 §3.7
+          - generic [ref=e204]: 夜间登台需注明同行者及具体事由。三人以上同行须由风纪委另出具陪同记录。
+    - generic [ref=e136]:
+      - textbox "在此书写……（Shift+Enter 换行 · Enter 发送）" [ref=e138]
+      - button "发出" [ref=e139] [cursor=pointer]:
+        - generic [ref=e140]: 发出
+        - img [ref=e141]
+  - complementary "上下文":
+    - generic:
+      - generic:
+        - img
+        - generic: 当前情境
+      - button "收起":
+        - img
+    - generic:
+      - generic:
+        - generic:
+          - text: 激活条目
+          - generic: 0 条 | 0 本书
+        - generic:
+          - generic: 暂无激活条目。在「世界书」管理中启用。
+      - generic:
+        - generic: 即时状态
+        - generic:
+          - generic:
+            - generic: AI 状态
+            - generic: 活跃
+          - generic: 当前活跃对话
+          - generic:
+            - generic: 无活跃对话
+            - generic: "预设:"
+            - button "默认预设"
+        - generic:
+          - generic:
+            - generic: API 状态
+            - generic: 未配置
+          - generic: 请在设置中配置 API Key 以启用 AI 对话。

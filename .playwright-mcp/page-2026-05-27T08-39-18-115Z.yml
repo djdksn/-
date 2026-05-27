@@ -1,0 +1,224 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "主导航" [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e7]
+          - generic [ref=e10]:
+            - generic [ref=e11]: 樱栖学园
+            - generic [ref=e12]: Sakura-su · Chronicle
+        - button "折叠侧边栏" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+      - generic [ref=e16]:
+        - generic [ref=e17]: 世界档案
+        - list [ref=e18]:
+          - button "设施名录 学园建筑与场所 12" [ref=e19] [cursor=pointer]:
+            - img [ref=e21]
+            - generic [ref=e23]:
+              - generic [ref=e24]: 设施名录
+              - generic [ref=e25]: 学园建筑与场所
+            - generic [ref=e26]: "12"
+          - button "组织名录 部活、委员会与社团 8" [ref=e27] [cursor=pointer]:
+            - img [ref=e29]
+            - generic [ref=e31]:
+              - generic [ref=e32]: 组织名录
+              - generic [ref=e33]: 部活、委员会与社团
+            - generic [ref=e34]: "8"
+          - button "花名册 人物全息档案 23" [ref=e35] [cursor=pointer]:
+            - img [ref=e37]
+            - generic [ref=e39]:
+              - generic [ref=e40]: 花名册
+              - generic [ref=e41]: 人物全息档案
+            - generic [ref=e42]: "23"
+          - button "课程列表 公共 · 社团 · 特殊 11" [ref=e43] [cursor=pointer]:
+            - img [ref=e45]
+            - generic [ref=e48]:
+              - generic [ref=e49]: 课程列表
+              - generic [ref=e50]: 公共 · 社团 · 特殊
+            - generic [ref=e51]: "11"
+      - generic [ref=e52]:
+        - generic [ref=e53]: 规则与流程
+        - list [ref=e54]:
+          - button "规章文档制作器 树形大纲 · 动态注入" [ref=e55] [cursor=pointer]:
+            - img [ref=e57]
+            - generic [ref=e59]:
+              - generic [ref=e60]: 规章文档制作器
+              - generic [ref=e61]: 树形大纲 · 动态注入
+          - button "申请表制作器 可视化表单 · 审批流程" [ref=e62] [cursor=pointer]:
+            - img [ref=e64]
+            - generic [ref=e66]:
+              - generic [ref=e67]: 申请表制作器
+              - generic [ref=e68]: 可视化表单 · 审批流程
+      - generic [ref=e69]:
+        - generic [ref=e70]: 叙事进度
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e73]: 学期
+            - generic [ref=e74]: 第二学期 · 第3周
+          - generic [ref=e75]:
+            - generic [ref=e76]: 日期
+            - generic [ref=e77]: 2026年5月26日（周二）
+          - generic [ref=e78]:
+            - generic [ref=e79]: 天气
+            - generic [ref=e80]: 晴 · 微风
+          - generic [ref=e84]:
+            - generic [ref=e85]: 主线进度
+            - generic [ref=e86]: 64%
+      - generic [ref=e87]:
+        - button [ref=e88] [cursor=pointer]:
+          - img [ref=e89]
+        - button [ref=e92] [cursor=pointer]:
+          - img [ref=e93]
+        - button [ref=e95] [cursor=pointer]:
+          - img [ref=e96]
+        - button [ref=e98] [cursor=pointer]:
+          - img [ref=e99]
+        - generic [ref=e103]: 连线中
+    - main [ref=e104]:
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - button "展开侧边栏" [ref=e107] [cursor=pointer]:
+            - img [ref=e108]
+          - generic [ref=e110]:
+            - generic [ref=e111]: 场景
+            - generic [ref=e113]: 旧馆图书室 · 西窗席
+            - generic [ref=e114]: 放学后 16:42
+        - generic [ref=e118]: 阳光斜照 · 25℃
+        - generic [ref=e119]:
+          - button "上下文 7" [ref=e120] [cursor=pointer]:
+            - img [ref=e121]
+            - generic [ref=e123]: 上下文
+            - generic [ref=e124]: "7"
+          - button "动作" [ref=e125] [cursor=pointer]:
+            - img [ref=e126]
+            - generic [ref=e128]: 动作
+          - button [ref=e129] [cursor=pointer]:
+            - img [ref=e130]
+      - generic [ref=e132]:
+        - generic [ref=e133]:
+          - generic [ref=e1326]: 序章 · 旧馆图书室
+          - generic [ref=e1328]:
+            - emphasis [ref=e1329]: 放学后的旧馆图书室，木质百叶斜切下午的光。
+            - text: 你与会长之间隔着一张矮书桌，她正翻阅一份社团申请。
+          - generic [ref=e1330]:
+            - generic [ref=e1331]: 千
+            - generic [ref=e1332]:
+              - generic [ref=e1333]:
+                - generic [ref=e1334]: 一之濑 千夏
+                - generic [ref=e1335]: · 学生会会长 · 高三 一组
+                - generic [ref=e1336]: 16:42
+              - generic [ref=e1337]:
+                - paragraph [ref=e1338]: 「钟楼天台通行这一栏，你写得有些含糊呢。」
+                - paragraph [ref=e1339]: 她抬眼看你，指尖点在你递交的申请书上。（窗外有一只黄莺在啼。）
+                - generic [ref=e1340]:
+                  - generic [ref=e1341]: 规章 · 校规 §3.7
+                  - generic [ref=e1342]: 夜间登台需注明同行者及具体事由。三人以上同行须由风纪委另出具陪同记录。
+                - generic [ref=e1343]:
+                  - button "解释一下事由" [ref=e1344] [cursor=pointer]:
+                    - img [ref=e1345]
+                    - generic [ref=e1349]: 解释一下事由
+                  - button "修改申请" [ref=e1350] [cursor=pointer]:
+                    - img [ref=e1351]
+                    - generic [ref=e1353]: 修改申请
+                  - button "保持沉默" [ref=e1354] [cursor=pointer]:
+                    - img [ref=e1355]
+                    - generic [ref=e1358]: 保持沉默
+        - generic "即时建议" [ref=e169]:
+          - generic [ref=e170]: 灵感
+          - button "递上一杯麦茶" [ref=e171] [cursor=pointer]
+          - button "主动接过文件" [ref=e172] [cursor=pointer]
+          - button "继续读手中的诗" [ref=e173] [cursor=pointer]
+          - button "把话题引向窗外" [ref=e174] [cursor=pointer]
+      - generic [ref=e176]:
+        - generic [ref=e177]:
+          - tablist "叙述模式" [ref=e178]:
+            - tab "对话" [selected] [ref=e179] [cursor=pointer]:
+              - img [ref=e180]
+              - generic [ref=e182]: 对话
+            - tab "动作" [ref=e183] [cursor=pointer]:
+              - img [ref=e184]
+              - generic [ref=e186]: 动作
+            - tab "内心" [ref=e187] [cursor=pointer]:
+              - img [ref=e188]
+              - generic [ref=e190]: 内心
+          - generic [ref=e191]:
+            - generic [ref=e192]:
+              - img [ref=e193]
+              - generic [ref=e195]: 世界书 · 0
+            - generic [ref=e196]:
+              - img [ref=e197]
+              - generic [ref=e199]: 规章 · 校规
+            - generic [ref=e200]:
+              - img [ref=e201]
+              - generic [ref=e204]: 申请 · 2 待处理
+        - generic [ref=e205]:
+          - button "附加" [ref=e206] [cursor=pointer]:
+            - img [ref=e207]
+          - generic [ref=e209]:
+            - generic [ref=e210]: 说
+            - textbox "向旧馆图书室的人或物说点什么……（Shift+Enter 换行 · Enter 发送）" [ref=e211]
+            - generic [ref=e212]:
+              - generic [ref=e213]: "0"
+              - generic [ref=e215]: 主视角
+          - button [ref=e216] [cursor=pointer]:
+            - img [ref=e217]
+          - button "发出" [ref=e220] [cursor=pointer]:
+            - generic [ref=e221]: 发出
+            - img [ref=e222]
+    - complementary "上下文" [ref=e224]:
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - img [ref=e227]
+          - generic [ref=e230]: 当前情境
+        - button "收起" [ref=e231] [cursor=pointer]:
+          - img [ref=e232]
+      - generic [ref=e234]:
+        - generic [ref=e1359]:
+          - generic [ref=e1360]:
+            - text: 激活条目
+            - generic [ref=e1361]: 0 条 | 0 本书
+          - generic [ref=e1363]: 暂无激活条目。在「世界书」管理中启用。
+        - generic [ref=e1364]:
+          - generic [ref=e1365]: 即时状态
+          - generic [ref=e1366]:
+            - generic [ref=e1367]:
+              - generic [ref=e1368]: AI 状态
+              - generic [ref=e1369]: 活跃
+            - generic [ref=e1370]: 当前活跃对话
+            - generic [ref=e1371]:
+              - generic [ref=e1372]: 无活跃对话
+              - generic [ref=e1374]: "预设:"
+              - button "默认预设" [ref=e1375] [cursor=pointer]
+          - generic [ref=e1376]:
+            - generic [ref=e1377]:
+              - generic [ref=e1378]: API 状态
+              - generic [ref=e1379]: 未配置
+            - generic [ref=e1380]: 请在设置中配置 API Key 以启用 AI 对话。
+  - generic [ref=e1382]:
+    - banner [ref=e1383]:
+      - generic [ref=e1384]:
+        - generic [ref=e1385]: 预设管理
+        - generic [ref=e1386]: 共 2 个
+      - button "关闭" [ref=e1387] [cursor=pointer]:
+        - img [ref=e1388]
+    - generic [ref=e1390]:
+      - generic [ref=e1391]:
+        - generic [ref=e1392]:
+          - generic [ref=e1393]:
+            - strong [ref=e1394]: TGbreak V3.0.1
+            - text: "model: gpt-4-turbo"
+          - generic [ref=e1395]:
+            - button "编辑" [ref=e1396] [cursor=pointer]
+            - button "设为默认" [ref=e1397] [cursor=pointer]
+            - button "删除" [ref=e1398] [cursor=pointer]
+        - generic [ref=e1399]:
+          - generic [ref=e1400]:
+            - strong [ref=e1401]: 默认预设
+            - text: "model: gpt-3.5-turbo"
+          - generic [ref=e1402]:
+            - button "编辑" [ref=e1403] [cursor=pointer]
+            - button "取消" [ref=e1404] [cursor=pointer]
+            - button "删除" [ref=e1405] [cursor=pointer]
+      - generic [ref=e1406]:
+        - button "+ 新建预设" [ref=e1407] [cursor=pointer]
+        - button "导入 JSON" [ref=e1408] [cursor=pointer]

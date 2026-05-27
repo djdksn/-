@@ -1,0 +1,139 @@
+{
+  "version": 6,
+  "exportedAt": 1779852728818,
+  "lorebooks": [],
+  "presets": [
+    {
+      "name": "默认预设",
+      "description": "SillyTavern 兼容的默认 OpenAI 预设",
+      "settings": {
+        "temp_openai": 0.8,
+        "freq_pen_openai": 0,
+        "pres_pen_openai": 0,
+        "top_p_openai": 0.9,
+        "top_k_openai": 0,
+        "top_a_openai": 0,
+        "min_p_openai": 0,
+        "repetition_penalty_openai": 1,
+        "openai_max_context": 4096,
+        "openai_max_tokens": 2048,
+        "stream_openai": false,
+        "max_context_unlocked": false,
+        "chat_completion_source": "openai",
+        "openai_model": "gpt-3.5-turbo",
+        "main": "Write {{char}}'s next reply in a fictional chat between {{char}} and {{user}}.",
+        "nsfw": "",
+        "jailbreak": "",
+        "enhanceDefinitions": "",
+        "impersonation_prompt": "",
+        "new_chat_prompt": "",
+        "new_group_chat_prompt": "",
+        "new_example_chat_prompt": "",
+        "continue_nudge_prompt": "",
+        "wi_format": "",
+        "group_nudge_prompt": "",
+        "scenario_format": "",
+        "personality_format": "",
+        "prompts": [],
+        "prompt_order": [
+          {
+            "identifier": "main",
+            "name": "Main Prompt",
+            "role": "system",
+            "enabled": true
+          },
+          {
+            "identifier": "worldInfoBefore",
+            "name": "World Info (Before)",
+            "role": "system",
+            "enabled": true
+          },
+          {
+            "identifier": "charDescription",
+            "name": "Character Description",
+            "role": "system",
+            "enabled": true
+          },
+          {
+            "identifier": "charPersonality",
+            "name": "Character Personality",
+            "role": "system",
+            "enabled": true
+          },
+          {
+            "identifier": "scenario",
+            "name": "Scenario",
+            "role": "system",
+            "enabled": true
+          },
+          {
+            "identifier": "personaDescription",
+            "name": "Persona Description",
+            "role": "system",
+            "enabled": true
+          },
+          {
+            "identifier": "dialogueExamples",
+            "name": "Dialogue Examples",
+            "role": "system",
+            "enabled": true
+          },
+          {
+            "identifier": "chatHistory",
+            "name": "Chat History",
+            "role": "system",
+            "enabled": true
+          },
+          {
+            "identifier": "worldInfoAfter",
+            "name": "World Info (After)",
+            "role": "system",
+            "enabled": true
+          },
+          {
+            "identifier": "groupNudge",
+            "name": "Group Nudge",
+            "role": "system",
+            "enabled": true
+          }
+        ]
+      },
+      "id": "6feee44e-c652-47b8-92d6-6e92913c8a83",
+      "createdAt": 1779852616869,
+      "updatedAt": 1779852616869
+    }
+  ],
+  "settings": [
+    {
+      "api": {
+        "baseUrl": "https://api.openai.com/v1",
+        "apiKey": "",
+        "model": "gpt-3.5-turbo",
+        "timeout": 60000
+      },
+      "apiMode": "single",
+      "activePresetId": null,
+      "activeLorebookIds": [],
+      "userName": "用户",
+      "characterName": "AI",
+      "theme": "dark",
+      "language": "zh",
+      "autoSave": true,
+      "autoSaveInterval": 30,
+      "uiMode": "game",
+      "customTags": [
+        "maintext",
+        "option",
+        "sum",
+        "vars",
+        "thinking",
+        "think"
+      ],
+      "formatPromptTemplate": "你必须严格按照以下 XML 标签格式输出回复，不要使用 Markdown 包裹：\n<thinking>……</thinking>     ← 可选；内部任何字符都视为思考过程，不被解析\n<maintext>……</maintext>     ← 必填；本回合的剧情正文，可多段，保留换行\n<option>选项 A\n选项 B\n选项 C</option>              ← 必填；至少 2 项，每行一个\n<sum>……</sum>               ← 必填；本回合一句话总结\n<vars>{ \"金钱\": +10, \"HP\": 38 }</vars>   ← 选填；JSON 深合并",
+      "thinkingDisplay": "fold",
+      "id": "settings"
+    }
+  ],
+  "chats": [],
+  "regexScripts": []
+}

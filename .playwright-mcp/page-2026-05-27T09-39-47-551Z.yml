@@ -1,0 +1,202 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "主导航" [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img [ref=e7]
+          - generic [ref=e10]:
+            - generic [ref=e11]: 樱栖学园
+            - generic [ref=e12]: Sakura-su · Chronicle
+        - button "折叠侧边栏" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+      - generic [ref=e16]:
+        - generic [ref=e17]: 世界档案
+        - list [ref=e18]:
+          - button "设施名录 学园建筑与场所 12" [ref=e19] [cursor=pointer]:
+            - img [ref=e21]
+            - generic [ref=e23]:
+              - generic [ref=e24]: 设施名录
+              - generic [ref=e25]: 学园建筑与场所
+            - generic [ref=e26]: "12"
+          - button "组织名录 部活、委员会与社团 8" [ref=e27] [cursor=pointer]:
+            - img [ref=e29]
+            - generic [ref=e31]:
+              - generic [ref=e32]: 组织名录
+              - generic [ref=e33]: 部活、委员会与社团
+            - generic [ref=e34]: "8"
+          - button "花名册 人物全息档案 23" [ref=e35] [cursor=pointer]:
+            - img [ref=e37]
+            - generic [ref=e39]:
+              - generic [ref=e40]: 花名册
+              - generic [ref=e41]: 人物全息档案
+            - generic [ref=e42]: "23"
+          - button "课程列表 公共 · 社团 · 特殊 11" [ref=e43] [cursor=pointer]:
+            - img [ref=e45]
+            - generic [ref=e48]:
+              - generic [ref=e49]: 课程列表
+              - generic [ref=e50]: 公共 · 社团 · 特殊
+            - generic [ref=e51]: "11"
+      - generic [ref=e52]:
+        - generic [ref=e53]: 规则与流程
+        - list [ref=e54]:
+          - button "规章文档制作器 树形大纲 · 动态注入" [ref=e55] [cursor=pointer]:
+            - img [ref=e57]
+            - generic [ref=e59]:
+              - generic [ref=e60]: 规章文档制作器
+              - generic [ref=e61]: 树形大纲 · 动态注入
+          - button "申请表制作器 可视化表单 · 审批流程" [ref=e62] [cursor=pointer]:
+            - img [ref=e64]
+            - generic [ref=e66]:
+              - generic [ref=e67]: 申请表制作器
+              - generic [ref=e68]: 可视化表单 · 审批流程
+        - list [ref=e69]:
+          - button "规章阅读器 已发布规章 · 表格填写" [active] [ref=e70] [cursor=pointer]:
+            - img [ref=e72]
+            - generic [ref=e74]:
+              - generic [ref=e75]: 规章阅读器
+              - generic [ref=e76]: 已发布规章 · 表格填写
+          - button "待办审批 我的申请 · 待我批复" [ref=e77] [cursor=pointer]:
+            - img [ref=e79]
+            - generic [ref=e81]:
+              - generic [ref=e82]: 待办审批
+              - generic [ref=e83]: 我的申请 · 待我批复
+      - generic [ref=e84]:
+        - generic [ref=e85]: 叙事进度
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - generic [ref=e88]: 学期
+            - generic [ref=e89]: 第二学期 · 第3周
+          - generic [ref=e90]:
+            - generic [ref=e91]: 日期
+            - generic [ref=e92]: 2026年5月26日（周二）
+          - generic [ref=e93]:
+            - generic [ref=e94]: 天气
+            - generic [ref=e95]: 晴 · 微风
+      - generic [ref=e96]:
+        - button [ref=e97] [cursor=pointer]:
+          - img [ref=e98]
+        - button [ref=e101] [cursor=pointer]:
+          - img [ref=e102]
+        - button [ref=e104] [cursor=pointer]:
+          - img [ref=e105]
+        - button [ref=e107] [cursor=pointer]:
+          - img [ref=e108]
+        - button [ref=e110] [cursor=pointer]:
+          - img [ref=e111]
+        - generic [ref=e115]: 连线中
+    - main [ref=e116]:
+      - generic [ref=e117]:
+        - generic [ref=e118]:
+          - button "展开侧边栏" [ref=e119] [cursor=pointer]:
+            - img [ref=e120]
+          - generic [ref=e122]: AI
+        - generic [ref=e123]:
+          - button "上下文" [ref=e124] [cursor=pointer]:
+            - img [ref=e125]
+            - generic [ref=e127]: 上下文
+          - button [ref=e128] [cursor=pointer]:
+            - img [ref=e129]
+      - generic [ref=e132]:
+        - generic [ref=e135]: 序章 · 旧馆图书室
+        - generic [ref=e137]:
+          - emphasis [ref=e138]: 放学后的旧馆图书室，木质百叶斜切下午的光。
+          - text: 你与会长之间隔着一张矮书桌，她正翻阅一份社团申请。
+        - generic [ref=e140]:
+          - paragraph [ref=e141]: 「钟楼天台通行这一栏，你写得有些含糊呢。」
+          - paragraph [ref=e142]: 她抬眼看你，指尖点在你递交的申请书上。（窗外有一只黄莺在啼。）
+          - generic [ref=e143]:
+            - generic [ref=e144]: 规章 · 校规 §3.7
+            - generic [ref=e145]: 夜间登台需注明同行者及具体事由。三人以上同行须由风纪委另出具陪同记录。
+      - generic [ref=e148]:
+        - textbox "在此书写……（Shift+Enter 换行 · Enter 发送）" [ref=e150]
+        - button "发出" [ref=e151] [cursor=pointer]:
+          - generic [ref=e152]: 发出
+          - img [ref=e153]
+    - complementary "上下文" [ref=e155]:
+      - generic [ref=e156]:
+        - generic [ref=e157]:
+          - img [ref=e158]
+          - generic [ref=e161]: 当前情境
+        - button "收起" [ref=e162] [cursor=pointer]:
+          - img [ref=e163]
+      - generic [ref=e165]:
+        - generic [ref=e166]:
+          - generic [ref=e167]:
+            - text: 激活条目
+            - generic [ref=e168]: 0 条 | 0 本书
+          - generic [ref=e170]: 暂无激活条目。在「世界书」管理中启用。
+        - generic [ref=e171]:
+          - generic [ref=e172]: 即时状态
+          - generic [ref=e173]:
+            - generic [ref=e174]:
+              - generic [ref=e175]: AI 状态
+              - generic [ref=e176]: 活跃
+            - generic [ref=e177]: 当前活跃对话
+            - generic [ref=e178]:
+              - generic [ref=e179]: 无活跃对话
+              - generic [ref=e181]: "预设:"
+              - button "默认预设" [ref=e182] [cursor=pointer]
+          - generic [ref=e183]:
+            - generic [ref=e184]:
+              - generic [ref=e185]: API 状态
+              - generic [ref=e186]: 未配置
+            - generic [ref=e187]: 请在设置中配置 API Key 以启用 AI 对话。
+  - generic [ref=e205]:
+    - banner [ref=e206]:
+      - img [ref=e208]
+      - generic [ref=e210]:
+        - generic [ref=e211]: 规章阅读器
+        - generic [ref=e212]: 浏览已发布的规章制度与申请表格
+      - button "关闭" [ref=e213] [cursor=pointer]:
+        - img [ref=e214]
+    - generic [ref=e217]:
+      - generic [ref=e218]:
+        - button "规章文档 已发布的校规与社团守则" [ref=e219] [cursor=pointer]:
+          - text: 规章文档
+          - generic [ref=e220]: 已发布的校规与社团守则
+        - button "申请表 可填写的各类申请表格" [ref=e221] [cursor=pointer]:
+          - text: 申请表
+          - generic [ref=e222]: 可填写的各类申请表格
+      - generic [ref=e223]:
+        - generic [ref=e224]:
+          - generic [ref=e225]:
+            - generic [ref=e226]: 樱栖学园校规（节选）
+            - generic [ref=e227]: v3.2
+            - generic [ref=e228]: 常驻注入
+          - generic [ref=e229]: 学园基础行为守则，常驻注入。
+          - generic [ref=e230]:
+            - generic [ref=e231]: 校规
+            - generic [ref=e232]: 规定
+            - generic [ref=e233]: 违规
+          - generic [ref=e234]:
+            - generic [ref=e235]:
+              - generic [ref=e236]: 第一章 总则
+              - generic [ref=e237]: 本校以「自治、温柔、克己」为校训，凡入此园者皆当谨守。
+              - generic [ref=e238]: 校规未尽事宜，由学生会与风纪委员会共同议决。
+            - generic [ref=e239]:
+              - generic [ref=e240]: 第二章 仪容与衣装
+              - generic [ref=e241]: 在校期间须着规定校服。每周三可着便服日，但需遵守仪容标准。
+              - generic [ref=e242]: 不得擅自染发；校服外披穿戴需符合季节规定。
+              - generic [ref=e243]: 配饰应低调，仅允许耳钉一枚以及不超过两枚的戒指。
+            - generic [ref=e244]:
+              - generic [ref=e245]: 第三章 部活与社团
+              - generic [ref=e246]: 加入新部活须经原部活组织许可与学生会备案。
+              - generic [ref=e247]: 同时归属多组织者，不得使任一组织职责受影响。
+              - generic [ref=e248]: 部活活动费需通过学生会审批后方可使用。
+        - generic [ref=e249]:
+          - generic [ref=e250]:
+            - generic [ref=e251]: 文学部社团守则
+            - generic [ref=e252]: v1.4
+            - generic [ref=e253]: 关键词触发
+          - generic [ref=e254]: 文学部内部章程，关键词触发注入。
+          - generic [ref=e255]:
+            - generic [ref=e256]: 文学部
+            - generic [ref=e257]: 同人志
+            - generic [ref=e258]: 夜读
+          - generic [ref=e259]:
+            - generic [ref=e260]:
+              - generic [ref=e261]: 第一章 部务
+              - generic [ref=e262]: 部室钥匙由部长保管，副部长与会长各有一副。
+            - generic [ref=e263]:
+              - generic [ref=e264]: 第二章 出版
+              - generic [ref=e265]: 每年合本同人志收录稿件须经全员评议；文负责人为副部长。

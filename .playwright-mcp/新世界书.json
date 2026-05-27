@@ -1,0 +1,9 @@
+{
+  "name": "新世界书",
+  "entries": {},
+  "settings": {
+    "recursive_scanning": false,
+    "case_sensitive": false,
+    "match_whole_words": false
+  }
+}
