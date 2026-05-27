@@ -240,11 +240,29 @@
   }
   input.addEventListener('input', autoSize);
 
-  function send() {
+  async function send() {
     const v = input.value.trim();
     if (!v) {
       if (typeof GameNotify !== 'undefined') GameNotify.warn('请先写点什么', '在文字将出现之前，沉默亦是一种声音。');
       return;
+    }
+
+    // Slash command detection
+    if (v.startsWith('/') && store) {
+      input.value = '';
+      autoSize();
+      const result = await store.executeSlashCommand(v);
+      if (result.handled) {
+        if (result.output) {
+          if (typeof GameNotify !== 'undefined') {
+            GameNotify.info('命令', result.output, { duration: 3000 });
+          }
+        }
+        return;
+      }
+      // Not a recognized command — restore input and send normally
+      input.value = v;
+      autoSize();
     }
 
     if (store && store.activeChat && store.settings?.api?.apiKey) {

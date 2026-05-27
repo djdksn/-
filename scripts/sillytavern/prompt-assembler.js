@@ -4,8 +4,9 @@
 
 import { createLorebookEngine } from './lorebook-engine.js';
 import { getRegexedString, REGEX_PLACEMENT } from './regex-engine.js';
+import { renderTemplate, buildGenerateContext } from './ejs-engine.js';
 
-export function assemblePrompt(options) {
+export async function assemblePrompt(options) {
   const { userInput, history, preset, lorebooks, userName, characterName, variables, formatPrompt, regexScripts, characterTags, triggerFilter, additionalContexts } = options;
 
   const allMatchedEntries = [];
@@ -85,6 +86,14 @@ export function assemblePrompt(options) {
     return null;
   }
 
+  // Build EJS context once for all prompt items
+  const ejsExtra = buildGenerateContext({
+    chat: { id: '', name: '', messages: history, variables },
+    userName,
+    characterName,
+    userInput,
+  });
+
   const assembledMessages = [];
   let systemAccumulator = '';
   let hasChatHistory = false;
@@ -108,6 +117,9 @@ export function assemblePrompt(options) {
     let content = replaceMacros(rawContent, { userName, characterName, userInput, variables });
     if (!content.trim()) continue;
 
+    // EJS processing for this prompt item
+    content = await renderTemplate(content, ejsExtra);
+
     const role = item.role || 'system';
     if (role === 'system') {
       systemAccumulator += (systemAccumulator ? '\n\n' : '') + content;
@@ -121,7 +133,9 @@ export function assemblePrompt(options) {
   }
 
   if (formatPrompt) {
-    systemAccumulator += (systemAccumulator ? '\n\n' : '') + formatPrompt;
+    let formatted = replaceMacros(formatPrompt, { userName, characterName, userInput, variables });
+    formatted = await renderTemplate(formatted, ejsExtra);
+    systemAccumulator += (systemAccumulator ? '\n\n' : '') + formatted;
   }
 
   if (systemAccumulator) {

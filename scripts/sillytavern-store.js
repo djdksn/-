@@ -19,6 +19,9 @@ import { assemblePrompt } from './sillytavern/prompt-assembler.js';
 import { StreamTagParser } from './sillytavern/stream-parser.js';
 import { createApiRouter } from './sillytavern/api-router.js';
 import { createDefaultRegexScript, getRegexedString, REGEX_PLACEMENT } from './sillytavern/regex-engine.js';
+import { execute as executeCommand, parse as parseCommand } from './sillytavern/slash-commands.js';
+import { renderTemplate } from './sillytavern/ejs-engine.js';
+import { runTriggered } from './sillytavern/script-manager.js';
 
 class SillytavernStore {
   constructor() {
@@ -164,6 +167,22 @@ class SillytavernStore {
     const chat = this.activeChat;
     if (!chat || !this.settings) return;
 
+    // Slash command interception
+    const cmdParsed = parseCommand(userText);
+    if (cmdParsed.isCommand) {
+      const result = await executeCommand(userText, {
+        chat,
+        userName: this.settings.userName,
+        characterName: this.settings.characterName,
+        userInput: userText,
+      });
+      if (result.handled && result.output) {
+        this.showToast(result.output);
+      }
+      this._notify();
+      return;
+    }
+
     this.isSending = true;
     this._notify();
 
@@ -202,8 +221,24 @@ class SillytavernStore {
       },
     };
 
-    const assembled = assemblePrompt(promptOpts);
+    const assembled = await assemblePrompt(promptOpts);
     const { messages } = assembled;
+
+    // Store for prompt-viewer
+    this._lastMessages = messages;
+    this._lastAssembled = promptOpts;
+
+    // Trigger onSend scripts
+    try {
+      await runTriggered({
+        chat: updatedChat,
+        userName: this.settings.userName,
+        characterName: this.settings.characterName,
+        userInput: userText,
+      }, 'onSend');
+    } catch (err) {
+      console.error('[Store] Script onSend hook error:', err);
+    }
 
     // Start streaming
     const tags = this.settings.customTags ?? [...DEFAULT_TAGS];
@@ -240,13 +275,28 @@ class SillytavernStore {
       eventBuf.push(...tail);
     }
 
+    let rawContent = eventBuf
+      .filter(e => (e.type === 'tag-chunk' || e.type === 'raw') && e.tag !== 'w2g')
+      .map(e => e.chunk)
+      .join('');
+
+    // EJS post-processing on assistant reply
+    try {
+      rawContent = await renderTemplate(rawContent, {
+        chat: updatedChat,
+        msg: { id: 'assistant-temp', role: 'assistant' },
+        userName: this.settings.userName,
+        characterName: this.settings.characterName,
+        userInput: userText,
+      });
+    } catch (err) {
+      console.error('[Store] EJS post-process error:', err);
+    }
+
     const assistantMsg = {
       id: crypto.randomUUID(),
       role: 'assistant',
-      content: eventBuf
-        .filter(e => (e.type === 'tag-chunk' || e.type === 'raw') && e.tag !== 'w2g')
-        .map(e => e.chunk)
-        .join(''),
+      content: rawContent,
       timestamp: Date.now(),
       apiUsed: 'primary',
     };
@@ -258,6 +308,18 @@ class SillytavernStore {
     };
     await this._db.table('chats').put(finalChat);
     this.chats = this.chats.map(c => c.id === finalChat.id ? finalChat : c);
+
+    // Trigger onMessage scripts
+    try {
+      await runTriggered({
+        chat: finalChat,
+        userName: this.settings.userName,
+        characterName: this.settings.characterName,
+        userInput: userText,
+      }, 'onMessage');
+    } catch (err) {
+      console.error('[Store] Script onMessage hook error:', err);
+    }
     this.streamState = { thinking: '', maintext: '', options: [], sum: '', varsRaw: '', w2gRaw: '', isStreaming: false };
     this.isSending = false;
     this._notify();
@@ -437,6 +499,15 @@ class SillytavernStore {
     this.toast = msg;
     this._notify();
     setTimeout(() => { this.toast = null; this._notify(); }, 2000);
+  }
+
+  executeSlashCommand(input) {
+    return executeCommand(input, {
+      chat: this.activeChat,
+      userName: this.settings?.userName,
+      characterName: this.settings?.characterName,
+      userInput: input,
+    });
   }
 }
 
