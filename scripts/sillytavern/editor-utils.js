@@ -15,6 +15,35 @@ const ENTRY_DEFAULTS = Object.freeze({
   probability: 100,
   useProbability: false,
   addMemo: false,
+  // Timed effects
+  sticky: 0,
+  cooldown: 0,
+  delay: 0,
+  // Inclusion groups
+  group: '',
+  groupOverride: false,
+  groupWeight: 100,
+  useGroupScoring: false,
+  // Per-entry overrides
+  caseSensitive: null,       // null = use book-level
+  matchWholeWords: null,     // null = use book-level
+  // Trigger filter
+  triggerFilter: [],
+  // Scan depth
+  scanDepth: 0,              // 0 = use book-level
+  // Recursion flags
+  excludeRecursion: false,
+  preventRecursion: false,
+  // Character filter
+  characterFilter: { isExclude: false, names: [], tags: [] },
+  // Match targets
+  matchPersonaDescription: false,
+  matchCharacterDescription: false,
+  matchCharacterPersonality: false,
+  matchScenario: false,
+  // Metadata
+  automationId: '',
+  decorators: [],
 });
 
 export function createDefaultEntry() {

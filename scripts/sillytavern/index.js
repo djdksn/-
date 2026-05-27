@@ -4,6 +4,7 @@
 export * from './types.js';
 export * from './database.js';
 export * from './lorebook-engine.js';
+export * from './regex-engine.js';
 export * from './prompt-assembler.js';
 export * from './importer.js';
 export * from './stream-parser.js';

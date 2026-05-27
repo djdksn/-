@@ -3,16 +3,23 @@
  */
 
 import { createLorebookEngine } from './lorebook-engine.js';
+import { getRegexedString, REGEX_PLACEMENT } from './regex-engine.js';
 
 export function assemblePrompt(options) {
-  const { userInput, history, preset, lorebooks, userName, characterName, variables, formatPrompt } = options;
+  const { userInput, history, preset, lorebooks, userName, characterName, variables, formatPrompt, regexScripts, characterTags, triggerFilter, additionalContexts } = options;
 
   const allMatchedEntries = [];
   const scanText = userInput + ' ' + history.slice(-3).map(m => m.content).join(' ');
 
   for (const book of lorebooks) {
     const engine = createLorebookEngine(book);
-    const matches = engine.recursiveScan(scanText, 3);
+    const matches = engine.recursiveScan(scanText, 3, {
+      characterName,
+      characterTags,
+      triggerFilter,
+      additionalContexts,
+      messageIndex: history.length,
+    });
     allMatchedEntries.push(...matches);
   }
 
@@ -39,7 +46,10 @@ export function assemblePrompt(options) {
   function resolvePromptContent(identifier) {
     if (identifier === 'worldInfoBefore' || identifier === 'worldInfoAfter') {
       const content = uniqueEntries.map(e => e.entry.content).join('\n\n');
-      return content || null;
+      if (!content) return null;
+      return regexScripts && regexScripts.length > 0
+        ? getRegexedString(content, REGEX_PLACEMENT.WORLD_INFO, { scripts: regexScripts, isPrompt: true })
+        : content;
     }
     if (identifier === 'charDescription') return preset.settings.character_description || null;
     if (identifier === 'charPersonality') return preset.settings.character_personality || null;
@@ -104,7 +114,10 @@ export function assemblePrompt(options) {
     assembledMessages.push(...recentHistory);
   }
 
-  assembledMessages.push({ role: 'user', content: userInput });
+  const processedInput = regexScripts && regexScripts.length > 0
+    ? getRegexedString(userInput, REGEX_PLACEMENT.USER_INPUT, { scripts: regexScripts, isPrompt: true })
+    : userInput;
+  assembledMessages.push({ role: 'user', content: processedInput });
 
   const systemPrompt = assembledMessages
     .filter(m => m.role === 'system')

@@ -11,12 +11,14 @@ import {
   getPresets, savePreset as dbSavePreset, deletePreset as dbDeletePreset,
   getSettings, saveSettings as dbSaveSettings,
   getChats, saveChat as dbSaveChat, deleteChat as dbDeleteChat,
+  getRegexScripts, saveRegexScript as dbSaveRegexScript, deleteRegexScript as dbDeleteRegexScript, saveAllRegexScripts,
 } from './sillytavern/database.js';
 import { createDefaultLorebook } from './sillytavern/editor-utils.js';
 import { createDefaultPreset } from './sillytavern/types.js';
 import { assemblePrompt } from './sillytavern/prompt-assembler.js';
 import { StreamTagParser } from './sillytavern/stream-parser.js';
 import { createApiRouter } from './sillytavern/api-router.js';
+import { createDefaultRegexScript, getRegexedString, REGEX_PLACEMENT } from './sillytavern/regex-engine.js';
 
 class SillytavernStore {
   constructor() {
@@ -27,6 +29,7 @@ class SillytavernStore {
     this.presets = [];
     this.settings = null;
     this.chats = [];
+    this.regexScripts = [];
     this.activeChatId = null;
     this.initialized = false;
     this.isSending = false;
@@ -60,13 +63,14 @@ class SillytavernStore {
   // ========== INIT ==========
   async loadAll() {
     await initializeDatabase();
-    const [l, p, s, c] = await Promise.all([
-      getLorebooks(), getPresets(), getSettings(), getChats(),
+    const [l, p, s, c, r] = await Promise.all([
+      getLorebooks(), getPresets(), getSettings(), getChats(), getRegexScripts(),
     ]);
     this.lorebooks = l;
     this.presets = p;
     this.settings = s ? { ...DEFAULT_SETTINGS, ...s } : { ...DEFAULT_SETTINGS };
     this.chats = c;
+    this.regexScripts = r;
     if (c.length > 0) this.activeChatId = c[0].id;
     this._router = createApiRouter(this.settings.api);
     this.initialized = true;
@@ -187,6 +191,15 @@ class SillytavernStore {
       characterName: this.settings.characterName,
       variables: updatedChat.variables,
       formatPrompt: this.settings.formatPromptTemplate,
+      regexScripts: this.regexScripts,
+      characterTags: this.settings.characterTags || [],
+      triggerFilter: 'normal',
+      additionalContexts: {
+        personaDescription: activePreset.settings.persona_description,
+        characterDescription: activePreset.settings.character_description,
+        characterPersonality: activePreset.settings.character_personality,
+        scenario: activePreset.settings.scenario,
+      },
     };
 
     const assembled = assemblePrompt(promptOpts);
@@ -356,6 +369,44 @@ class SillytavernStore {
       await this.updateSettings({ activePresetId: null });
     }
     this._notify();
+  }
+
+  // ========== REGEX SCRIPT MUTATIONS ==========
+  async addRegexScript() {
+    const script = createDefaultRegexScript();
+    await dbSaveRegexScript(script);
+    this.regexScripts = [...this.regexScripts, script];
+    this._notify();
+    return script;
+  }
+
+  async updateRegexScript(script) {
+    const next = { ...script, updatedAt: Date.now() };
+    await dbSaveRegexScript(next);
+    this.regexScripts = this.regexScripts.map(s => s.id === next.id ? next : s);
+    this._notify();
+    return next;
+  }
+
+  async deleteRegexScript(id) {
+    await dbDeleteRegexScript(id);
+    this.regexScripts = this.regexScripts.filter(s => s.id !== id);
+    this._notify();
+  }
+
+  async importRegexScripts(scripts) {
+    for (const s of scripts) {
+      s.id = s.id || crypto.randomUUID();
+      s.createdAt = s.createdAt || Date.now();
+      s.updatedAt = Date.now();
+    }
+    await saveAllRegexScripts(scripts);
+    this.regexScripts = scripts;
+    this._notify();
+  }
+
+  runRegexOnText(text, placement, params = {}) {
+    return getRegexedString(text, placement, { ...params, scripts: this.regexScripts });
   }
 
   showToast(msg) {

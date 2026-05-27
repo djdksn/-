@@ -9,6 +9,7 @@ import { importLorebook, importPreset, exportLorebook, exportPreset, exportToJso
 import { createDefaultEntry, updateEntry, removeEntry } from './sillytavern/editor-utils.js';
 import { fetchModels, testConnection } from './sillytavern/api-tools.js';
 import { exportAllData, importAllData, clearAllData, saveLorebook, savePreset } from './sillytavern/database.js';
+import { openRegexManager } from './sillytavern/regex-ui.js';
 
 // ========== HELPERS ==========
 
@@ -20,8 +21,8 @@ export function openSettings() {
   const s = store.settings || DEFAULT_SETTINGS;
   let activeTab = 'primary';
 
-  const tabs = ['primary', 'secondary', 'tags', 'prompt', 'display', 'backup'];
-  const tabLabels = { primary:'主 API', secondary:'次 API', tags:'标签', prompt:'格式提示词', display:'显示', backup:'备份' };
+  const tabs = ['primary', 'secondary', 'tags', 'prompt', 'display', 'regex', 'backup'];
+  const tabLabels = { primary:'主 API', secondary:'次 API', tags:'标签', prompt:'格式提示词', display:'显示', regex:'正则', backup:'备份' };
 
   function buildTabBar() {
     return tabs.map(t =>
@@ -139,6 +140,26 @@ export function openSettings() {
       </div>`;
   }
 
+  function buildRegexTab() {
+    const count = store.regexScripts.length;
+    return `
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:13px;color:var(--fg-secondary);">管理文本替换正则，可对用户输入、AI 输出、世界信息等不同阶段应用查找替换。</span>
+          <button id="st-open-regex-mgr" style="margin-left:auto;padding:6px 14px;font-size:13px;border-radius:6px;border:1px solid var(--amber-700);background:var(--amber-800);color:var(--amber-100);cursor:pointer;">打开正则管理器 (${count})</button>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--ink-700);">
+        <div style="font-size:12px;color:var(--fg-tertiary);line-height:1.6;">
+          正则脚本在以下阶段生效：<br>
+          1. <b>用户输入</b> → 发送前替换用户消息<br>
+          2. <b>AI 输出</b> → 接收后替换 AI 回复<br>
+          3. <b>斜杠命令</b> → 处理斜杠命令参数<br>
+          4. <b>世界信息</b> → 注入 prompt 前替换世界书条目内容<br>
+          5. <b>推理</b> → 替换推理/思考内容
+        </div>
+      </div>`;
+  }
+
   function buildBackupTab() {
     return `
       <div style="display:flex;flex-direction:column;gap:16px;">
@@ -167,6 +188,7 @@ export function openSettings() {
       case 'tags': return buildTagsTab();
       case 'prompt': return buildPromptTab();
       case 'display': return buildDisplayTab();
+      case 'regex': return buildRegexTab();
       case 'backup': return buildBackupTab();
       default: return '';
     }
@@ -312,6 +334,10 @@ function wireSettingsEvents(modal) {
               </fieldset>
             </div>`;
           wireDisplayEvents(el);
+          break;
+        case 'regex':
+          content.innerHTML = buildRegexTab();
+          el.querySelector('#st-open-regex-mgr')?.addEventListener('click', () => openRegexManager());
           break;
         case 'backup':
           content.innerHTML = `
@@ -738,9 +764,37 @@ function wireEditorContent(modal) {
     const constant = document.getElementById('st-entry-constant')?.checked || false;
     const selective = document.getElementById('st-entry-selective')?.checked || false;
     const probability = parseInt(document.getElementById('st-entry-prob')?.value) || 100;
+    const useProbability = document.getElementById('st-entry-use-prob')?.checked || false;
+    // Advanced fields
+    const sticky = parseInt(document.getElementById('st-entry-sticky')?.value) || 0;
+    const cooldown = parseInt(document.getElementById('st-entry-cooldown')?.value) || 0;
+    const delay = parseInt(document.getElementById('st-entry-delay')?.value) || 0;
+    const group = document.getElementById('st-entry-group')?.value || '';
+    const groupWeight = parseInt(document.getElementById('st-entry-group-weight')?.value) || 100;
+    const groupOverride = document.getElementById('st-entry-group-override')?.checked || false;
+    const useGroupScoring = document.getElementById('st-entry-group-scoring')?.checked || false;
+    const entryCaseSensitive = document.getElementById('st-entry-case-sensitive')?.checked ? true : null;
+    const entryWholeWords = document.getElementById('st-entry-whole-words')?.checked ? true : null;
+    const excludeRecursion = document.getElementById('st-entry-exclude-recursion')?.checked || false;
+    const preventRecursion = document.getElementById('st-entry-prevent-recursion')?.checked || false;
+    const scanDepth = parseInt(document.getElementById('st-entry-scan-depth')?.value) || 0;
+    const secondaryKeys = (document.getElementById('st-entry-secondary-keys')?.value || '').split(',').map(s => s.trim()).filter(Boolean);
+    const matchPersonaDescription = document.getElementById('st-entry-match-persona')?.checked || false;
+    const matchCharacterDescription = document.getElementById('st-entry-match-char-desc')?.checked || false;
+    const matchCharacterPersonality = document.getElementById('st-entry-match-char-pers')?.checked || false;
+    const matchScenario = document.getElementById('st-entry-match-scenario')?.checked || false;
+    const automationId = document.getElementById('st-entry-automation-id')?.value || '';
 
     const nextEntries = book.entries.slice();
-    nextEntries[idx] = { ...nextEntries[idx], keys, content, position, order, constant, selective, probability, useProbability: probability < 100 };
+    nextEntries[idx] = {
+      ...nextEntries[idx], keys, content, position, order, constant, selective,
+      probability, useProbability,
+      secondaryKeys, sticky, cooldown, delay, group, groupWeight, groupOverride,
+      useGroupScoring, caseSensitive: entryCaseSensitive, matchWholeWords: entryWholeWords,
+      excludeRecursion, preventRecursion, scanDepth,
+      matchPersonaDescription, matchCharacterDescription, matchCharacterPersonality,
+      matchScenario, automationId,
+    };
     const updated = { ...book, entries: nextEntries, updatedAt: Date.now() };
     store.updateLorebook(updated);
   }
@@ -836,6 +890,67 @@ function wireEditorContent(modal) {
 }
 
 // Helper to re-open the editor inline
+function buildAdvancedFields(entry) {
+  if (!entry) return '';
+  const e = entry;
+  return `
+    <details style="margin-top:8px;">
+      <summary style="font-size:12px;color:var(--fg-secondary);cursor:pointer;padding:4px 0;">高级选项</summary>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;padding-left:8px;border-left:2px solid var(--ink-700);">
+        <div style="display:flex;gap:8px;">
+          <label class="st-field" style="flex:1;"><span class="st-field-label">粘性 (条)</span>
+            <input id="st-entry-sticky" type="number" min="0" value="${e.sticky || 0}" style="width:100%;padding:4px;margin-top:2px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+          </label>
+          <label class="st-field" style="flex:1;"><span class="st-field-label">冷却 (条)</span>
+            <input id="st-entry-cooldown" type="number" min="0" value="${e.cooldown || 0}" style="width:100%;padding:4px;margin-top:2px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+          </label>
+          <label class="st-field" style="flex:1;"><span class="st-field-label">延迟 (条)</span>
+            <input id="st-entry-delay" type="number" min="0" value="${e.delay || 0}" style="width:100%;padding:4px;margin-top:2px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+          </label>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <label class="st-field" style="flex:1;"><span class="st-field-label">分组名</span>
+            <input id="st-entry-group" type="text" value="${esc(e.group || '')}" style="width:100%;padding:4px;margin-top:2px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+          </label>
+          <label class="st-field" style="flex:1;"><span class="st-field-label">分组权重</span>
+            <input id="st-entry-group-weight" type="number" min="1" value="${e.groupWeight || 100}" style="width:100%;padding:4px;margin-top:2px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+          </label>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-group-override" ${e.groupOverride?'checked':''}> 分组优先</label>
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-group-scoring" ${e.useGroupScoring?'checked':''}> 分组评分</label>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-case-sensitive" ${e.caseSensitive===true?'checked':''}> 逐条区分大小写</label>
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-whole-words" ${e.matchWholeWords===true?'checked':''}> 逐条全词匹配</label>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-exclude-recursion" ${e.excludeRecursion?'checked':''}> 排除递归</label>
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-prevent-recursion" ${e.preventRecursion?'checked':''}> 阻止递归</label>
+          <label class="st-field" style="flex:1;"><span class="st-field-label">扫描深度</span>
+            <input id="st-entry-scan-depth" type="number" min="0" value="${e.scanDepth || 0}" style="width:100%;padding:4px;margin-top:2px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+          </label>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <label class="st-field" style="flex:1;"><span class="st-field-label">辅助关键词 (逗号分隔)</span>
+            <input id="st-entry-secondary-keys" type="text" value="${esc((e.secondaryKeys || []).join(', '))}" style="width:100%;padding:4px;margin-top:2px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+          </label>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-match-persona" ${e.matchPersonaDescription?'checked':''}> 匹配 Persona</label>
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-match-char-desc" ${e.matchCharacterDescription?'checked':''}> 匹配角色描述</label>
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-match-char-pers" ${e.matchCharacterPersonality?'checked':''}> 匹配角色性格</label>
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-match-scenario" ${e.matchScenario?'checked':''}> 匹配场景</label>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <label class="st-field" style="flex:1;"><span class="st-field-label">自动化 ID</span>
+            <input id="st-entry-automation-id" type="text" value="${esc(e.automationId || '')}" style="width:100%;padding:4px;margin-top:2px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:4px;color:var(--fg-primary);font-size:12px;">
+          </label>
+        </div>
+      </div>
+    </details>`;
+}
+
 function openLorebookEditorRaw(book, editingEntryId, modal) {
   const content = modal.el?.querySelector('#st-editor-content');
   if (!content) return;
@@ -886,7 +1001,9 @@ function openLorebookEditorRaw(book, editingEntryId, modal) {
           <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-constant" ${entry.constant?'checked':''}> 常驻</label>
           <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-selective" ${entry.selective?'checked':''}> 选择性</label>
           <label style="font-size:12px;display:flex;align-items:center;gap:4px;">概率 <input id="st-entry-prob" type="number" min="0" max="100" value="${entry.probability}" style="width:60px;margin-left:4px;padding:4px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:4px;color:var(--fg-primary);font-size:12px;"></label>
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-use-prob" ${entry.useProbability?'checked':''}> 启用概率</label>
         </div>
+        ${buildAdvancedFields(entry)}
       </div>`;
   }
 

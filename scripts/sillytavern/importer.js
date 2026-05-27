@@ -52,8 +52,11 @@ export function importLorebook(data) {
       matchScenario: e.matchScenario,
       matchCreatorNotes: e.matchCreatorNotes,
       group: e.group,
+      groupOverride: e.groupOverride ?? false,
       decorators: e.decorators,
       characterFilter: e.characterFilter,
+      triggerFilter: e.triggerFilter || [],
+      automationId: e.automationId || '',
     }));
 
   return {
@@ -106,6 +109,9 @@ export function exportLorebook(lorebook) {
       matchCreatorNotes: e.matchCreatorNotes ?? false,
       decorators: e.decorators ?? [],
       characterFilter: e.characterFilter ?? { isExclude: false, names: [], tags: [] },
+      triggerFilter: e.triggerFilter ?? [],
+      automationId: e.automationId ?? '',
+      groupOverride: e.groupOverride ?? false,
     };
   });
 

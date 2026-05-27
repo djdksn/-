@@ -3,8 +3,8 @@
  * Replaces Dexie CDN with a minimal native IndexedDB wrapper.
  */
 const DB_NAME = 'SillyTavernWebDB';
-const DB_VERSION = 5;
-const STORES = ['lorebooks', 'presets', 'settings', 'chats'];
+const DB_VERSION = 6;
+const STORES = ['lorebooks', 'presets', 'settings', 'chats', 'regex_scripts'];
 
 class MiniDB {
   constructor(name, version) {
@@ -185,13 +185,14 @@ export async function clearAllData() {
 
 export async function exportAllData() {
   const db = getDatabase();
-  const [lorebooks, presets, settings, chats] = await Promise.all([
+  const [lorebooks, presets, settings, chats, regexScripts] = await Promise.all([
     db.table('lorebooks').toArray(),
     db.table('presets').toArray(),
     db.table('settings').toArray(),
     db.table('chats').toArray(),
+    db.table('regex_scripts').toArray(),
   ]);
-  return { version: DB_VERSION, exportedAt: Date.now(), lorebooks, presets, settings, chats };
+  return { version: DB_VERSION, exportedAt: Date.now(), lorebooks, presets, settings, chats, regexScripts };
 }
 
 export async function importAllData(backup) {
@@ -201,10 +202,12 @@ export async function importAllData(backup) {
   await db.table('presets').clear();
   await db.table('settings').clear();
   await db.table('chats').clear();
+  await db.table('regex_scripts').clear();
   if (Array.isArray(backup.lorebooks)) await db.table('lorebooks').bulkPut(backup.lorebooks);
   if (Array.isArray(backup.presets)) await db.table('presets').bulkPut(backup.presets);
   if (Array.isArray(backup.settings)) await db.table('settings').bulkPut(backup.settings);
   if (Array.isArray(backup.chats)) await db.table('chats').bulkPut(backup.chats);
+  if (Array.isArray(backup.regexScripts)) await db.table('regex_scripts').bulkPut(backup.regexScripts);
 }
 
 export async function getLorebooks() { return getDatabase().table('lorebooks').toArray(); }
@@ -229,6 +232,18 @@ export async function getSettings() {
 }
 export async function saveSettings(settings) {
   await getDatabase().table('settings').put({ ...settings, id: 'settings' });
+}
+
+export async function getRegexScripts() { return getDatabase().table('regex_scripts').toArray(); }
+export async function saveRegexScript(script) {
+  script.updatedAt = Date.now();
+  await getDatabase().table('regex_scripts').put(script);
+  return script.id;
+}
+export async function deleteRegexScript(id) { await getDatabase().table('regex_scripts').delete(id); }
+export async function saveAllRegexScripts(scripts) {
+  await getDatabase().table('regex_scripts').clear();
+  if (scripts.length > 0) await getDatabase().table('regex_scripts').bulkPut(scripts);
 }
 
 export async function getChats() { return getDatabase().table('chats').toArray(); }
