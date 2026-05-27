@@ -81,7 +81,7 @@ export function openRegexManager() {
   const modal = window.GameModal.open({ size: 'lg', title: '正则脚本管理', subtitle: '创建和编辑文本替换规则', body });
 
   requestAnimationFrame(() => {
-    const el = modal.modalEl;
+    const el = modal.el;
     if (!el) return;
 
     el.querySelector('#rx-new-script')?.addEventListener('click', async () => {
@@ -247,18 +247,18 @@ export function openRegexEditor(script, { onSaved } = {}) {
   const modal = window.GameModal.open({ size: 'lg', title: '编辑正则脚本', subtitle: `ID: ${current.id.slice(0, 8)}...`, body });
 
   function collect() {
-    const findRegex = modal.modalEl.querySelector('#rx-ed-find')?.value || '';
-    const replaceString = modal.modalEl.querySelector('#rx-ed-replace')?.value || '';
-    const name = modal.modalEl.querySelector('#rx-ed-name')?.value || 'Unnamed';
-    const trimRaw = modal.modalEl.querySelector('#rx-ed-trim')?.value || '';
-    const placement = Array.from(modal.modalEl.querySelectorAll('[data-rx-ed-placement]:checked')).map(cb => Number(cb.value));
-    const disabled = modal.modalEl.querySelector('#rx-ed-disabled')?.checked || false;
-    const markdownOnly = modal.modalEl.querySelector('#rx-ed-markdown-only')?.checked || false;
-    const promptOnly = modal.modalEl.querySelector('#rx-ed-prompt-only')?.checked || false;
-    const runOnEdit = modal.modalEl.querySelector('#rx-ed-run-on-edit')?.checked || false;
-    const substituteRegex = Number(modal.modalEl.querySelector('#rx-ed-submode')?.value) || 0;
-    const minDepthRaw = modal.modalEl.querySelector('#rx-ed-mindepth')?.value;
-    const maxDepthRaw = modal.modalEl.querySelector('#rx-ed-maxdepth')?.value;
+    const findRegex = modal.el.querySelector('#rx-ed-find')?.value || '';
+    const replaceString = modal.el.querySelector('#rx-ed-replace')?.value || '';
+    const name = modal.el.querySelector('#rx-ed-name')?.value || 'Unnamed';
+    const trimRaw = modal.el.querySelector('#rx-ed-trim')?.value || '';
+    const placement = Array.from(modal.el.querySelectorAll('[data-rx-ed-placement]:checked')).map(cb => Number(cb.value));
+    const disabled = modal.el.querySelector('#rx-ed-disabled')?.checked || false;
+    const markdownOnly = modal.el.querySelector('#rx-ed-markdown-only')?.checked || false;
+    const promptOnly = modal.el.querySelector('#rx-ed-prompt-only')?.checked || false;
+    const runOnEdit = modal.el.querySelector('#rx-ed-run-on-edit')?.checked || false;
+    const substituteRegex = Number(modal.el.querySelector('#rx-ed-submode')?.value) || 0;
+    const minDepthRaw = modal.el.querySelector('#rx-ed-mindepth')?.value;
+    const maxDepthRaw = modal.el.querySelector('#rx-ed-maxdepth')?.value;
 
     current = {
       ...current,
@@ -278,9 +278,9 @@ export function openRegexEditor(script, { onSaved } = {}) {
   }
 
   requestAnimationFrame(() => {
-    if (!modal.modalEl) return;
+    if (!modal.el) return;
 
-    modal.modalEl.querySelector('#rx-ed-save')?.addEventListener('click', async () => {
+    modal.el.querySelector('#rx-ed-save')?.addEventListener('click', async () => {
       collect();
       await store.updateRegexScript(current);
       if (onSaved) onSaved(current);
@@ -288,13 +288,13 @@ export function openRegexEditor(script, { onSaved } = {}) {
       store.showToast('正则脚本已保存');
     });
 
-    modal.modalEl.querySelector('#rx-ed-cancel')?.addEventListener('click', () => modal.close());
+    modal.el.querySelector('#rx-ed-cancel')?.addEventListener('click', () => modal.close());
 
-    modal.modalEl.querySelector('#rx-ed-run-test')?.addEventListener('click', () => {
+    modal.el.querySelector('#rx-ed-run-test')?.addEventListener('click', () => {
       collect();
-      const input = modal.modalEl.querySelector('#rx-ed-test-input')?.value || '';
-      const placement = Number(modal.modalEl.querySelector('#rx-ed-test-placement')?.value) || REGEX_PLACEMENT.AI_OUTPUT;
-      const outputEl = modal.modalEl.querySelector('#rx-ed-test-output');
+      const input = modal.el.querySelector('#rx-ed-test-input')?.value || '';
+      const placement = Number(modal.el.querySelector('#rx-ed-test-placement')?.value) || REGEX_PLACEMENT.AI_OUTPUT;
+      const outputEl = modal.el.querySelector('#rx-ed-test-output');
       if (!outputEl) return;
 
       const result = getRegexedString(input, placement, { scripts: [current] });
