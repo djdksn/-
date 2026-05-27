@@ -336,7 +336,22 @@ function wireSettingsEvents(modal) {
           wireDisplayEvents(el);
           break;
         case 'regex':
-          content.innerHTML = buildRegexTab();
+          content.innerHTML = `
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-size:13px;color:var(--fg-secondary);">管理文本替换正则，可对用户输入、AI 输出、世界信息等不同阶段应用查找替换。</span>
+                <button id="st-open-regex-mgr" style="margin-left:auto;padding:6px 14px;font-size:13px;border-radius:6px;border:1px solid var(--amber-700);background:var(--amber-800);color:var(--amber-100);cursor:pointer;">打开正则管理器 (${store.regexScripts.length})</button>
+              </div>
+              <hr style="border:none;border-top:1px solid var(--ink-700);">
+              <div style="font-size:12px;color:var(--fg-tertiary);line-height:1.6;">
+                正则脚本在以下阶段生效：<br>
+                1. <b>用户输入</b> → 发送前替换用户消息<br>
+                2. <b>AI 输出</b> → 接收后替换 AI 回复<br>
+                3. <b>斜杠命令</b> → 处理斜杠命令参数<br>
+                4. <b>世界信息</b> → 注入 prompt 前替换世界书条目内容<br>
+                5. <b>推理</b> → 替换推理/思考内容
+              </div>
+            </div>`;
           el.querySelector('#st-open-regex-mgr')?.addEventListener('click', () => openRegexManager());
           break;
         case 'backup':
