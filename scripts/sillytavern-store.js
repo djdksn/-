@@ -11,7 +11,7 @@ import {
   getPresets, savePreset as dbSavePreset, deletePreset as dbDeletePreset,
   getSettings, saveSettings as dbSaveSettings,
   getChats, saveChat as dbSaveChat, deleteChat as dbDeleteChat,
-  getRegexScripts, saveRegexScript as dbSaveRegexScript, deleteRegexScript as dbDeleteRegexScript, saveAllRegexScripts,
+  getRegexScripts, saveRegexScript as dbSaveRegexScript, deleteRegexScript as dbDeleteRegexScript,
 } from './sillytavern/database.js';
 import { createDefaultLorebook } from './sillytavern/editor-utils.js';
 import { createDefaultPreset } from './sillytavern/types.js';
@@ -383,7 +383,12 @@ class SillytavernStore {
   async updateRegexScript(script) {
     const next = { ...script, updatedAt: Date.now() };
     await dbSaveRegexScript(next);
-    this.regexScripts = this.regexScripts.map(s => s.id === next.id ? next : s);
+    const idx = this.regexScripts.findIndex(s => s.id === next.id);
+    if (idx >= 0) {
+      this.regexScripts = [...this.regexScripts.slice(0, idx), next, ...this.regexScripts.slice(idx + 1)];
+    } else {
+      this.regexScripts = [...this.regexScripts, next];
+    }
     this._notify();
     return next;
   }
@@ -400,8 +405,21 @@ class SillytavernStore {
       s.createdAt = s.createdAt || Date.now();
       s.updatedAt = Date.now();
     }
-    await saveAllRegexScripts(scripts);
-    this.regexScripts = scripts;
+    // Save each individually (upsert) and merge into memory
+    for (const s of scripts) {
+      await dbSaveRegexScript(s);
+    }
+    const existingIds = new Set(this.regexScripts.map(s => s.id));
+    const merged = [...this.regexScripts];
+    for (const s of scripts) {
+      if (existingIds.has(s.id)) {
+        const idx = merged.findIndex(x => x.id === s.id);
+        if (idx >= 0) merged[idx] = s;
+      } else {
+        merged.push(s);
+      }
+    }
+    this.regexScripts = merged;
     this._notify();
   }
 

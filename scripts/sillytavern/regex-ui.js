@@ -87,7 +87,7 @@ export function openRegexManager() {
     el.querySelector('#rx-new-script')?.addEventListener('click', async () => {
       const script = await store.addRegexScript();
       refreshBody();
-      setTimeout(() => openRegexEditor(script), 100);
+      setTimeout(() => openRegexEditor(script, { onSaved: refreshBody }), 100);
     });
 
     el.querySelector('#rx-import')?.addEventListener('click', async () => {
@@ -104,41 +104,48 @@ export function openRegexManager() {
       store.showToast('已导出全部脚本');
     });
 
-    el.querySelectorAll('[data-regex-edit]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.dataset.regexEdit;
-        const script = store.regexScripts.find(s => s.id === id);
-        if (script) openRegexEditor(script);
-      });
-    });
+    // Event delegation on the list container — survives refreshBody() replacements
+    const listContainer = el.querySelector('#rx-list-container');
+    if (listContainer) {
+      listContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
 
-    el.querySelectorAll('[data-regex-clone]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.dataset.regexClone;
-        const src = store.regexScripts.find(s => s.id === id);
-        if (!src) return;
-        const clone = { ...src, id: crypto.randomUUID(), scriptName: src.scriptName + ' (副本)', createdAt: Date.now(), updatedAt: Date.now() };
-        await store.updateRegexScript(clone);
-        refreshBody();
-        store.showToast('已克隆');
-      });
-    });
+        const editId = btn.dataset.regexEdit;
+        if (editId) {
+          const script = store.regexScripts.find(s => s.id === editId);
+          if (script) openRegexEditor(script, { onSaved: refreshBody });
+          return;
+        }
 
-    el.querySelectorAll('[data-regex-delete]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const id = btn.dataset.regexDelete;
-        if (!confirm('确定要删除此正则脚本？')) return;
-        await store.deleteRegexScript(id);
-        refreshBody();
-        store.showToast('已删除');
+        const cloneId = btn.dataset.regexClone;
+        if (cloneId) {
+          const src = store.regexScripts.find(s => s.id === cloneId);
+          if (!src) return;
+          const clone = { ...src, id: crypto.randomUUID(), scriptName: src.scriptName + ' (副本)', createdAt: Date.now(), updatedAt: Date.now() };
+          store.updateRegexScript(clone).then(() => {
+            refreshBody();
+            store.showToast('已克隆');
+          });
+          return;
+        }
+
+        const deleteId = btn.dataset.regexDelete;
+        if (deleteId) {
+          if (!confirm('确定要删除此正则脚本？')) return;
+          store.deleteRegexScript(deleteId).then(() => {
+            refreshBody();
+            store.showToast('已删除');
+          });
+        }
       });
-    });
+    }
   });
 }
 
 // ========== REGEX EDITOR ==========
 
-export function openRegexEditor(script) {
+export function openRegexEditor(script, { onSaved } = {}) {
   if (!script) return;
   let current = { ...script };
 
@@ -276,6 +283,7 @@ export function openRegexEditor(script) {
     modal.modalEl.querySelector('#rx-ed-save')?.addEventListener('click', async () => {
       collect();
       await store.updateRegexScript(current);
+      if (onSaved) onSaved(current);
       modal.close();
       store.showToast('正则脚本已保存');
     });
