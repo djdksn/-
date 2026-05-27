@@ -15,7 +15,7 @@ async function loadAll() {
 
 function getAll() { return [..._scripts]; }
 
-function getEnabled() { return _scripts.filter(s => s.enabled); }
+function getEnabled() { return _scripts.filter(s => s.enabled).map(s => ({ ...s })); }
 
 async function add(name) {
   await loadAll();
@@ -66,10 +66,10 @@ async function reorder(ids) {
 function buildScriptContext(context = {}) {
   const { chat, userName, characterName, userInput } = context;
   return {
-    getvar: (key, opts) => variableStore.getVar(key, opts, chat),
-    setvar: (key, value, opts) => variableStore.setVar(key, value, opts, chat),
-    incvar: (key, delta, opts) => variableStore.incVar(key, delta, opts, chat),
-    decvar: (key, delta, opts) => variableStore.decVar(key, delta, opts, chat),
+    getvar: (key, opts) => variableStore.getVarSync(key, opts, chat),
+    setvar: (key, value, opts) => variableStore.setVarSync(key, value, opts, chat),
+    incvar: (key, delta, opts) => variableStore.incVarSync(key, delta, opts, chat),
+    decvar: (key, delta, opts) => variableStore.decVarSync(key, delta, opts, chat),
     console: {
       log: (...args) => console.log('[Script]', ...args),
       warn: (...args) => console.warn('[Script]', ...args),
@@ -89,9 +89,10 @@ function buildScriptContext(context = {}) {
  * @param context - { chat, userName, characterName, userInput }
  * @returns { success: boolean, error?: string, output?: string }
  */
-function executeScript(script, context = {}) {
+async function executeScript(script, context = {}) {
   if (!script.enabled || !script.content) return { success: false, error: 'Script disabled or empty' };
   try {
+    await variableStore.ensureLoaded();
     const ctxObj = buildScriptContext(context);
     const paramNames = Object.keys(ctxObj);
     const paramValues = Object.values(ctxObj);
@@ -112,7 +113,7 @@ async function runTriggered(context, trigger) {
   const toRun = _scripts.filter(s => s.enabled && s.triggers?.[trigger]);
   const results = [];
   for (const script of toRun) {
-    const result = executeScript(script, context);
+    const result = await executeScript(script, context);
     results.push({ scriptId: script.id, name: script.name, ...result });
   }
   return results;
