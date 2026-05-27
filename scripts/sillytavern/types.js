@@ -46,7 +46,7 @@ export const DEFAULT_SETTINGS = {
   activePresetId: null,
   activeLorebookIds: [],
   userName: '用户',
-  characterName: 'AI',
+  characterName: '旧馆图书室',
   theme: 'dark',
   language: 'zh',
   autoSave: true,

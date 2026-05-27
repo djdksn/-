@@ -26,9 +26,9 @@ window.GameData = (function () {
     { id: 'fac-teacher-dorm', name: '教师公寓', type: '生活', area: '校园西区', desc: '独栋小楼，坂上老师与水川校医各居一层，星野老师住顶层。', tone: 'moss',
       hours: '住宿教师 24 小时', atmosphere: '安静、书卷、深夜咖啡', orgs: [], icon: 'home' },
     { id: 'fac-yuzuki', name: '夕月温泉馆', type: '校外', area: '樱丘路南 · 步行 10 分钟', desc: '三层木造温泉旅馆，表面是正经疗养场所，二楼以上提供隐秘色情按摩套餐。', tone: 'amber',
-      hours: '10:00 — 次日 02:00', atmosphere: '硫磺、桧木、蒸腾水汽', orgs: [], icon: 'flame' },
+      hours: '10:00 — 次日 02:00', atmosphere: '硫磺、桧木、蒸腾水汽', orgs: ['org-yuzuki-onsen'], icon: 'flame' },
     { id: 'fac-clinic', name: '樱丘综合诊所', type: '校外', area: '樱丘路东 · 步行 15 分钟', desc: '高端私人医疗机构，表面提供精密体检，实则进行以医疗为名的榨精实验。', tone: 'vermil',
-      hours: '09:00 — 19:00（急诊 24 小时）', atmosphere: '消毒水、乳胶、仪器蜂鸣', orgs: [], icon: 'shield' },
+      hours: '09:00 — 19:00（急诊 24 小时）', atmosphere: '消毒水、乳胶、仪器蜂鸣', orgs: ['org-sakuraoka-clinic'], icon: 'shield' },
   ];
 
   // —— 组织 (5 个) —— //
@@ -291,30 +291,90 @@ window.GameData = (function () {
       tagline: '她不是冷漠，只是对大多数事物缺乏好奇——直到那个变量出现在她的视线里。' },
   ];
 
-  // —— 规章文档 (保留，适配) —— //
+  // —— 规章文档 —— //
   const ruleDocs = [
-    { id: 'doc-school-rule', name: '樱丘大学校规（节选）', version: 'v3.0',
-      desc: '大学基础行为守则，常驻注入。',
-      trigger: 'always', keywords: ['校规', '规定', '违规'],
+    { id: 'doc-school-rule', name: '樱丘大学校规', version: 'v4.1',
+      desc: '樱丘大学基础行为守则，常驻注入。',
+      trigger: 'always', keywords: ['校规', '规定', '违规', '纪律'],
       injection: 'system', format: 'indent', maxDepth: 2,
       sections: [
         { id: 's1', title: '第一章 总则', children: [
-          { id: 's1-1', kind: 'rule', text: '本校以「求真、自律、开放」为校训，凡入此园者皆当谨守。' },
-          { id: 's1-2', kind: 'rule', text: '校规未尽事宜，由学生会与各职能部门共同议决。' },
+          { id: 's1-1', kind: 'rule', text: '本校以「求真、自律、开放」为校训。知识没有禁区，身体亦然——但一切探索须建立在知情与自愿之上。' },
+          { id: 's1-2', kind: 'rule', text: '校规未尽事宜，由学生会、保健室与性爱部三方联席会议共同议决。' },
+          { id: 's1-3', kind: 'rule', text: '本校为日本文部科学省特批的单性别教育改革试点校。唯一男性学生的招收、培养与评估受本规则特别保护。' },
         ]},
-        { id: 's2', title: '第二章 性别平等与特殊条例', children: [
-          { id: 's2-1', kind: 'rule', text: '本校为单性别教育改革试点，接收男性学生的条件与权益受特别条例保护。' },
-          { id: 's2-2', kind: 'rule', text: '所有涉及异性互动的教学活动须经学生本人同意与性爱部备案。' },
-          { id: 's2-3', kind: 'rule', text: '性教育课程为必修学分，不得以任何理由申请免修。' },
+        { id: 's2', title: '第二章 性别平等与特别条例', children: [
+          { id: 's2-1', kind: 'rule', text: '男性学生在校期间享有与女性学生同等的学习权、隐私权与拒绝权。任何教学活动不得强制其参与非自愿的身体接触。' },
+          { id: 's2-2', kind: 'rule', text: '所有涉及异性互动的教学与社团活动，须经参与双方明确同意，并在性爱部或保健室备案。口头同意即可生效，但事后任意一方可撤回。' },
+          { id: 's2-3', kind: 'rule', text: '性教育课程（sex01—sex07）为全体学生必修学分。男性学生不得以任何理由申请免修，但可申请调整考核方式。' },
+          { id: 's2-4', kind: 'rule', text: '男性学生每学期须接受保健室安排的基础体检至少一次。深度体检项目为选修，须另行签署同意书。' },
         ]},
         { id: 's3', title: '第三章 社团与部活', children: [
-          { id: 's3-1', kind: 'rule', text: '加入新社团须经原社团许可与学生会备案。性爱部的加入条件由该部自行决定。' },
-          { id: 's3-2', kind: 'rule', text: '同时归属多组织者，不得使任一组织职责受影响。学生会长兼任他部职务须报备。' },
+          { id: 's3-1', kind: 'rule', text: '加入新社团须经原社团许可与学生会备案。性爱部加入条件由该部自行制定，最低门槛为修完 sex01 课程。' },
+          { id: 's3-2', kind: 'rule', text: '同时归属多组织者，不得使任一组织职责受影响。学生会会长兼任性爱部职务须向校方报备。' },
+          { id: 's3-3', kind: 'rule', text: '社团活动不得与正常课程冲突。性爱部的社团活动（club01—club07）享有与正式课程同等的学分认定权。' },
+        ]},
+      ]},
+    { id: 'doc-sex-ed-rules', name: '性教育课程管理条例', version: 'v2.3',
+      desc: '性教育课程的课堂纪律与考核规范，关键词触发注入。',
+      trigger: 'keyword', keywords: ['性教育', '课程', 'sex', '考核', '实操'],
+      injection: 'after', format: 'indent', maxDepth: 3,
+      sections: [
+        { id: 'se1', title: '第一条 课堂纪律', children: [
+          { id: 'se1-1', kind: 'rule', text: '理论课期间，学生须着校服或指定着装。实操课期间的着装要求由任课教师根据教学内容现场指定。' },
+          { id: 'se1-2', kind: 'rule', text: '实操课中使用的情趣道具、医疗器械与教学设备均由学校统一采购与消毒。学生自备工具须经教师检查后方可使用。' },
+          { id: 'se1-3', kind: 'rule', text: '课堂中发生的所有生理反应（勃起、润滑、高潮、射精等）均视为正常教学现象，不得因此嘲笑或羞辱任何学生。' },
+        ]},
+        { id: 'se2', title: '第二条 师生关系', children: [
+          { id: 'se2-1', kind: 'rule', text: '任课教师在实操示范中与学生发生的身体接触，仅限于教学目的。超出教学范畴的私人关系不受本条例保护，但亦不禁止。' },
+          { id: 'se2-2', kind: 'rule', text: '学生在课堂上对教师产生性欲或情感依恋属正常心理反应。鼓励通过保健室心理咨询或与教师直接沟通处理。' },
+        ]},
+        { id: 'se3', title: '第三条 考核与评估', children: [
+          { id: 'se3-1', kind: 'rule', text: '每门课程设期中与期末两次考核。考核形式包括但不限于：假具测试、真人盲测、耐力赛、多人协作等。' },
+          { id: 'se3-2', kind: 'rule', text: '男性学生作为全校唯一真人测试体，其身体状态直接影响全体学生的考核成绩。任何蓄意干扰其状态的行为视为作弊。' },
+        ]},
+      ]},
+    { id: 'doc-yuzuki-rules', name: '夕月温泉馆服务规程', version: 'v1.8',
+      desc: '温泉馆的三层服务标准与专属禁忌，关键词触发注入。',
+      trigger: 'keyword', keywords: ['夕月', '温泉', '按摩', '套餐', '汤原', '奈绪'],
+      injection: 'after', format: 'indent', maxDepth: 3,
+      sections: [
+        { id: 'yz1', title: '第一条 三层服务标准', children: [
+          { id: 'yz1-1', kind: 'rule', text: '第一层「暧昧保健」：全身精油推拿，允许隔着浴衣进行肢体接触，禁触性器官。技师可着浴衣或技师制服。' },
+          { id: 'yz1-2', kind: 'rule', text: '第二层「素股乳交」：允许胸部摩擦与大腿根部接触，可使用润滑液，允许射精在体外。技师须着丁字裤以上衣着。' },
+          { id: 'yz1-3', kind: 'rule', text: '第三层「插入式性爱」：允许阴道插入与口交，不限体位。严禁在技师体内射精——此为夕月温泉馆最高禁忌。' },
+        ]},
+        { id: 'yz2', title: '第二条 技师权益', children: [
+          { id: 'yz2-1', kind: 'rule', text: '技师可在服务中途叫停，无须说明理由。客人必须立即停止动作，否则将被永久列入黑名单。' },
+          { id: 'yz2-2', kind: 'rule', text: '技师有权选择服务的最高层级。奈绪为三层全通技师，其他技师由老板娘汤原夕子根据培训进度逐级授权。' },
+        ]},
+        { id: 'yz3', title: '第三条 禁忌事项', children: [
+          { id: 'yz3-1', kind: 'rule', text: '【绝对禁止】技师体内射精。违反者将被永久驱逐并通报樱丘大学学生会。' },
+          { id: 'yz3-2', kind: 'rule', text: '禁止在温泉池水中进行第二、三层服务。水中的一切接触仅限于第一层保健推拿。' },
+        ]},
+      ]},
+    { id: 'doc-clinic-rules', name: '樱丘综合诊所医疗同意书', version: 'v2.0',
+      desc: '深度体检项目的知情同意条款，关键词触发注入。',
+      trigger: 'keyword', keywords: ['诊所', '体检', '医疗', '神崎', '护士', '检查'],
+      injection: 'after', format: 'indent', maxDepth: 3,
+      sections: [
+        { id: 'cl1', title: '第一条 体检项目分级', children: [
+          { id: 'cl1-1', kind: 'rule', text: 'A 级（基础）：身高体重、血压心率、视力听力、血常规。无需签署同意书，由浅仓音护士执行。' },
+          { id: 'cl1-2', kind: 'rule', text: 'B 级（深度）：前列腺触诊、精液分析、勃起反射测试、尿道敏感度评估。须签署本同意书，由五十岚早纪护士长执行。' },
+          { id: 'cl1-3', kind: 'rule', text: 'C 级（科研）：多日连续采样、药物反应观测、极限榨取实验。须神崎堇医师亲自审批，仅向自愿参与者开放。' },
+        ]},
+        { id: 'cl2', title: '第二条 患者权利', children: [
+          { id: 'cl2-1', kind: 'rule', text: '所有体检数据归患者本人所有。诊所仅保留用于医疗研究的匿名化副本。' },
+          { id: 'cl2-2', kind: 'rule', text: '患者可在任意环节喊停。医疗操作绝对服从患者的最新指令——此条优先于「医疗操作绝对服从医师」之原则。' },
+        ]},
+        { id: 'cl3', title: '第三条 免责声明', children: [
+          { id: 'cl3-1', kind: 'rule', text: '深度体检可能导致暂时性脱水、肌肉酸痛、阴茎敏感度短期下降。均在 24—48 小时内恢复。' },
+          { id: 'cl3-2', kind: 'rule', text: 'C 级科研项目的参与者将获得学分补偿与樱丘诊所终身 VIP 资格。' },
         ]},
       ]},
   ];
 
-  // —— 申请表 (保留，适配) —— //
+  // —— 申请表 —— //
   const formTemplates = [
     {
       id: 'form-club-join', name: '社团加入申请表', code: 'CLUB_JOIN', version: 'v2.1',
@@ -329,13 +389,90 @@ window.GameData = (function () {
         { id: 'g2', name: '申请内容', fields: [
           { id: 'f4', label: '欲加入社团', type: 'select', required: true, source: { kind: 'organizations' }, placeholder: '选择社团' },
           { id: 'f5', label: '原社团（如有）', type: 'select', required: false, source: { kind: 'organizations' } },
-          { id: 'f6', label: '申请理由', type: 'textarea', required: true, min: 30, max: 400, placeholder: '请用至少 30 字阐述加入意愿。' },
+          { id: 'f6', label: '申请理由', type: 'textarea', required: true, min: 30, max: 400, placeholder: '请用至少 30 字阐述加入意愿与可贡献之处。' },
         ]},
       ],
       flow: [
         { id: 's1', name: '原部长审查', who: '原所属部长（如不存在则跳过）', allowReject: true },
         { id: 's2', name: '目标社团面试', who: '目标社团负责人', allowReject: true },
         { id: 's3', name: '学生会备案', who: '学生会会长 / 书记', allowReject: true },
+      ],
+    },
+    {
+      id: 'form-sex-club-join', name: '性爱部入部特别申请', code: 'SEXCLUB_JOIN', version: 'v2.0',
+      desc: '申请加入性爱部的专用表格。需额外提供性教育课程修读记录与身体自评。',
+      validityDays: 14,
+      groups: [
+        { id: 'g1', name: '基本信息', fields: [
+          { id: 'f1', label: '申请人姓名', type: 'select', required: true, source: { kind: 'roster' }, placeholder: '从花名册选择' },
+          { id: 'f2', label: '已修性教育课程', type: 'text', required: true, placeholder: '如「sex01, sex03」' },
+          { id: 'f3', label: '申请日期', type: 'date', required: true },
+        ]},
+        { id: 'g2', name: '身体自评', fields: [
+          { id: 'f4', label: '是否已完成基础体检', type: 'radio', required: true, options: ['是', '否（需先预约保健室）'] },
+          { id: 'f5', label: '性经验自述', type: 'textarea', required: true, min: 20, max: 300, placeholder: '请简述过往性经验（自慰/他人/器械），无经验可填写「无」。此为学术参考，不影响入部资格。' },
+          { id: 'f6', label: '偏好部门', type: 'radio', required: false, options: ['观测组', '实操组', '数据记录组', '无偏好'] },
+        ]},
+        { id: 'g3', name: '知情确认', fields: [
+          { id: 'f7', label: '我已知晓性爱部活动内容并自愿参加', type: 'radio', required: true, options: ['是，我自愿加入'] },
+          { id: 'f8', label: '本人签字', type: 'text', required: true, placeholder: '请输入您的签名' },
+        ]},
+      ],
+      flow: [
+        { id: 's1', name: '保健室体检核查', who: '水川冴子校医', allowReject: true },
+        { id: 's2', name: '性爱部面试', who: '坂上静香顾问 + 至少一名部员', allowReject: true },
+        { id: 's3', name: '学生会备案', who: '绫濑雪乃会长', allowReject: true },
+      ],
+    },
+    {
+      id: 'form-yuzuki-booking', name: '夕月温泉馆服务预约表', code: 'YUZUKI_BOOK', version: 'v1.5',
+      desc: '预约夕月温泉馆按摩套餐。第一层公开预约，第二、三层须到店后与技师面谈确认。',
+      validityDays: 3,
+      groups: [
+        { id: 'g1', name: '预约信息', fields: [
+          { id: 'f1', label: '预约人', type: 'select', required: true, source: { kind: 'roster' }, placeholder: '从花名册选择' },
+          { id: 'f2', label: '预约日期', type: 'date', required: true },
+          { id: 'f3', label: '期望时段', type: 'radio', required: true, options: ['上午 10:00—12:00', '下午 13:00—17:00', '晚间 18:00—22:00', '深夜 22:00—01:00'] },
+        ]},
+        { id: 'g2', name: '服务偏好', fields: [
+          { id: 'f4', label: '期望技师', type: 'select', required: false, source: { kind: 'roster' }, placeholder: '可选（汤原夕子 / 奈绪）' },
+          { id: 'f5', label: '本次最高接受层级', type: 'radio', required: true, options: ['仅第一层（暧昧保健）', '可接受第二层（素股乳交）', '开放第三层（插入式性爱）'] },
+          { id: 'f6', label: '特殊需求', type: 'textarea', required: false, max: 200, placeholder: '如精油偏好、敏感部位回避、音乐选择等。' },
+        ]},
+        { id: 'g3', name: '确认', fields: [
+          { id: 'f7', label: '我已阅读并理解《夕月温泉馆服务规程》', type: 'radio', required: true, options: ['是'] },
+          { id: 'f8', label: '我理解「绝对禁止技师体内射精」规则', type: 'radio', required: true, options: ['我理解并同意'] },
+        ]},
+      ],
+      flow: [
+        { id: 's1', name: '温泉馆确认', who: '汤原夕子 / 奈绪', allowReject: true },
+        { id: 's2', name: '到店面谈', who: '指定技师与客人当面确认', allowReject: true },
+      ],
+    },
+    {
+      id: 'form-clinic-consent', name: '樱丘综合诊所深度体检同意书', code: 'CLINIC_DEEP', version: 'v2.1',
+      desc: '签署本同意书以授权进行 B 级及以上深度体检项目。',
+      validityDays: 30,
+      groups: [
+        { id: 'g1', name: '受检者信息', fields: [
+          { id: 'f1', label: '受检人姓名', type: 'select', required: true, source: { kind: 'roster' }, placeholder: '从花名册选择' },
+          { id: 'f2', label: '最近一次性行为距今', type: 'text', required: true, placeholder: '如「3 天前」或「暂无」' },
+          { id: 'f3', label: '当前是否有性器官不适', type: 'radio', required: true, options: ['无不适', '轻微不适', '有明显症状（请描述）'] },
+        ]},
+        { id: 'g2', name: '体检项目选择', fields: [
+          { id: 'f4', label: '申请体检等级', type: 'radio', required: true, options: ['B 级（深度体检）', 'C 级（科研项目，需神崎医师审批）'] },
+          { id: 'f5', label: '可接受的采样方式（多选）', type: 'text', required: true, placeholder: '如「前列腺触诊、精液采集、尿道探入」' },
+          { id: 'f6', label: '过敏史与禁忌', type: 'textarea', required: false, max: 200, placeholder: '如对乳胶过敏、麻醉禁忌、敏感部位等。' },
+        ]},
+        { id: 'g3', name: '知情同意', fields: [
+          { id: 'f7', label: '我已知晓体检内容并同意配合', type: 'radio', required: true, options: ['是，我同意'] },
+          { id: 'f8', label: '本人（或监护人）签字', type: 'text', required: true, placeholder: '请输入您的签名' },
+        ]},
+      ],
+      flow: [
+        { id: 's1', name: '护士长预审', who: '五十岚早纪护士长', allowReject: false },
+        { id: 's2', name: '医师审批（仅 C 级）', who: '神崎堇主治医师', allowReject: true },
+        { id: 's3', name: '体检排期', who: '浅仓音护士', allowReject: false },
       ],
     },
   ];

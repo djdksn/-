@@ -350,10 +350,30 @@
   };
 
   function updateCtxTags() {
-    // Update topbar character name
-    const nameEl = document.getElementById('topbar-char-name');
-    if (nameEl && store) {
-      nameEl.textContent = store.settings?.characterName || '旧馆图书室';
+    const locEl = document.getElementById('topbar-location');
+    const timeEl = document.getElementById('topbar-time');
+    const termEl = document.getElementById('topbar-term');
+
+    if (!store) return;
+
+    const vars = store.activeChat?.variables || window.__liveVariables;
+
+    // Location
+    if (locEl) {
+      const loc = vars?.['当前地点'] || '旧馆图书室';
+      locEl.textContent = loc;
+    }
+
+    // Time: 日期 + 时间
+    if (timeEl) {
+      const date = vars?.['当前时间']?.['日期'] || '4月7日-周一';
+      const time = vars?.['当前时间']?.['时间'] || '上午07:30';
+      timeEl.textContent = `${date} ${time}`;
+    }
+
+    // Term (use 当前时间.日期 to derive term if possible, else fallback)
+    if (termEl) {
+      termEl.textContent = '第二学期 · 第3周';
     }
   }
 

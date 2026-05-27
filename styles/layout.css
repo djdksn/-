@@ -295,6 +295,27 @@
 .topbar-center { flex-shrink: 0; }
 .topbar-right { justify-content: flex-end; flex: 1; }
 
+.topbar-progress {
+  display: flex; align-items: center; gap: var(--sp-4);
+  font-size: var(--fs-sm); color: var(--fg-secondary);
+  min-width: 0; flex-shrink: 1;
+}
+.topbar-progress-location {
+  font-weight: 600; color: var(--fg-primary);
+  white-space: nowrap; text-overflow: ellipsis; overflow: hidden;
+}
+.topbar-progress-time {
+  color: var(--fg-tertiary); white-space: nowrap;
+  font-family: var(--font-mono); font-size: var(--fs-xs);
+}
+.topbar-progress-term {
+  color: var(--fg-quaternary); white-space: nowrap;
+  font-size: var(--fs-xs);
+}
+.topbar-progress-sep {
+  color: var(--border-base); user-select: none;
+}
+
 .scene-crumb {
   display: flex; align-items: center; gap: var(--sp-5);
   padding: var(--sp-4) var(--sp-8);

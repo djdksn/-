@@ -199,23 +199,6 @@
       </nav>
     </div>
 
-    <div class="sidebar-section sidebar-section-bottom">
-      <div class="sidebar-label">叙事进度</div>
-      <div class="progress-card">
-        <div class="progress-card-row">
-          <span class="progress-card-key">学期</span>
-          <span class="progress-card-val">第二学期 · 第3周</span>
-        </div>
-        <div class="progress-card-row">
-          <span class="progress-card-key">日期</span>
-          <span class="progress-card-val">2026年5月26日（周二）</span>
-        </div>
-        <div class="progress-card-row">
-          <span class="progress-card-key">天气</span>
-          <span class="progress-card-val">晴 · 微风</span>
-        </div>
-      </div>
-    </div>
 
     <footer class="sidebar-footer">
       <button class="footer-btn" id="settings-btn" data-tip="设置 ⌘,">
@@ -248,7 +231,13 @@
         <button class="iconbtn" id="open-sidebar" aria-label="展开侧边栏" data-tip="展开">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
         </button>
-        <span class="topbar-char-name" id="topbar-char-name">旧馆图书室</span></div>
+        <div class="topbar-progress" id="topbar-progress">
+          <span class="topbar-progress-location" id="topbar-location">旧馆图书室</span>
+          <span class="topbar-progress-sep">·</span>
+          <span class="topbar-progress-time" id="topbar-time">4月7日-周一 上午07:30</span>
+          <span class="topbar-progress-sep">·</span>
+          <span class="topbar-progress-term" id="topbar-term">第二学期 · 第3周</span>
+        </div></div>
 	      <div class="topbar-right">
         <button class="chip-btn" id="ctx-toggle" data-tip="上下文面板">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3v18M3 7h6M3 12h6M3 17h6M14 7h7M14 12h7M14 17h4" stroke-linecap="round"/></svg>
