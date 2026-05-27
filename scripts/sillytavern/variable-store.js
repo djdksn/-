@@ -78,8 +78,8 @@ class VariableStore {
     if (typeof raw === 'string') {
       return { flags: raw, scope: 'chat' };
     }
-    if (!raw) return { scope: 'chat' };
-    const scope = this._resolveScope(raw.scope) || 'chat';
+    if (!raw) return { scope: null }; // null = auto-search
+    const scope = this._resolveScope(raw.scope) || null;
     return { ...raw, scope };
   }
 
@@ -131,6 +131,9 @@ class VariableStore {
     if (opts.scope === 'message') {
       const mKey = _messageKey(chat?.id, msgId);
       if (!mKey) return undefined;
+      const existing = messageVars.get(mKey) || {};
+      if (flags === 'nx' && pathGet(existing, key) !== undefined) return undefined;
+      if (flags === 'xx' && pathGet(existing, key) === undefined) return undefined;
       if (!messageVars.has(mKey)) messageVars.set(mKey, {});
       const obj = messageVars.get(mKey);
       pathSet(obj, key, value);
