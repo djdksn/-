@@ -30,6 +30,33 @@
   padding: var(--sp-3);
 }
 
+/* —— Category headers (学生 / 教职工 / 校外人员) —— */
+.roster-category {
+  margin-bottom: var(--sp-9);
+}
+.roster-category-head {
+  display: flex; align-items: center; gap: var(--sp-4);
+  padding: var(--sp-5) var(--sp-6);
+  margin-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--border-base);
+}
+.roster-category-label {
+  font-family: var(--font-serif);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--fg-primary);
+  letter-spacing: 0.08em;
+}
+.roster-category-count {
+  display: inline-grid; place-items: center;
+  min-width: 22px; height: 18px; padding: 0 5px;
+  background: var(--accent);
+  border-radius: var(--r-xs);
+  font-size: var(--fs-2xs);
+  font-family: var(--font-mono);
+  color: #fff;
+}
+
 .roster-group {
   margin-bottom: var(--sp-7);
 }

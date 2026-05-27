@@ -558,6 +558,27 @@ class SillytavernStore {
   }
 }
 
+// —— Infer category + orgs from NPC identity string ——
+function inferCategoryOrg(identity) {
+  if (!identity) return { category: 'student', orgs: [] };
+  const id = identity.toLowerCase();
+
+  // Category inference
+  let category = 'external';
+  if (/学生|大一|大二|大三|大四|年级|在校/.test(id)) category = 'student';
+  else if (/教师|老师|教授|校医|护士|顾问|讲师|导员/.test(id)) category = 'staff';
+
+  // Organization inference by keyword
+  const orgs = [];
+  if (/学生会/.test(identity)) orgs.push({ org: 'org-student-council', role: '干事' });
+  if (/性爱部/.test(identity)) orgs.push({ org: 'org-sex-club', role: '部员' });
+  if (/保健室/.test(identity)) orgs.push({ org: 'org-health-room', role: '校医' });
+  if (/夕月|温泉/.test(identity)) orgs.push({ org: 'org-yuzuki-onsen', role: '工作人员' });
+  if (/诊所|医疗|医师/.test(identity)) orgs.push({ org: 'org-sakuraoka-clinic', role: '医护人员' });
+
+  return { category, orgs };
+}
+
 // —— Sync new NPCs from variable store to GameData for sidebar roster display ——
 export function syncNpcsToGameData(variables) {
   if (typeof GameData === 'undefined' || !variables) return;
@@ -567,15 +588,31 @@ export function syncNpcsToGameData(variables) {
   const tones = ['sakura', 'wisteria', 'amber', 'moss', 'ink', 'vermil'];
 
   for (const [npcName, npcData] of Object.entries(npcs)) {
-    if (existingNames.has(npcName)) continue;
     const s = npcData?.静态数据;
     if (!s) continue;
     const social = s.社会情况 || {};
+    const identity = social.身份 || '';
+
+    // Also patch existing entries that lack category/orgs
+    if (existingNames.has(npcName)) {
+      const existing = GameData.characters.find(c => c.name === npcName);
+      if (existing && (!existing.category || (existing.orgs && existing.orgs.length === 0 && identity))) {
+        const { category, orgs } = inferCategoryOrg(identity);
+        if (!existing.category) existing.category = category;
+        if (existing.orgs && existing.orgs.length === 0 && orgs.length > 0) {
+          existing.orgs = orgs;
+          console.log('[Store] Patched existing NPC:', npcName, { category, orgs: orgs.map(o => o.org) });
+        }
+      }
+      continue;
+    }
     const body = s.身体形状 || {};
     const details = s.个人细节 || {};
     const dynamic = npcData?.动态数据 || {};
     const clothes = dynamic.人物穿着 || {};
     const wearStr = Object.entries(clothes).filter(([,v]) => v).map(([k, v]) => `${k}: ${v}`).join(' · ') || '暂无数据';
+
+    const { category, orgs } = inferCategoryOrg(identity);
 
     const charEntry = {
       id: 'ch-' + npcName.replace(/[^一-龥a-zA-Z]/g, '-').toLowerCase().replace(/-+/g, '-'),
@@ -584,9 +621,10 @@ export function syncNpcsToGameData(variables) {
       tone: tones[Object.keys(npcs).length % tones.length],
       avatar: npcName.charAt(0),
       age: social.年龄 || 0,
-      year: social.身份 || '未知',
+      year: identity || '未知',
       height: body.身高 ? `${body.身高} cm` : '? cm',
-      orgs: [],
+      category,
+      orgs,
       look: body.体型概述 || social.性格 || '暂无描述',
       build: body.体型概述 || '',
       wear: wearStr,
@@ -598,7 +636,7 @@ export function syncNpcsToGameData(variables) {
 
     GameData.characters.push(charEntry);
     existingNames.add(npcName);
-    console.log('[Store] Synced new NPC to GameData:', npcName);
+    console.log('[Store] Synced new NPC to GameData:', npcName, { category, orgs: orgs.map(o => o.org) });
   }
 }
 

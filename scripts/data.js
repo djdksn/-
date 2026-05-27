@@ -83,7 +83,7 @@ window.GameData = (function () {
   // —— 角色 (15 人：主角 + 14 NPC) —— //
   const characters = [
     { id: 'ch-cheng-lixing', name: '程励行', kana: 'CHENG Lixing', tone: 'ink', avatar: '程',
-      age: 18, year: '大一', height: '178 cm',
+      age: 18, year: '大一', height: '178 cm', category: 'student',
       orgs: [],
       look: '干净利落的短发，戴一副银框眼镜。眼神里既有初来乍到的不安，也有仔细观察一切的冷静。',
       build: '中等身形，肩宽腰窄，久坐书桌前养出的清瘦中带着少年特有的挺拔。',
@@ -97,7 +97,7 @@ window.GameData = (function () {
       tagline: '全校唯一的男生。这不是设定，这是变量的初始值。' },
 
     { id: 'ch-banshang-jingxiang', name: '坂上静香', kana: 'SAKAUE Shizuka', tone: 'amber', avatar: '坂',
-      age: 30, year: '教师 · 生物部/性爱部顾问', height: '163 cm',
+      age: 30, year: '教师 · 生物部/性爱部顾问', height: '163 cm', category: 'staff',
       orgs: [{ org: 'org-sex-club', role: '顾问教师' }],
       look: '成熟饱满的熟女面容，唇肉丰厚，眼神从容而温暖。紧绷的白衬衫下F杯的丰腴身段呼之欲出。',
       build: '163cm / F92 / 腰63 / 臀94。熟女体型，丰腴不臃肿，沉甸甸的双乳与圆润臀部是岁月赠予的资本。',
@@ -111,7 +111,7 @@ window.GameData = (function () {
       tagline: '讲台上的她像翻开一本从未被阅读的书——每一页都令人无法移开目光。' },
 
     { id: 'ch-mizukawa-saeko', name: '水川冴子', kana: 'MIZUKAWA Saeko', tone: 'moss', avatar: '水',
-      age: 29, year: '校医 · 保健室负责', height: '172 cm',
+      age: 29, year: '校医 · 保健室负责', height: '172 cm', category: 'staff',
       orgs: [{ org: 'org-health-room', role: '负责校医' }],
       look: '冰山御姐，锐利眼神。唇线平直，极少微笑。172cm高挑身形配上极低体脂，如同一把出鞘的手术刀。',
       build: '172cm / D88 / 腰60 / 臀90。高挑紧致，体脂极低，马甲线分明，高翘健身臀是每周四次健身的成果。',
@@ -124,7 +124,7 @@ window.GameData = (function () {
       tagline: '她的沉默里藏着比听诊器更精确的判断。' },
 
     { id: 'ch-tangyuan-xizi', name: '汤原夕子', kana: 'YUHARA Yuuko', tone: 'amber', avatar: '汤',
-      age: 31, year: '夕月温泉馆 · 老板娘', height: '162 cm',
+      age: 31, year: '夕月温泉馆 · 老板娘', height: '162 cm', category: 'external',
       orgs: [{ org: 'org-yuzuki-onsen', role: '老板娘' }],
       look: '柔软丰盈的熟女面容，被岁月善待的温泉水汽般的女人。G杯巨乳把浴衣撑得岌岌可危，眼神慵懒而包容。',
       build: '162cm / G94 / 腰65 / 臀96。丰腴圆润的熟女身段，沉重下垂的双乳与肥圆宽大的臀部充满母性肉感。',
@@ -137,7 +137,7 @@ window.GameData = (function () {
       tagline: '她像一池永远温热的泉水——你跳进去，就不想再上来。' },
 
     { id: 'ch-ayase-yukino', name: '绫濑雪乃', kana: 'AYASE Yukino', tone: 'sakura', avatar: '绫',
-      age: 19, year: '大二 · 学生会会长', height: '163 cm',
+      age: 19, year: '大二 · 学生会会长', height: '163 cm', category: 'student',
       orgs: [
         { org: 'org-student-council', role: '会长' },
         { org: 'org-sex-club', role: '研究员' },
@@ -154,7 +154,7 @@ window.GameData = (function () {
       tagline: '她把感情也当成论文题目——冷静地观察，谨慎地假设，然后在独处时推翻一切。' },
 
     { id: 'ch-ying-xili', name: '樱汐里', kana: 'SAKURA Shiori', tone: 'wisteria', avatar: '樱',
-      age: 18, year: '大一 · 文学部/性爱部', height: '158 cm',
+      age: 18, year: '大一 · 文学部/性爱部', height: '158 cm', category: 'student',
       orgs: [
         { org: 'org-sex-club', role: '部员' },
       ],
@@ -170,7 +170,7 @@ window.GameData = (function () {
       tagline: '她的笔比她的嘴勇敢一百倍——纸上全是她不敢说出口的欲望。' },
 
     { id: 'ch-naixu', name: '奈绪', kana: 'NAO', tone: 'amber', avatar: '奈',
-      age: 22, year: '夕月温泉馆 · 专职技师', height: '160 cm',
+      age: 22, year: '夕月温泉馆 · 专职技师', height: '160 cm', category: 'external',
       orgs: [{ org: 'org-yuzuki-onsen', role: '专职技师' }],
       look: '清纯温顺的面容，眉眼含春，容易害羞。D杯的饱满身材与清纯脸蛋形成强烈反差，穴口常年外翻泛着水光。',
       build: '160cm / D杯 / 苗条匀称 / 腰58 / 臀88。被彻底开发成淫娃的躯体，紧致白皙的大腿内侧藏着被频繁使用的痕迹。',
@@ -183,7 +183,7 @@ window.GameData = (function () {
       tagline: '她的清纯是真的，她的淫荡也是真的——两者从不矛盾。' },
 
     { id: 'ch-xiyuansi-liuyi', name: '西园寺瑠衣', kana: 'SAIONJI Rui', tone: 'wisteria', avatar: '瑠',
-      age: 18, year: '大一 · 音乐社/性爱部', height: '167 cm',
+      age: 18, year: '大一 · 音乐社/性爱部', height: '167 cm', category: 'student',
       orgs: [
         { org: 'org-sex-club', role: '部员' },
       ],
@@ -199,7 +199,7 @@ window.GameData = (function () {
       tagline: '她拉琴时闭眼，不是因为投入——是因为她想用触觉重新认识每一个音符。' },
 
     { id: 'ch-xingye-liumei', name: '星野留美', kana: 'HOSHINO Rumi', tone: 'amber', avatar: '星',
-      age: 26, year: '教师 · 家政课', height: '155 cm',
+      age: 26, year: '教师 · 家政课', height: '155 cm', category: 'staff',
       orgs: [],
       look: '温婉人妻气质，肌肤白里透红。娇小肉感的身躯透着极强的人妻韵味，情动时眼神迷离如醉。',
       build: '155cm / C杯 / 娇小柔软 / 蜜桃臀型。大腿内侧极多软肉，缝隙常年保持湿润泥泞，极易高潮体质。',
@@ -213,7 +213,7 @@ window.GameData = (function () {
       tagline: '她的围裙下藏着一座秘密花园——而她是唯一的花匠。' },
 
     { id: 'ch-jiecheng-meisui', name: '结城美穗', kana: 'YUKI Miho', tone: 'vermil', avatar: '结',
-      age: 31, year: '家庭主妇（夕月隐藏客源）', height: '166 cm',
+      age: 31, year: '家庭主妇（夕月隐藏客源）', height: '166 cm', category: 'external',
       orgs: [{ org: 'org-yuzuki-onsen', role: 'VIP 客户（隐）' }],
       look: '雍容华贵的熟女面容，牛奶肌白得耀眼。F杯沉重白皙的双乳与96cm的宽大臀部是保养得当的极品雌性资本。',
       build: '166cm / F96 / 腰64 / 臀96。熟女体型，丰硕双乳乳晕呈深色，层层肉褶的下体是成熟女性的生理勋章。',
@@ -226,7 +226,7 @@ window.GameData = (function () {
       tagline: '钻戒是戴给外人看的。她的身体只向年轻人敞开——那是丈夫永远买不到的服务。' },
 
     { id: 'ch-tongdao-kelian', name: '桐岛可怜', kana: 'KIRISHIMA Karen', tone: 'moss', avatar: '桐',
-      age: 18, year: '大一 · 游泳社/性爱部', height: '165 cm',
+      age: 18, year: '大一 · 游泳社/性爱部', height: '165 cm', category: 'student',
       orgs: [
         { org: 'org-sex-club', role: '部员' },
       ],
@@ -241,7 +241,7 @@ window.GameData = (function () {
       tagline: '她的人生只有两种模式：训练和比赛。而性爱是两者的交叉点。' },
 
     { id: 'ch-shenqi-jin', name: '神崎堇', kana: 'KANZAKI Sumire', tone: 'vermil', avatar: '神',
-      age: 26, year: '樱丘综合诊所 · 负责人/主治医师', height: '168 cm',
+      age: 26, year: '樱丘综合诊所 · 负责人/主治医师', height: '168 cm', category: 'external',
       orgs: [{ org: 'org-sakuraoka-clinic', role: '负责人/主治医师' }],
       look: '金丝眼镜后的锐利眼波，泪痣点缀冷肤色。薄冷的唇形与E杯的丰满肉体形成冰火两极的禁欲诱惑。',
       build: '168cm / E杯 / 高挑匀称 / 腰60 / 臀90。丰满圆挺的E杯、平坦且有轻微腹肌的腰腹、笔直修长的双腿——毫无赘肉的完美躯体。',
@@ -254,7 +254,7 @@ window.GameData = (function () {
       tagline: '在她眼里，你的每一次勃起都是一组待记录的数据——而她从不遗漏任何一个数据点。' },
 
     { id: 'ch-qiancang-yin', name: '浅仓音', kana: 'ASAKURA Oto', tone: 'sakura', avatar: '浅',
-      age: 20, year: '樱丘综合诊所 · 体检护士', height: '156 cm',
+      age: 20, year: '樱丘综合诊所 · 体检护士', height: '156 cm', category: 'external',
       orgs: [{ org: 'org-sakuraoka-clinic', role: '体检护士' }],
       look: '双马尾、甜美笑容、粉嫩虎牙。元气活泼的面容配上C杯的挺拔身材，是诊所里最受欢迎的护士。',
       build: '156cm / C杯 / 娇小弹软 / 腰56 / 臀85。毫无防备的柔软腹部，极浅的粉色私处，小巧弹软的臀部。',
@@ -267,7 +267,7 @@ window.GameData = (function () {
       tagline: '她的笑容能让任何病人放松——但放松之后会发生什么，就超出护理手册的范围了。' },
 
     { id: 'ch-wushilan-zaoji', name: '五十岚早纪', kana: 'IGARASHI Saki', tone: 'vermil', avatar: '五',
-      age: 22, year: '樱丘综合诊所 · 护士长', height: '162 cm',
+      age: 22, year: '樱丘综合诊所 · 护士长', height: '162 cm', category: 'external',
       orgs: [{ org: 'org-sakuraoka-clinic', role: '护士长' }],
       look: '小恶魔眼角配上艳丽唇色，表面知心大姐姐的笑脸下藏着欺负人的坏心眼。E杯水滴形巨乳与丰腴大腿在护士服下呼之欲出。',
       build: '162cm / E杯 / 前凸后翘 / 腰59 / 臀88。微胖肉感的完美熟女身段，肥大的肉蒂与常年湿润的穴口是过度开发的证明。',
@@ -280,7 +280,7 @@ window.GameData = (function () {
       tagline: '她的温柔是一层糖衣——舔开之后，里面全是让人腿软的坏心眼。' },
 
     { id: 'ch-lin-xueye', name: '林雪野', kana: 'LIN Xueye', tone: 'ink', avatar: '林',
-      age: 19, year: '大二', height: '168 cm',
+      age: 19, year: '大二', height: '168 cm', category: 'student',
       orgs: [],
       look: '齐肩黑发，眼神总是带着审视。淡粉色薄唇极少上扬，清冷距离感如同一块在阳光下不融的冰。',
       build: '168cm / B杯 / 清瘦高挑 / 腰57 / 臀86。极白的皮肤在阳光下近乎透明，笔挺的双腿没有一丝赘肉。',

@@ -24,53 +24,92 @@
   }
 
   function shellHtml() {
-    // 按组织归类（同一人多组织 -> 多次出现）
-    const groupMap = new Map();
-    GameData.organizations.forEach(o => groupMap.set(o.id, []));
-    const looseGroup = []; // 无任何组织的人
+    const CAT_LABELS = { student: '学生', staff: '教职工', external: '校外人员' };
+    const CAT_ORDER = ['student', 'staff', 'external'];
+
+    // Group characters by category
+    const catMap = { student: [], staff: [], external: [] };
     GameData.characters.forEach(c => {
-      if (!c.orgs || c.orgs.length === 0) { looseGroup.push({ char: c, role: '游民' }); return; }
-      c.orgs.forEach(r => {
-        if (groupMap.has(r.org)) groupMap.get(r.org).push({ char: c, role: r.role });
-      });
+      const cat = c.category || 'student';
+      if (catMap[cat]) catMap[cat].push(c);
     });
 
-    const groupsHtml = GameData.organizations.map(o => {
-      const arr = groupMap.get(o.id);
-      if (!arr || arr.length === 0) return '';
-      const items = arr.map(({ char: c, role }) => `
-        <div class="roster-item" data-id="${c.id}">
-          <div class="avatar avatar-sm tone-${c.tone}">${c.avatar}</div>
-          <div>
-            <div class="roster-item-name">${c.name}</div>
-            <div class="roster-item-role">${role}</div>
-          </div>
-        </div>
-      `).join('');
-      return `
-        <div class="roster-group">
-          <div class="roster-group-head">
-            ${o.short}
-            <span class="roster-group-count">${arr.length}</span>
-          </div>
-          ${items}
-        </div>
-      `;
-    }).join('');
+    // For each category, group by organization
+    const orgIdMap = {};
+    GameData.organizations.forEach(o => { orgIdMap[o.id] = o; });
 
-    const looseHtml = looseGroup.length ? `
-      <div class="roster-group">
-        <div class="roster-group-head">无所属<span class="roster-group-count">${looseGroup.length}</span></div>
-        ${looseGroup.map(({ char: c }) => `
+    function renderCategory(cat) {
+      const chars = catMap[cat];
+      if (!chars || chars.length === 0) return '';
+
+      // Org sub-groups within this category
+      const orgGroupMap = new Map();
+      const looseChars = [];
+      const seen = new Set();
+
+      chars.forEach(c => {
+        if (!c.orgs || c.orgs.length === 0) {
+          if (!seen.has(c.id)) { looseChars.push({ char: c, role: null }); seen.add(c.id); }
+          return;
+        }
+        c.orgs.forEach(r => {
+          if (!orgGroupMap.has(r.org)) orgGroupMap.set(r.org, []);
+          orgGroupMap.get(r.org).push({ char: c, role: r.role });
+          seen.add(c.id + '|' + r.org);
+        });
+      });
+
+      // Render org sub-groups
+      let orgsHtml = '';
+      for (const [orgId, members] of orgGroupMap) {
+        const o = orgIdMap[orgId];
+        if (!o) continue;
+        const items = members.map(({ char: c, role }) => `
           <div class="roster-item" data-id="${c.id}">
             <div class="avatar avatar-sm tone-${c.tone}">${c.avatar}</div>
             <div>
               <div class="roster-item-name">${c.name}</div>
-              <div class="roster-item-role">游民</div>
+              <div class="roster-item-role">${role || ''}</div>
             </div>
           </div>
-        `).join('')}
-      </div>` : '';
+        `).join('');
+        orgsHtml += `
+          <div class="roster-group">
+            <div class="roster-group-head">${o.short}<span class="roster-group-count">${members.length}</span></div>
+            ${items}
+          </div>`;
+      }
+
+      // Loose chars (no org in this category)
+      let looseHtml = '';
+      if (looseChars.length > 0) {
+        const items = looseChars.map(({ char: c }) => `
+          <div class="roster-item" data-id="${c.id}">
+            <div class="avatar avatar-sm tone-${c.tone}">${c.avatar}</div>
+            <div>
+              <div class="roster-item-name">${c.name}</div>
+              <div class="roster-item-role">${c.year || ''}</div>
+            </div>
+          </div>
+        `).join('');
+        looseHtml = `
+          <div class="roster-group">
+            <div class="roster-group-head">无固定组织<span class="roster-group-count">${looseChars.length}</span></div>
+            ${items}
+          </div>`;
+      }
+
+      return `
+        <div class="roster-category">
+          <div class="roster-category-head">
+            <span class="roster-category-label">${CAT_LABELS[cat]}</span>
+            <span class="roster-category-count">${chars.length}</span>
+          </div>
+          ${orgsHtml}${looseHtml}
+        </div>`;
+    }
+
+    const bodyHtml = CAT_ORDER.map(renderCategory).join('');
 
     return `
       <div class="roster-shell">
@@ -81,7 +120,7 @@
               <input id="roster-search" type="text" placeholder="搜索人物……" />
             </div>
           </div>
-          <div class="roster-list" id="roster-list">${groupsHtml}${looseHtml}</div>
+          <div class="roster-list" id="roster-list">${bodyHtml}</div>
         </aside>
         <section class="dossier" id="dossier"></section>
       </div>
