@@ -32,7 +32,7 @@ export const DEFAULT_FORMAT_PROMPT = `你必须严格按照以下 XML 标签格�
 <sum>……</sum>               ← 必填；本回合一句话总结
 <vars>{ "金钱": +10, "HP": 38 }</vars>   ← 选填；JSON 深合并`;
 
-export const DEFAULT_TAGS = ['maintext', 'option', 'sum', 'vars', 'thinking', 'think'];
+export const DEFAULT_TAGS = ['maintext', 'option', 'sum', 'vars', 'thinking', 'think', 'w2g'];
 export const DEFAULT_OPAQUE_TAGS = ['thinking', 'think'];
 
 export const DEFAULT_SETTINGS = {

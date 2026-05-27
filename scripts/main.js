@@ -134,10 +134,6 @@ ctxBody.addEventListener('click', (e) => {
 });
 
 // —— 顶栏其它按钮 —— //
-document.getElementById('quick-actions').addEventListener('click', () => {
-  openLorebooks();
-});
-
 document.getElementById('new-turn').addEventListener('click', async () => {
   if (window.__stStore) {
     const s = window.__stStore;

@@ -35,7 +35,7 @@ class SillytavernStore {
     this.isSending = false;
 
     // stream state
-    this.streamState = { thinking: '', maintext: '', options: [], sum: '', varsRaw: '', isStreaming: false };
+    this.streamState = { thinking: '', maintext: '', options: [], sum: '', varsRaw: '', w2gRaw: '', isStreaming: false };
 
     // modal flags
     this.showSettings = false;
@@ -210,7 +210,7 @@ class SillytavernStore {
     const opaqueTags = [...DEFAULT_OPAQUE_TAGS];
     this._parser = new StreamTagParser(tags, opaqueTags);
     const eventBuf = [];
-    this.streamState = { thinking: '', maintext: '', options: [], sum: '', varsRaw: '', isStreaming: true };
+    this.streamState = { thinking: '', maintext: '', options: [], sum: '', varsRaw: '', w2gRaw: '', isStreaming: true };
     this._notify();
 
     if (!this._router) this._router = createApiRouter(this.settings.api);
@@ -244,7 +244,7 @@ class SillytavernStore {
       id: crypto.randomUUID(),
       role: 'assistant',
       content: eventBuf
-        .filter(e => e.type === 'tag-chunk' || e.type === 'raw')
+        .filter(e => (e.type === 'tag-chunk' || e.type === 'raw') && e.tag !== 'w2g')
         .map(e => e.chunk)
         .join(''),
       timestamp: Date.now(),
@@ -258,7 +258,7 @@ class SillytavernStore {
     };
     await this._db.table('chats').put(finalChat);
     this.chats = this.chats.map(c => c.id === finalChat.id ? finalChat : c);
-    this.streamState = { thinking: '', maintext: '', options: [], sum: '', varsRaw: '', isStreaming: false };
+    this.streamState = { thinking: '', maintext: '', options: [], sum: '', varsRaw: '', w2gRaw: '', isStreaming: false };
     this.isSending = false;
     this._notify();
   }
@@ -296,6 +296,7 @@ class SillytavernStore {
         else if (ev.tag === 'thinking' || ev.tag === 'think') this.streamState.thinking += ev.chunk;
         else if (ev.tag === 'sum') this.streamState.sum += ev.chunk;
         else if (ev.tag === 'vars') this.streamState.varsRaw += ev.chunk;
+        else if (ev.tag === 'w2g') this.streamState.w2gRaw += ev.chunk;
       } else if (ev.type === 'option-line') {
         this.streamState.options = [...this.streamState.options, ev.line];
       }
