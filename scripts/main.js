@@ -2,6 +2,7 @@
 import { openSettings, openLorebooks, openPresets } from './sillytavern-ui.js';
 import { store } from './sillytavern-store.js';
 import { exportAllData } from './sillytavern/database.js';
+import { seedLorebooksIfNeeded, injectVariablesIntoChat } from './sillytavern/init-variables.js';
 
 // —— 主导航 -> 模态框 —— //
 document.querySelectorAll('.nav-item[data-modal]').forEach(item => {
@@ -180,9 +181,25 @@ document.getElementById('archive-btn').addEventListener('click', async () => {
 document.getElementById('lorebook-btn').addEventListener('click', () => {
   openLorebooks();
 });
+document.getElementById('lorebook-nav-btn').addEventListener('click', () => {
+  openLorebooks();
+});
 
 document.getElementById('preset-btn').addEventListener('click', () => {
   openPresets();
+});
+document.getElementById('preset-nav-btn').addEventListener('click', () => {
+  openPresets();
+});
+
+// Handle sidebar nav items that don't go through data-modal dispatch
+document.getElementById('lorebook-nav-btn')?.addEventListener('click', function () {
+  this.classList.add('is-active');
+  setTimeout(() => this.classList.remove('is-active'), 280);
+});
+document.getElementById('preset-nav-btn')?.addEventListener('click', function () {
+  this.classList.add('is-active');
+  setTimeout(() => this.classList.remove('is-active'), 280);
 });
 
 // —— 全局快捷键 —— //
@@ -207,6 +224,21 @@ document.addEventListener('keydown', e => {
 
     // Load from IndexedDB
     await store.loadAll();
+
+    // Seed lorebook entries (变量更新规则, 变量列表, 系统规则)
+    await seedLorebooksIfNeeded(store);
+
+    // Create first chat with initial variables if none exist
+    if (!store.activeChatId) {
+      const chatId = await store.createChat('序章 · 樱栖学园');
+      // Inject initial variables into the freshly created chat
+      injectVariablesIntoChat(store, chatId);
+    } else {
+      const chat = store.activeChat;
+      if (chat && (!chat.variables || Object.keys(chat.variables).length === 0)) {
+        injectVariablesIntoChat(store, chat.id);
+      }
+    }
 
     // Wire up ctx-pane refresh
     store.subscribe(() => {

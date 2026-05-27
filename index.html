@@ -146,6 +146,59 @@
       </nav>
     </div>
 
+    <div class="sidebar-section">
+      <div class="sidebar-label">AI 引擎</div>
+      <nav class="nav-list" role="list">
+        <button class="nav-item" data-modal="prompt-viewer" data-shortcut="P">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">提示词查看器</span>
+            <span class="nav-desc">组装结果 · 变量快照</span>
+          </span>
+        </button>
+        <button class="nav-item" data-modal="variable-manager" data-shortcut="V">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h16M8 3v18" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">变量管理</span>
+            <span class="nav-desc">全局 · 会话 · 消息</span>
+          </span>
+        </button>
+        <button class="nav-item" data-modal="script-editor" data-shortcut="S">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6M8 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">脚本编辑器</span>
+            <span class="nav-desc">Regex · EJS · 触发器</span>
+          </span>
+        </button>
+      </nav>
+      <nav class="nav-list" role="list" style="margin-top: var(--sp-4);">
+        <button class="nav-item" id="lorebook-nav-btn">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">世界书管理</span>
+            <span class="nav-desc">条目 · 触发器 · 匹配</span>
+          </span>
+        </button>
+        <button class="nav-item" id="preset-nav-btn">
+          <span class="nav-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </span>
+          <span class="nav-text">
+            <span class="nav-title">预设管理</span>
+            <span class="nav-desc">采样参数 · 提示词模板</span>
+          </span>
+        </button>
+      </nav>
+    </div>
+
     <div class="sidebar-section sidebar-section-bottom">
       <div class="sidebar-label">叙事进度</div>
       <div class="progress-card">
