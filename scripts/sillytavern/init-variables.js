@@ -197,6 +197,72 @@ const VARIABLE_LIST_CONTENT = `---
 </status_current_variables>
 `;
 
+// ================================================================
+// 2b. School Rules & Forms — injected as lorebook for AI context
+// ================================================================
+
+const SCHOOL_RULES_CONTENT = `<rule_樱丘大学规章体系>
+樱丘大学校规 v4.1:
+  第一章 总则:
+    - 本校以「求真、自律、开放」为校训。知识没有禁区，身体亦然——但一切探索须建立在知情与自愿之上。
+    - 校规未尽事宜，由学生会、保健室与性爱部三方联席会议共同议决。
+    - 本校为日本文部科学省特批的单性别教育改革试点校。唯一男性学生（程励行）的招收、培养与评估受本规则特别保护。
+  第二章 性别平等与特别条例:
+    - 男性学生在校期间享有与女性学生同等的学习权、隐私权与拒绝权。任何教学活动不得强制其参与非自愿的身体接触。
+    - 所有涉及异性互动的教学与社团活动，须经参与双方明确同意，并在性爱部或保健室备案。口头同意即可生效，但事后任意一方可撤回。
+    - 性教育课程（sex01—sex07）为全体学生必修学分。男性学生不得以任何理由申请免修，但可申请调整考核方式。
+    - 男性学生每学期须接受保健室安排的基础体检至少一次。深度体检项目为选修，须另行签署同意书。
+  第三章 社团与部活:
+    - 加入新社团须经原社团许可与学生会备案。性爱部加入条件由该部自行制定，最低门槛为修完 sex01 课程。
+    - 同时归属多组织者，不得使任一组织职责受影响。学生会会长兼任性爱部职务须向校方报备。
+    - 社团活动不得与正常课程冲突。性爱部的社团活动（club01—club07）享有与正式课程同等的学分认定权。
+
+性教育课程管理条例 v2.3:
+  课堂纪律:
+    - 理论课期间学生须着校服或指定着装。实操课的着装要求由任课教师现场指定。
+    - 实操课中使用的情趣道具、医疗器械与教学设备均由学校统一采购与消毒。学生自备工具须经教师检查。
+    - 课堂中发生的所有生理反应（勃起、润滑、高潮、射精等）均视为正常教学现象，不得嘲笑或羞辱任何学生。
+  师生关系:
+    - 任课教师在实操示范中与学生发生的身体接触仅限于教学目的。超出教学范畴的私人关系不受本条例保护，但亦不禁止。
+    - 学生对教师产生性欲或情感依恋属正常心理反应。鼓励通过保健室心理咨询或与教师直接沟通处理。
+  考核与评估:
+    - 每门课程设期中与期末两次考核。形式包括：假具测试、真人盲测、耐力赛、多人协作等。
+    - 男性学生作为全校唯一真人测试体，其身体状态直接影响全体学生的考核成绩。任何蓄意干扰其状态的行为视为作弊。
+
+夕月温泉馆服务规程 v1.8:
+  三层服务标准:
+    - 第一层「暧昧保健」：全身精油推拿，允许隔着浴衣进行肢体接触，禁触性器官。技师可着浴衣或技师制服。
+    - 第二层「素股乳交」：允许胸部摩擦与大腿根部接触，可使用润滑液，允许射精在体外。技师须着丁字裤以上衣着。
+    - 第三层「插入式性爱」：允许阴道插入与口交，不限体位。【绝对禁止】在技师体内射精——此为夕月温泉馆最高禁忌。
+  技师权益:
+    - 技师可在服务中途叫停，无须说明理由。客人必须立即停止动作，否则将被永久列入黑名单。
+    - 技师有权选择服务的最高层级。奈绪为三层全通技师，其他技师由老板娘汤原夕子根据培训进度逐级授权。
+  禁忌事项:
+    - 【绝对禁止】技师体内射精。违反者将被永久驱逐并通报樱丘大学学生会。
+    - 禁止在温泉池水中进行第二、三层服务。水中一切接触仅限于第一层保健推拿。
+
+樱丘综合诊所医疗同意书 v2.0:
+  体检项目分级:
+    - A 级（基础）：身高体重、血压心率、视力听力、血常规。无需签署同意书，由浅仓音护士执行。
+    - B 级（深度）：前列腺触诊、精液分析、勃起反射测试、尿道敏感度评估。须签署本同意书，由五十岚早纪护士长执行。
+    - C 级（科研）：多日连续采样、药物反应观测、极限榨取实验。须神崎堇医师亲自审批，仅向自愿参与者开放。
+  患者权利:
+    - 所有体检数据归患者本人所有。诊所仅保留用于医疗研究的匿名化副本。
+    - 患者可在任意环节喊停。医疗操作绝对服从患者的最新指令——此条优先于「医疗操作绝对服从医师」之原则。
+  免责声明:
+    - 深度体检可能导致暂时性脱水、肌肉酸痛、阴茎敏感度短期下降。均在 24—48 小时内恢复。
+    - C 级科研项目的参与者将获得学分补偿与樱丘诊所终身 VIP 资格。
+</rule_樱丘大学规章体系>`;
+
+const FORMS_SUMMARY_CONTENT = `<reference_可用申请表>
+游戏中有以下申请表可供角色使用。当剧情涉及相关场景时，应提示玩家可前往对应面板填写：
+
+1. 社团加入申请表 (CLUB_JOIN) — 申请加入新社团。需原部长审查 → 目标社团面试 → 学生会备案。
+2. 性爱部入部特别申请 (SEXCLUB_JOIN) — 加入性爱部的专用表。需提供性教育课程修读记录与身体自评。审批流：保健室体检核查 → 性爱部面试 → 学生会备案。
+3. 夕月温泉馆服务预约表 (YUZUKI_BOOK) — 预约温泉馆按摩套餐。第一层公开预约，第二、三层需到店与技师面谈确认。含「禁止体内射精」确认条款。
+4. 樱丘综合诊所深度体检同意书 (CLINIC_DEEP) — 授权 B 级及以上深度体检。需选择体检等级（B/C）与可接受采样方式。C 级须神崎医师审批。
+</reference_可用申请表>`;
+
 const SYSTEM_RULES_CONTENT = `<rule_系统核心逻辑约束>
 系统最高优先级铁律:
   人物数据绝对锁死与防抹除机制:
@@ -265,6 +331,53 @@ export function getSeedLorebooks() {
           keys: [], secondaryKeys: [],
           content: SYSTEM_RULES_CONTENT,
           order: 999, position: 'in_chat', selective: false, selectiveLogic: 'and_any',
+          constant: true, probability: 100, useProbability: true, addMemo: true,
+          sticky: 0, cooldown: 0, delay: 0,
+          group: '', groupOverride: false, groupWeight: 100, useGroupScoring: false,
+          caseSensitive: null, matchWholeWords: null,
+          triggerFilter: [], scanDepth: 0,
+          excludeRecursion: false, preventRecursion: false,
+          characterFilter: { isExclude: false, names: [], tags: [] },
+          matchPersonaDescription: false, matchCharacterDescription: false,
+          matchCharacterPersonality: false, matchCharacterDepthPrompt: false,
+          matchScenario: false, matchCreatorNotes: false,
+          depth: 0, role: 0, automationId: '', decorators: [],
+        },
+      ],
+      recursiveScanning: false,
+      caseSensitive: false,
+      matchWholeWords: false,
+      createdAt: now,
+      updatedAt: now,
+    },
+    // ── 规章与申请表世界书 (常驻注入，AI 可见) ──
+    {
+      id: 'seed-rules-forms',
+      name: '樱丘大学 · 规章与申请表',
+      comment: '校规 / 性教育管理条例 / 温泉馆规程 / 诊所同意书 / 可用申请表 — 常驻注入 AI 上下文',
+      entries: [
+        {
+          id: 'entry-school-rules',
+          keys: [], secondaryKeys: [],
+          content: SCHOOL_RULES_CONTENT,
+          order: 300, position: 'in_chat', selective: false, selectiveLogic: 'and_any',
+          constant: true, probability: 100, useProbability: true, addMemo: true,
+          sticky: 0, cooldown: 0, delay: 0,
+          group: '', groupOverride: false, groupWeight: 100, useGroupScoring: false,
+          caseSensitive: null, matchWholeWords: null,
+          triggerFilter: [], scanDepth: 0,
+          excludeRecursion: false, preventRecursion: false,
+          characterFilter: { isExclude: false, names: [], tags: [] },
+          matchPersonaDescription: false, matchCharacterDescription: false,
+          matchCharacterPersonality: false, matchCharacterDepthPrompt: false,
+          matchScenario: false, matchCreatorNotes: false,
+          depth: 0, role: 0, automationId: '', decorators: [],
+        },
+        {
+          id: 'entry-forms-summary',
+          keys: [], secondaryKeys: [],
+          content: FORMS_SUMMARY_CONTENT,
+          order: 301, position: 'in_chat', selective: false, selectiveLogic: 'and_any',
           constant: true, probability: 100, useProbability: true, addMemo: true,
           sticky: 0, cooldown: 0, delay: 0,
           group: '', groupOverride: false, groupWeight: 100, useGroupScoring: false,
