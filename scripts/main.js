@@ -254,7 +254,7 @@ document.addEventListener('keydown', e => {
     }
 
     // One-time: reset test messages and re-inject fresh variables
-    const RESET_KEY = 'sakurasu.chat.reset.v1';
+    const RESET_KEY = 'sakurasu.chat.reset.v2';
     if (!localStorage.getItem(RESET_KEY)) {
       const chat = store.activeChat;
       if (chat && chat.messages?.length > 0) {
