@@ -94,6 +94,51 @@ function _isRecord(obj) {
   return vals.length > 0 && vals.every(v => typeof v === 'object' && v !== null && !Array.isArray(v));
 }
 
+// ── Compact formatters (token-efficient) ──────────────────────────
+
+/**
+ * Format one NPC as a compact 4-line summary.
+ * Omits 器官形态, 经历 (sexual history), 即时痕迹 to save ~300 tokens/NPC.
+ */
+function _formatNpcCompact(name, npc) {
+  const s = npc.静态数据 || {};
+  const d = npc.动态数据 || {};
+  const soc = s.社会情况 || {};
+  const pers = s.个人情况 || {};
+  const body = s.身体形状 || {};
+
+  const lines = [];
+  // Line 1: Name | Age | Position | Department
+  lines.push(`  ■ ${name} | ${soc.年龄 || '?'}岁 | ${soc.职务 || ''} | ${soc.所属部门 || ''}`);
+
+  // Line 2: Personality + affection + sexual attitude
+  const meta = [`性格: ${pers.性格 || ''}`, `外在: ${pers.外在性格表现 || ''}`, `好感: ${d.人物好感度 || '一般'}`, `性观念: ${pers.性观念 || ''}`];
+  lines.push(`    ${meta.join(' | ')}`);
+
+  // Line 3: Body type + clothing
+  if (body.体型数据) lines.push(`    体型: ${body.体型数据}`);
+  const clothes = d.人物穿着;
+  if (clothes) {
+    const cEntries = Object.entries(clothes).filter(([, v]) => v && v !== '无');
+    if (cEntries.length > 0) lines.push(`    穿着: ${cEntries.map(([, v]) => v).join(' / ')}`);
+  }
+
+  // Line 4: Inner thoughts + personal detail
+  if (d.内心想法) lines.push(`    想法: ${d.内心想法}`);
+  if (s.个人细节) lines.push(`    细节: ${s.个人细节}`);
+
+  return lines.join('\n');
+}
+
+/**
+ * Format one course as a single line.
+ */
+function _formatCourseCompact(_id, course) {
+  const s = course.静态数据 || {};
+  const d = course.动态数据 || {};
+  return `  ■ ${s.课程名称 || _id} (${s.课程编号 || ''}) | 教师: ${s.任教老师 || ''} | 进展: ${d.课程进展 || '未开始'}`;
+}
+
 /**
  * Expand the format_message_variable macro.
  * Reads current global + chat scope variables and formats as structured text.
@@ -116,16 +161,31 @@ function _expandFormatVariable(_args, context) {
 
     if (typeof val === 'object' && !Array.isArray(val)) {
       if (_isRecord(val)) {
-        // Record type (e.g. NPC花名册, 校内组织, 课程)
-        // Add compact name index first for quick AI reference
-        const names = Object.keys(val);
-        if (names.length > 0) {
-          sections.push(`  [名单] ${names.join('、')}`);
-        }
-        for (const [entryName, entryData] of Object.entries(val)) {
-          sections.push(`  ■ ${entryName}`);
-          const formatted = _format(entryData, 2, 4);
-          if (formatted) sections.push(formatted);
+        if (key === 'NPC花名册') {
+          // Compact: name index + 4-line summary per NPC (no 器官形态/经历/即时痕迹)
+          const names = Object.keys(val);
+          if (names.length > 0) {
+            sections.push(`  [名单] ${names.join('、')}`);
+          }
+          for (const [entryName, entryData] of Object.entries(val)) {
+            sections.push(_formatNpcCompact(entryName, entryData));
+          }
+        } else if (key === '课程') {
+          // Compact: one line per course
+          for (const [courseId, courseData] of Object.entries(val)) {
+            sections.push(_formatCourseCompact(courseId, courseData));
+          }
+        } else {
+          // Full expansion for other Records (校内组织, 校外组织, etc.)
+          const names = Object.keys(val);
+          if (names.length > 0) {
+            sections.push(`  [名单] ${names.join('、')}`);
+          }
+          for (const [entryName, entryData] of Object.entries(val)) {
+            sections.push(`  ■ ${entryName}`);
+            const formatted = _format(entryData, 2, 4);
+            if (formatted) sections.push(formatted);
+          }
         }
       } else {
         // Plain nested object — try flat display for basic fields first
