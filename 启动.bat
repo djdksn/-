@@ -1,47 +1,37 @@
 @echo off
 cd /d "%~dp0"
+set "PORT=3456"
 title 樱栖学园 · 编年志
-set PORT=3456
 
 echo.
 echo   樱栖学园 · 编年志
 echo   ====================
+echo   http://localhost:%PORT%/
 echo.
 
-:: Check if server already running
-curl -s -o NUL http://localhost:%PORT% 2>NUL
+:: npx serve (preferred)
+where npx >nul 2>&1
 if %errorlevel% equ 0 (
-    echo   [OK] Server already running
-    start http://localhost:%PORT%
+    echo   [..] npx serve on port %PORT%
+    start "" "http://localhost:%PORT%/"
+    npx --yes serve . -l %PORT% --no-clipboard
     goto :done
 )
 
-:: Find npx — try common paths first
-set NPX=
-if exist "%ProgramFiles%\nodejs\npx.cmd" set NPX="%ProgramFiles%\nodejs\npx.cmd"
-if exist "%ProgramFiles(x86)%\nodejs\npx.cmd" set NPX="%ProgramFiles(x86)%\nodejs\npx.cmd"
-if "%NPX%"=="" where npx >nul 2>nul && set NPX=npx
-
-if not "%NPX%"=="" (
-    echo   [..] Starting server on port %PORT%...
-    start http://localhost:%PORT%
-    %NPX% --yes serve . -l %PORT% --no-clipboard
-    goto :done
-)
-
-:: Fallback: Python
-where python >nul 2>nul
+:: Python fallback
+where python >nul 2>&1
 if %errorlevel% equ 0 (
-    echo   [..] Using Python server...
-    start http://localhost:%PORT%
+    echo   [..] Python http.server on port %PORT%
+    start "" "http://localhost:%PORT%/"
     python -m http.server %PORT%
     goto :done
 )
 
-where python3 >nul 2>nul
+:: Python3 fallback
+where python3 >nul 2>&1
 if %errorlevel% equ 0 (
-    echo   [..] Using Python3 server...
-    start http://localhost:%PORT%
+    echo   [..] Python3 http.server on port %PORT%
+    start "" "http://localhost:%PORT%/"
     python3 -m http.server %PORT%
     goto :done
 )
