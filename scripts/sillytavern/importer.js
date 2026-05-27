@@ -201,17 +201,41 @@ export function exportPreset(preset) {
 
 export function importJsonFile() {
   return new Promise((resolve) => {
+    // Clean up any stale file inputs from previous cancelled imports
+    document.querySelectorAll('input[data-st-import]').forEach(el => el.remove());
+
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json,application/json';
+    input.setAttribute('data-st-import', '1');
+
+    let resolved = false;
+    const done = (val) => {
+      if (resolved) return;
+      resolved = true;
+      input.remove();
+      resolve(val);
+    };
+
     input.onchange = async (e) => {
       const file = e.target.files?.[0];
-      if (!file) { resolve(null); return; }
+      if (!file) { done(null); return; }
       try {
         const text = await file.text();
-        resolve(JSON.parse(text));
-      } catch { resolve(null); }
+        done(JSON.parse(text));
+      } catch { done(null); }
     };
+
+    // Handle cancel (supported in modern browsers)
+    input.oncancel = () => done(null);
+
+    // Fallback: if window refocuses without file selection, treat as cancel
+    const onFocus = () => {
+      window.removeEventListener('focus', onFocus);
+      setTimeout(() => { if (!resolved) done(null); }, 300);
+    };
+    window.addEventListener('focus', onFocus);
+
     input.click();
   });
 }
