@@ -21,7 +21,7 @@
   display: flex; flex-direction: column;
   background: linear-gradient(180deg, var(--ink-900) 0%, var(--ink-950) 100%);
   border-right: 1px solid var(--border-faint);
-  overflow: hidden;
+  overflow-y: auto; overflow-x: hidden;
   z-index: var(--z-sticky);
 }
 .sidebar::before {
@@ -33,10 +33,13 @@
 }
 
 .sidebar-header {
-  position: relative;
+  position: sticky; top: 0; z-index: 2;
+  flex-shrink: 0;
   display: flex; align-items: center; justify-content: space-between;
   padding: var(--sp-12) var(--sp-12) var(--sp-10);
   border-bottom: 1px solid var(--border-faint);
+  background: linear-gradient(180deg, var(--ink-950) 0%, var(--ink-900) 100%);
+  backdrop-filter: blur(12px);
 }
 
 .brand {
@@ -96,7 +99,7 @@
   padding: var(--sp-10) var(--sp-8);
   border-bottom: 1px solid var(--border-faint);
 }
-.sidebar-section-bottom { margin-top: auto; border-bottom: 0; }
+.sidebar-section-bottom { border-bottom: 0; }
 .sidebar-label {
   font-size: var(--fs-2xs);
   font-weight: 600;
@@ -229,9 +232,13 @@
 
 /* —— Sidebar footer —— */
 .sidebar-footer {
+  position: sticky; bottom: 0; z-index: 2;
+  flex-shrink: 0;
   display: flex; align-items: center; gap: var(--sp-3);
   padding: var(--sp-7) var(--sp-10);
   border-top: 1px solid var(--border-faint);
+  background: linear-gradient(180deg, var(--ink-900) 0%, var(--ink-950) 100%);
+  backdrop-filter: blur(12px);
 }
 .footer-btn {
   width: 30px; height: 30px;
@@ -401,6 +408,7 @@
 .app-shell.ctx-collapsed .ctx-pane { opacity: 0; pointer-events: none; }
 
 .ctx-pane-head {
+  flex-shrink: 0;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 var(--sp-10);
   height: var(--topbar-h);
@@ -415,9 +423,42 @@
 }
 .ctx-pane-title svg { width: 16px; height: 16px; color: var(--accent); }
 .ctx-pane-body {
-  flex: 1; overflow-y: auto;
+  flex: 1; overflow-y: auto; overflow-x: hidden;
   padding: var(--sp-10);
   display: flex; flex-direction: column; gap: var(--sp-10);
+}
+
+/* ==========================================================
+ * 无极滚轮 — 自定义滚动条
+ * ========================================================== */
+.sidebar::-webkit-scrollbar,
+.ctx-pane-body::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar::-webkit-scrollbar-track,
+.ctx-pane-body::-webkit-scrollbar-track,
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar::-webkit-scrollbar-thumb,
+.ctx-pane-body::-webkit-scrollbar-thumb,
+.modal-body::-webkit-scrollbar-thumb {
+  background: var(--border-faint);
+  border-radius: var(--r-full);
+  transition: background var(--t-fast);
+}
+.sidebar::-webkit-scrollbar-thumb:hover,
+.ctx-pane-body::-webkit-scrollbar-thumb:hover,
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--border-soft);
+}
+/* Firefox */
+.sidebar,
+.ctx-pane-body,
+.modal-body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-faint) transparent;
 }
 
 /* ==========================================================
