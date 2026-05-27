@@ -1267,14 +1267,14 @@ export function openPresetEditor(preset) {
     ${textarea('Scenario Format', 'scenario_format', 3)}
     ${textarea('Personality Format', 'personality_format', 3)}`;
 
-  // Prompt order section
+  // Prompt order section (built-in slots)
   const order = s.prompt_order && s.prompt_order.length > 0
     ? s.prompt_order
     : DEFAULT_PROMPT_ORDER.map((p, i) => ({ ...p, enabled: true }));
   const promptsArr = s.prompts || [];
 
   const orderContent = `
-    <div style="font-size:12px;color:var(--fg-quaternary);margin-bottom:8px;">拖拽排序或切换开关（修改后点击底部保存生效）</div>
+    <div style="font-size:12px;color:var(--fg-quaternary);margin-bottom:8px;">拖拽排序内置提示词位置，开关控制是否注入</div>
     <div id="pre-prompt-order-list" style="display:flex;flex-direction:column;gap:4px;">
       ${order.map((p, i) => `
         <div class="pre-order-item" data-idx="${i}" draggable="true" style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--ink-800);border-radius:4px;cursor:grab;">
@@ -1285,11 +1285,85 @@ export function openPresetEditor(preset) {
           </label>
         </div>
       `).join('')}
-    </div>
-    <div style="margin-top:8px;font-size:11px;color:var(--fg-quaternary);">
-      自定义 JSON Prompts: <span style="font-family:var(--font-mono);">${promptsArr.length} 个</span>
-      <textarea id="pre-prompts-json" style="width:100%;resize:vertical;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:6px 8px;font-size:11px;font-family:var(--font-mono);margin-top:4px;" rows="4">${esc(JSON.stringify(promptsArr, null, 2))}</textarea>
     </div>`;
+
+  // Custom prompts section (ST-style cards)
+  const posLabels = ['角色前', '角色后', '示例前', '示例后', '@深度', '例消息顶', '例消息底', '出口'];
+  const roleOptions = ['system', 'user', 'assistant'].map(r =>
+    `<option value="${r}" ${(promptsArr.role || 'system') === r ? 'selected' : ''}>${r}</option>`
+  ).join('');
+
+  const renderPromptCard = (p, i) => `
+    <div class="pre-custom-item" data-prompt-index="${i}" draggable="true" style="background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;margin-bottom:6px;overflow:hidden;">
+      <div class="pre-custom-head" style="display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;user-select:none;">
+        <span class="pre-custom-drag" style="cursor:grab;color:var(--fg-quaternary);font-family:var(--font-mono);" draggable="true">⠿</span>
+        <span style="font-size:11px;color:var(--fg-tertiary);font-family:var(--font-mono);width:20px;text-align:right;">#${i + 1}</span>
+        <span class="pre-custom-name-display" style="flex:1;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(p.name || '未命名')}</span>
+        ${p.system_prompt ? '<span style="font-size:10px;color:var(--sakura-400);background:rgba(255,107,154,0.12);padding:1px 6px;border-radius:3px;">SYSTEM</span>' : ''}
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--fg-tertiary);cursor:pointer;" onclick="event.stopPropagation()">
+          <input type="checkbox" class="pre-custom-enabled" data-prompt-index="${i}" ${p.enabled !== false ? 'checked' : ''}> 启用
+        </label>
+        <button class="pre-custom-expand-btn" data-prompt-index="${i}" style="all:unset;cursor:pointer;color:var(--fg-tertiary);font-size:14px;padding:2px 4px;" title="展开/折叠">▸</button>
+      </div>
+      <div class="pre-custom-body" data-prompt-index="${i}" style="display:none;padding:0 10px 10px;border-top:1px solid var(--ink-700);">
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <div style="flex:1;">
+            <label style="font-size:11px;color:var(--fg-tertiary);display:block;margin-bottom:2px;">名称</label>
+            <input class="pre-custom-name" data-prompt-index="${i}" value="${esc(p.name || '')}" placeholder="提示词名称" style="width:100%;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:4px 8px;font-size:12px;">
+          </div>
+          <div style="width:100px;">
+            <label style="font-size:11px;color:var(--fg-tertiary);display:block;margin-bottom:2px;">角色</label>
+            <select class="pre-custom-role" data-prompt-index="${i}" style="width:100%;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:4px 6px;font-size:12px;">
+              <option value="system" ${(p.role || 'system') === 'system' ? 'selected' : ''}>system</option>
+              <option value="user" ${p.role === 'user' ? 'selected' : ''}>user</option>
+              <option value="assistant" ${p.role === 'assistant' ? 'selected' : ''}>assistant</option>
+            </select>
+          </div>
+        </div>
+        <label style="font-size:11px;color:var(--fg-tertiary);display:block;margin-top:8px;margin-bottom:2px;">内容</label>
+        <textarea class="pre-custom-content" data-prompt-index="${i}" rows="4" style="width:100%;resize:vertical;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:6px 8px;font-size:12px;font-family:var(--font-mono);">${esc(p.content || '')}</textarea>
+        <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;align-items:center;">
+          <div style="width:120px;">
+            <label style="font-size:10px;color:var(--fg-quaternary);display:block;margin-bottom:2px;">注入位置</label>
+            <select class="pre-custom-position" data-prompt-index="${i}" style="width:100%;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:3px 4px;font-size:11px;">
+              ${posLabels.map((l, vi) => `<option value="${vi}" ${(p.injection_position || 0) === vi ? 'selected' : ''}>${l}</option>`).join('')}
+            </select>
+          </div>
+          <div style="width:70px;">
+            <label style="font-size:10px;color:var(--fg-quaternary);display:block;margin-bottom:2px;">深度</label>
+            <input class="pre-custom-depth" data-prompt-index="${i}" type="number" value="${p.injection_depth ?? 4}" min="0" max="999" style="width:100%;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:3px 4px;font-size:11px;">
+          </div>
+          <div style="width:70px;">
+            <label style="font-size:10px;color:var(--fg-quaternary);display:block;margin-bottom:2px;">排序</label>
+            <input class="pre-custom-order" data-prompt-index="${i}" type="number" value="${p.injection_order ?? 100}" min="0" max="9999" style="width:100%;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:3px 4px;font-size:11px;">
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;padding-top:14px;">
+            <label style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--fg-tertiary);cursor:pointer;">
+              <input type="checkbox" class="pre-custom-system" data-prompt-index="${i}" ${p.system_prompt ? 'checked' : ''}> 系统提示
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--fg-tertiary);cursor:pointer;">
+              <input type="checkbox" class="pre-custom-marker" data-prompt-index="${i}" ${p.marker ? 'checked' : ''}> 标记
+            </label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--fg-tertiary);cursor:pointer;">
+              <input type="checkbox" class="pre-custom-forbid" data-prompt-index="${i}" ${p.forbid_overrides ? 'checked' : ''}> 禁止覆写
+            </label>
+          </div>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content:flex-end;">
+          <button class="pre-custom-delete" data-prompt-index="${i}" style="all:unset;cursor:pointer;color:var(--amber-400);font-size:11px;padding:2px 8px;">删除此提示词</button>
+        </div>
+      </div>
+    </div>`;
+
+  const customPromptsContent = `
+    <div style="font-size:12px;color:var(--fg-quaternary);margin-bottom:8px;">
+      自定义提示词 · ${promptsArr.length} 条 — 点击卡片展开编辑，拖拽排序
+    </div>
+    <div id="pre-custom-prompts-list" style="display:flex;flex-direction:column;">
+      ${promptsArr.map((p, i) => renderPromptCard(p, i)).join('')}
+      ${promptsArr.length === 0 ? '<div style="font-size:12px;color:var(--fg-tertiary);padding:12px;text-align:center;">暂无自定义提示词</div>' : ''}
+    </div>
+    <button id="pre-custom-add" class="btn-sm" style="margin-top:8px;">+ 添加提示词</button>`;
 
   const body = `
     <div style="max-height:65vh;overflow-y:auto;padding-right:4px;">
@@ -1300,7 +1374,8 @@ export function openPresetEditor(preset) {
       ${section('提示词模板', promptsContent)}
       ${section('辅助提示词', utilityContent)}
       ${section('格式模板', formatContent)}
-      ${section('提示词排序', orderContent)}
+      ${section('提示词排序 (注入位置)', orderContent)}
+      ${section('自定义提示词 (' + promptsArr.length + ' 条)', customPromptsContent)}
     </div>
     <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--ink-700);padding-top:12px;">
       <button id="pre-editor-cancel" class="btn-sm" style="color:var(--fg-tertiary);">取消</button>
@@ -1337,12 +1412,32 @@ export function openPresetEditor(preset) {
         newOrder.push({ ...order[idx], enabled: cb ? cb.checked : true });
       });
       next.settings.prompt_order = newOrder;
-      // collect prompts JSON
-      const promptsTextarea = el.querySelector('#pre-prompts-json');
-      if (promptsTextarea) {
-        try {
-          next.settings.prompts = JSON.parse(promptsTextarea.value);
-        } catch { /* keep old */ }
+      // collect custom prompts from card UI
+      const promptCards = el.querySelectorAll('.pre-custom-item');
+      if (promptCards.length > 0) {
+        const promptsArr = [];
+        promptCards.forEach(card => {
+          const idx = card.getAttribute('data-prompt-index');
+          const orig = snap.settings.prompts?.[idx] || {};
+          const name = card.querySelector('.pre-custom-name')?.value ?? orig.name ?? '';
+          const content = card.querySelector('.pre-custom-content')?.value ?? orig.content ?? '';
+          const role = card.querySelector('.pre-custom-role')?.value ?? orig.role ?? 'system';
+          const enabled = card.querySelector('.pre-custom-enabled')?.checked ?? orig.enabled ?? true;
+          const injection_position = Number(card.querySelector('.pre-custom-position')?.value ?? orig.injection_position ?? 0);
+          const injection_depth = Number(card.querySelector('.pre-custom-depth')?.value ?? orig.injection_depth ?? 4);
+          const injection_order = Number(card.querySelector('.pre-custom-order')?.value ?? orig.injection_order ?? 100);
+          const system_prompt = card.querySelector('.pre-custom-system')?.checked ?? orig.system_prompt ?? false;
+          const marker = card.querySelector('.pre-custom-marker')?.checked ?? orig.marker ?? false;
+          const forbid_overrides = card.querySelector('.pre-custom-forbid')?.checked ?? orig.forbid_overrides ?? false;
+          promptsArr.push({
+            ...orig,
+            name, content, role, enabled,
+            injection_position, injection_depth, injection_order,
+            system_prompt, marker, forbid_overrides,
+            identifier: orig.identifier || crypto.randomUUID(),
+          });
+        });
+        next.settings.prompts = promptsArr;
       }
       next.name = el.querySelector('[data-key="name"]')?.value || next.name;
       next.description = el.querySelector('[data-key="description"]')?.value || next.description;
@@ -1369,34 +1464,148 @@ export function openPresetEditor(preset) {
     });
 
     // Drag-and-drop for prompt_order
-    const list = el.querySelector('#pre-prompt-order-list');
-    if (list) {
+    const orderList = el.querySelector('#pre-prompt-order-list');
+    if (orderList) {
       let dragSrc = null;
-      list.addEventListener('dragstart', e => {
+      orderList.addEventListener('dragstart', e => {
         dragSrc = e.target.closest('.pre-order-item');
         if (dragSrc) { dragSrc.style.opacity = '0.4'; e.dataTransfer.effectAllowed = 'move'; }
       });
-      list.addEventListener('dragend', e => {
+      orderList.addEventListener('dragend', e => {
         const item = e.target.closest('.pre-order-item');
         if (item) item.style.opacity = '1';
         dragSrc = null;
       });
-      list.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
-      list.addEventListener('drop', e => {
+      orderList.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+      orderList.addEventListener('drop', e => {
         e.preventDefault();
         const target = e.target.closest('.pre-order-item');
         if (!target || !dragSrc || target === dragSrc) return;
-        const items = [...list.querySelectorAll('.pre-order-item')];
+        const items = [...orderList.querySelectorAll('.pre-order-item')];
         const fromIdx = items.indexOf(dragSrc);
         const toIdx = items.indexOf(target);
         if (fromIdx < toIdx) {
-          list.insertBefore(dragSrc, target.nextSibling);
+          orderList.insertBefore(dragSrc, target.nextSibling);
         } else {
-          list.insertBefore(dragSrc, target);
+          orderList.insertBefore(dragSrc, target);
         }
-        // Re-index
-        list.querySelectorAll('.pre-order-item').forEach((item, i) => {
+        orderList.querySelectorAll('.pre-order-item').forEach((item, i) => {
           item.setAttribute('data-idx', i);
+        });
+      });
+    }
+
+    // Custom prompts — expand/collapse, add, delete, drag
+    const promptsList = el.querySelector('#pre-custom-prompts-list');
+    if (promptsList) {
+      // Expand/collapse on header click
+      promptsList.addEventListener('click', e => {
+        const expandBtn = e.target.closest('.pre-custom-expand-btn');
+        const head = e.target.closest('.pre-custom-head');
+        const deleteBtn = e.target.closest('.pre-custom-delete');
+        if (!head) return;
+        if (deleteBtn) return; // handled separately
+
+        const card = head.closest('.pre-custom-item');
+        if (!card) return;
+        const idx = card.getAttribute('data-prompt-index');
+        const body = card.querySelector(`.pre-custom-body[data-prompt-index="${idx}"]`);
+        const arrow = card.querySelector(`.pre-custom-expand-btn[data-prompt-index="${idx}"]`);
+        if (body) {
+          const isOpen = body.style.display !== 'none';
+          body.style.display = isOpen ? 'none' : 'block';
+          if (arrow) arrow.textContent = isOpen ? '▸' : '▾';
+        }
+      });
+
+      // Stop checkbox clicks from toggling expand
+      promptsList.addEventListener('click', e => {
+        if (e.target.type === 'checkbox' || e.target.closest('select') || e.target.closest('textarea') || e.target.closest('input[type="number"]')) {
+          e.stopPropagation();
+        }
+      }, true);
+
+      // Delete prompt
+      promptsList.addEventListener('click', e => {
+        const deleteBtn = e.target.closest('.pre-custom-delete');
+        if (!deleteBtn) return;
+        e.stopPropagation();
+        const idx = deleteBtn.getAttribute('data-prompt-index');
+        const card = deleteBtn.closest('.pre-custom-item');
+        if (card) card.remove();
+        reindexCustomPrompts(el);
+      });
+
+      // Drag-and-drop for custom prompts (triggered from drag handle)
+      let customDragSrc = null;
+      promptsList.addEventListener('dragstart', e => {
+        const dragHandle = e.target.closest('.pre-custom-drag');
+        if (!dragHandle) { e.preventDefault(); return; }
+        customDragSrc = dragHandle.closest('.pre-custom-item');
+        if (customDragSrc) { customDragSrc.style.opacity = '0.4'; e.dataTransfer.effectAllowed = 'move'; }
+      });
+      promptsList.addEventListener('dragend', e => {
+        if (customDragSrc) { customDragSrc.style.opacity = '1'; customDragSrc = null; }
+      });
+      promptsList.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+      promptsList.addEventListener('drop', e => {
+        e.preventDefault();
+        const target = e.target.closest('.pre-custom-item');
+        if (!target || !customDragSrc || target === customDragSrc) return;
+        const items = [...promptsList.querySelectorAll('.pre-custom-item')];
+        const fromIdx = items.indexOf(customDragSrc);
+        const toIdx = items.indexOf(target);
+        if (fromIdx < toIdx) {
+          promptsList.insertBefore(customDragSrc, target.nextSibling);
+        } else {
+          promptsList.insertBefore(customDragSrc, target);
+        }
+        reindexCustomPrompts(el);
+      });
+    }
+
+    // Add custom prompt button
+    const addBtn = el.querySelector('#pre-custom-add');
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        const newPrompt = {
+          identifier: crypto.randomUUID(),
+          name: '新提示词',
+          enabled: true,
+          role: 'system',
+          content: '',
+          injection_position: 0,
+          injection_depth: 4,
+          injection_order: 100,
+          system_prompt: false,
+          marker: false,
+          forbid_overrides: false,
+        };
+        // Collect current state from DOM first, then append new prompt
+        const current = collect();
+        current.settings.prompts = [...(current.settings.prompts || []), newPrompt];
+        modal.close();
+        openPresetEditor(current);
+        store.showToast('已添加提示词');
+      });
+    }
+
+    function reindexCustomPrompts(container) {
+      const cards = container.querySelectorAll('.pre-custom-item');
+      cards.forEach((card, i) => {
+        card.setAttribute('data-prompt-index', String(i));
+        // Update all numbered display
+        const numSpan = card.querySelector('.pre-custom-head span[style*="text-align:right"]');
+        if (numSpan) numSpan.textContent = '#' + (i + 1);
+      });
+      // Re-index all data attributes on child elements
+      ['pre-custom-name-display', 'pre-custom-name', 'pre-custom-content', 'pre-custom-role',
+       'pre-custom-position', 'pre-custom-depth', 'pre-custom-order',
+       'pre-custom-system', 'pre-custom-marker', 'pre-custom-forbid',
+       'pre-custom-delete', 'pre-custom-expand-btn', 'pre-custom-enabled',
+       'pre-custom-body'].forEach(cls => {
+        container.querySelectorAll(`.${cls}`).forEach(el => {
+          el.setAttribute('data-prompt-index', el.closest('.pre-custom-item')?.getAttribute('data-prompt-index') ?? '0');
         });
       });
     }
