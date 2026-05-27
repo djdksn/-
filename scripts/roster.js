@@ -267,6 +267,11 @@
     const vars = window.__liveVariables;
     if (!vars) return '<div class="dossier-section"><div class="dossier-section-label">动态数据</div><div class="dossier-section-content" style="color:var(--fg-quaternary)">变量系统尚未就绪，请先发送一条消息激活。</div></div>';
 
+    // ── Protagonist: show User信息 ──
+    if (c.id === 'ch-cheng-lixing') {
+      return renderProtagonistLiveTab(vars);
+    }
+
     const npc = vars['NPC花名册']?.[c.name];
     if (!npc?.动态数据) return '<div class="dossier-section"><div class="dossier-section-label">动态数据</div><div class="dossier-section-content" style="color:var(--fg-quaternary)">该角色暂无动态数据。变量将在 AI 对话过程中自动更新。</div></div>';
 
@@ -317,6 +322,58 @@
         <div class="dossier-section-label">${GameIcons.get('hash')}<span>经历统计</span></div>
         <div class="dossier-stats" style="flex-wrap:wrap;">${expHtml}</div>
       </div>` : ''}
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get('info')}<span>数据来源</span></div>
+        <div class="dossier-section-content" style="font-size:var(--fs-xs);color:var(--fg-quaternary);">以上数据来源于 AI 对话中的实时变量更新。每次 AI 回复后自动刷新。</div>
+      </div>
+    `;
+  }
+
+  function renderProtagonistLiveTab(vars) {
+    const u = vars['User信息'];
+    if (!u) return '<div class="dossier-section"><div class="dossier-section-label">动态数据</div><div class="dossier-section-content" style="color:var(--fg-quaternary)">主角数据尚未初始化，请先发送一条消息激活变量系统。</div></div>';
+
+    const statsHtml = [
+      ['年龄', u.年龄, ''],
+      ['职务', u.职务, ''],
+      ['所属部门', u.所属部门, ''],
+      ['性交总次数', u.性交总次数, ''],
+      ['接受性交次数', u.接受性交次数, ''],
+      ['接受口交次数', u.接受口交次数, ''],
+      ['接受肛交次数', u.接受肛交次数, ''],
+      ['接受色情按摩次数', u.接受色情按摩次数, ''],
+      ['发生性关系总人数', u.发生性关系总人数, ''],
+    ].filter(([, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => `<div class="dossier-stat"><span class="dossier-stat-k">${k}</span><span class="dossier-stat-v">${escapeHtml(String(v))}</span></div>`).join('');
+
+    const recent = u['最近一次性行为'];
+    const recentHtml = recent && recent.对象 !== '暂无' ? `
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get('clock')}<span>最近一次性行为</span></div>
+        <div class="dossier-stats" style="flex-wrap:wrap;">
+          <div class="dossier-stat"><span class="dossier-stat-k">时间</span><span class="dossier-stat-v">${escapeHtml(String(recent.时间 || '暂无'))}</span></div>
+          <div class="dossier-stat"><span class="dossier-stat-k">地点</span><span class="dossier-stat-v">${escapeHtml(String(recent.地点 || '暂无'))}</span></div>
+          <div class="dossier-stat"><span class="dossier-stat-k">对象</span><span class="dossier-stat-v">${escapeHtml(String(recent.对象 || '暂无'))}</span></div>
+        </div>
+        <div class="dossier-section-content" style="margin-top:var(--sp-4);">${escapeHtml(String(recent['方式与情况描写'] || '暂无'))}</div>
+      </div>` : '';
+
+    const partners = u['与其发生性交个人性交方式与次数'];
+    const partnersHtml = partners && Object.keys(partners).length > 0 ? `
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get('users')}<span>性交记录</span></div>
+        <div class="dossier-section-content">
+          ${Object.entries(partners).map(([name, data]) => `<div style="margin-bottom:var(--sp-3);"><strong>${escapeHtml(name)}</strong>: ${escapeHtml(String(data.方式 || ''))} · ${data.次数 || 0}次</div>`).join('')}
+        </div>
+      </div>` : '';
+
+    return `
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get('user')}<span>主角信息</span></div>
+        <div class="dossier-stats" style="flex-wrap:wrap;">${statsHtml}</div>
+      </div>
+      ${recentHtml}
+      ${partnersHtml}
       <div class="dossier-section">
         <div class="dossier-section-label">${GameIcons.get('info')}<span>数据来源</span></div>
         <div class="dossier-section-content" style="font-size:var(--fs-xs);color:var(--fg-quaternary);">以上数据来源于 AI 对话中的实时变量更新。每次 AI 回复后自动刷新。</div>

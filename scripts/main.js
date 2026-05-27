@@ -245,13 +245,25 @@ document.addEventListener('keydown', e => {
     // Create first chat with initial variables if none exist
     if (!store.activeChatId) {
       const chatId = await store.createChat('序章 · 樱丘大学');
-      // Inject initial variables into the freshly created chat
       injectVariablesIntoChat(store, chatId);
     } else {
       const chat = store.activeChat;
       if (chat && (!chat.variables || Object.keys(chat.variables).length === 0)) {
         injectVariablesIntoChat(store, chat.id);
       }
+    }
+
+    // One-time: reset test messages and re-inject fresh variables
+    const RESET_KEY = 'sakurasu.chat.reset.v1';
+    if (!localStorage.getItem(RESET_KEY)) {
+      const chat = store.activeChat;
+      if (chat && chat.messages?.length > 0) {
+        await store._db.table('chats').put({ ...chat, messages: [], variables: {}, updatedAt: Date.now() });
+        store.chats = store.chats.map(c => c.id === chat.id ? { ...c, messages: [], variables: {} } : c);
+        injectVariablesIntoChat(store, chat.id);
+        console.log('[SillyTavern] Chat messages reset, variables re-injected');
+      }
+      localStorage.setItem(RESET_KEY, '1');
     }
 
     // Init bridge for live variable display
