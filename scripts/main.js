@@ -16,6 +16,8 @@ document.querySelectorAll('.nav-item[data-modal]').forEach(item => {
       case 'courses': GameCourses.open(); break;
       case 'rules-editor': GameRulesEditor.open(); break;
       case 'form-editor': GameFormEditor.open(); break;
+      case 'rules-reader': GameRulesReader.open(); break;
+      case 'todo': GameTodo.open(); break;
     }
     setTimeout(() => item.classList.remove('is-active'), 280);
   });
@@ -176,11 +178,15 @@ document.getElementById('lorebook-btn').addEventListener('click', () => {
   openLorebooks();
 });
 
+document.getElementById('preset-btn').addEventListener('click', () => {
+  openPresets();
+});
+
 // —— 全局快捷键 —— //
 document.addEventListener('keydown', e => {
   if (e.target.matches('input, textarea')) return;
   const k = e.key.toLowerCase();
-  const map = { f: 'facilities', o: 'organizations', r: 'roster', c: 'courses', d: 'rules-editor', a: 'form-editor' };
+  const map = { f: 'facilities', o: 'organizations', r: 'roster', c: 'courses', d: 'rules-editor', a: 'form-editor', e: 'rules-reader', t: 'todo' };
   if (map[k]) {
     const item = document.querySelector(`.nav-item[data-modal="${map[k]}"]`);
     if (item) item.click();
