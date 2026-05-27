@@ -3,6 +3,7 @@
  * API aligned with ST-Prompt-Template: getvar, setvar, incvar, decvar
  */
 import { getGlobalVariables, saveGlobalVariables } from './database.js';
+import { coerce as schemaCoerce } from './variable-schema.js';
 
 // In-memory message variables: chatId -> messageId -> vars
 const messageVars = new Map();
@@ -128,6 +129,12 @@ class VariableStore {
     const opts = this._resolveOpts(rawOpts);
     const flags = opts.flags || 'n';
 
+    // Schema coercion
+    const scResult = schemaCoerce(key, value);
+    if (scResult.warning) console.warn(scResult.warning);
+    if (scResult.coerced === undefined) return undefined;
+    value = scResult.coerced;
+
     if (opts.scope === 'message') {
       const mKey = _messageKey(chat?.id, msgId);
       if (!mKey) return undefined;
@@ -201,6 +208,25 @@ class VariableStore {
     return {};
   }
 
+  /**
+   * Synchronous version of getAll for use by macros and EJS templates.
+   * ensureLoaded() must be called first.
+   */
+  getAllSync(scope, chat) {
+    if (scope === 'global') return { ..._globalVars };
+    if (scope === 'chat') return chat?.variables ? { ...chat.variables } : {};
+    if (scope === 'message' && chat) {
+      const result = {};
+      for (const [key, vars] of messageVars) {
+        if (key.startsWith(chat.id + '::')) {
+          result[key.slice(chat.id.length + 2)] = { ...vars };
+        }
+      }
+      return result;
+    }
+    return {};
+  }
+
   // ---- Synchronous variants (for EJS templates; ensureLoaded must be called first) ----
 
   async ensureLoaded() {
@@ -249,6 +275,12 @@ class VariableStore {
   setVarSync(key, value, rawOpts, chat, msgId) {
     const opts = this._resolveOpts(rawOpts);
     const flags = opts.flags || 'n';
+
+    // Schema coercion
+    const scResult = schemaCoerce(key, value);
+    if (scResult.warning) console.warn(scResult.warning);
+    if (scResult.coerced === undefined) return undefined;
+    value = scResult.coerced;
 
     if (opts.scope === 'message') {
       const mKey = _messageKey(chat?.id, msgId);
