@@ -284,7 +284,96 @@ export function getSeedLorebooks() {
       createdAt: now,
       updatedAt: now,
     },
+    // ── 初始变量数据世界书 (可见可导入) ──
+    {
+      id: 'seed-initial-variables',
+      name: '樱丘大学 · 初始变量',
+      comment: '完整初始世界状态 — NPC花名册 / 课程 / 组织 / 设施 / 用户信息',
+      entries: [
+        {
+          id: 'entry-init-vars-manifest',
+          keys: ['初始变量', '世界状态', '变量快照'], secondaryKeys: [],
+          content: buildInitialVariablesManifest(),
+          order: 100, position: 'in_chat', selective: true, selectiveLogic: 'and_any',
+          constant: false, probability: 100, useProbability: true, addMemo: true,
+          sticky: 0, cooldown: 0, delay: 0,
+          group: '', groupOverride: false, groupWeight: 100, useGroupScoring: false,
+          caseSensitive: null, matchWholeWords: null,
+          triggerFilter: [], scanDepth: 0,
+          excludeRecursion: false, preventRecursion: false,
+          characterFilter: { isExclude: false, names: [], tags: [] },
+          matchPersonaDescription: false, matchCharacterDescription: false,
+          matchCharacterPersonality: false, matchCharacterDepthPrompt: false,
+          matchScenario: false, matchCreatorNotes: false,
+          depth: 0, role: 0, automationId: '', decorators: [],
+        },
+      ],
+      recursiveScanning: false,
+      caseSensitive: false,
+      matchWholeWords: false,
+      createdAt: now,
+      updatedAt: now,
+    },
   ];
+}
+
+/**
+ * Build a compact manifest of initial world state for the lorebook entry.
+ * This makes the variable structure visible and searchable from the UI.
+ */
+function buildInitialVariablesManifest() {
+  const vars = getInitialChatVariables();
+  const npcs = vars['NPC花名册'];
+  const courses = vars['课程'];
+  const orgs = vars['校内组织'];
+  const externalOrgs = vars['校外组织'];
+  const facilities = vars['校内设施'];
+
+  const npcList = Object.entries(npcs).map(([name, data]) => {
+    const s = data.静态数据;
+    return `- ${name} | ${s.社会情况.年龄}岁 | ${s.社会情况.职务} | ${s.社会情况.所属部门}`;
+  }).join('\n');
+
+  const courseList = Object.entries(courses).map(([id, c]) => {
+    const s = c.静态数据;
+    return `- ${id}: ${s.课程名称} (${s.课程编号}) | 教师: ${s.任教老师} | 进展: ${c.动态数据.课程进展}`;
+  }).join('\n');
+
+  const orgList = Object.entries(orgs).map(([name, o]) =>
+    `- ${name} | 负责人: ${o.负责人 || '暂无'} | 职能: ${o.职能}`).join('\n');
+
+  const extOrgList = Object.entries(externalOrgs).map(([name, o]) =>
+    `- ${name} | 负责人: ${o.负责人} | 性质: ${o.性质}`).join('\n');
+
+  const facList = Object.entries(facilities).map(([name, f]) =>
+    `- ${name}: ${f.介绍} (${f.功能})`).join('\n');
+
+  return `---
+## 初始世界状态 · 樱丘大学
+
+### 基本信息
+- 当前地点: ${vars['当前地点']}
+- 当前时间: ${vars['当前时间'].日期} ${vars['当前时间'].时间}
+- 学校: ${vars['学校情况'].名称}
+- 用户: ${vars['User信息'].姓名}, ${vars['User信息'].年龄}岁, ${vars['User信息'].职务}
+
+### NPC花名册 (${Object.keys(npcs).length} 人)
+${npcList}
+
+### 课程 (${Object.keys(courses).length} 门)
+${courseList}
+
+### 校内组织 (${Object.keys(orgs).length} 个)
+${orgList}
+
+### 校外组织 (${Object.keys(externalOrgs).length} 个)
+${extOrgList}
+
+### 校内设施 (${Object.keys(facilities).length} 处)
+${facList}
+
+> 此条目记录游戏开始时的初始世界状态。随着剧情推进，变量将通过 AI 输出的 UpdateVariable 指令动态更新。使用「变量管理」面板可查看实时值。
+---`;
 }
 
 // ================================================================

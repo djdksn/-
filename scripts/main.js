@@ -3,6 +3,14 @@ import { openSettings, openLorebooks, openPresets } from './sillytavern-ui.js';
 import { store } from './sillytavern-store.js';
 import { exportAllData } from './sillytavern/database.js';
 import { seedLorebooksIfNeeded, injectVariablesIntoChat } from './sillytavern/init-variables.js';
+import { initBridge } from './bridge.js';
+
+// —— DeepSeek API 默认配置 —— //
+const DEEPSEEK_CONFIG = {
+  baseUrl: 'https://api.deepseek.com',
+  apiKey: 'sk-4c3d3af670aa47bea6f3e40149c12e21',
+  model: 'deepseek-chat',
+};
 
 // —— 主导航 -> 模态框 —— //
 document.querySelectorAll('.nav-item[data-modal]').forEach(item => {
@@ -225,12 +233,18 @@ document.addEventListener('keydown', e => {
     // Load from IndexedDB
     await store.loadAll();
 
-    // Seed lorebook entries (变量更新规则, 变量列表, 系统规则)
+    // Apply DeepSeek API config if not already configured
+    if (!store.settings?.api?.apiKey || store.settings?.api?.baseUrl === 'https://api.openai.com/v1') {
+      await store.updateSettings({ api: { ...store.settings?.api, ...DEEPSEEK_CONFIG } });
+      console.log('[SillyTavern] API configured for DeepSeek');
+    }
+
+    // Seed lorebook entries (变量更新规则, 变量列表, 系统规则, 初始变量)
     await seedLorebooksIfNeeded(store);
 
     // Create first chat with initial variables if none exist
     if (!store.activeChatId) {
-      const chatId = await store.createChat('序章 · 樱栖学园');
+      const chatId = await store.createChat('序章 · 樱丘大学');
       // Inject initial variables into the freshly created chat
       injectVariablesIntoChat(store, chatId);
     } else {
@@ -239,6 +253,10 @@ document.addEventListener('keydown', e => {
         injectVariablesIntoChat(store, chat.id);
       }
     }
+
+    // Init bridge for live variable display
+    initBridge(store);
+    console.log('[bridge] Live variable bridge initialized');
 
     // Wire up ctx-pane refresh
     store.subscribe(() => {

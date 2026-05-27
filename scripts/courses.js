@@ -171,6 +171,17 @@
     const contentHtml = (c.content || []).map(x => `<li>${escape(x)}</li>`).join('');
     const kindLabel = KIND_META[c.kind].label;
 
+    // Live progress from variable system
+    let progressBadge = '';
+    if (c.varKey && window.__liveVariables) {
+      const cv = window.__liveVariables['课程']?.[c.varKey];
+      if (cv?.动态数据?.课程进展) {
+        const prog = cv.动态数据.课程进展;
+        const pc = { '未开始': 'var(--ink-500)', '进行中': 'var(--amber-400)', '已完成': 'var(--moss-400)' }[prog] || 'var(--ink-600)';
+        progressBadge = `<span style="display:inline-block;padding:3px 10px;border-radius:4px;font-size:var(--fs-xs);background:${pc};color:#fff;font-weight:600;">${escape(prog)}</span>`;
+      }
+    }
+
     const m = GameModal.open({
       size: 'xl', icon: 'school',
       title: c.name,
@@ -183,6 +194,7 @@
               <div class="course-detail-tags">
                 <span class="badge badge-${({public:'wisteria',club:'moss',special:'amber'})[c.kind]}">${kindLabel}</span>
                 <span class="badge badge-ink">${escape(c.term)}</span>
+                ${progressBadge}
               </div>
               <div class="course-detail-name">${escape(c.name)}</div>
               <div class="course-detail-en">${escape(c.code)}</div>

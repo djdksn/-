@@ -165,6 +165,7 @@
         <button class="tab-btn is-active" data-tab="profile">资料</button>
         <button class="tab-btn" data-tab="orgs">任职</button>
         <button class="tab-btn" data-tab="relations">关系</button>
+        <button class="tab-btn" data-tab="live">动态</button>
         <button class="tab-btn" data-tab="lore">秘事</button>
       </nav>
 
@@ -236,6 +237,8 @@
             modal.el.querySelector('.dossier').scrollTop = 0;
           });
         });
+      } else if (tab === 'live') {
+        body.innerHTML = renderLiveTab(c);
       } else if (tab === 'lore') {
         body.innerHTML = `
           <div class="dossier-section">
@@ -258,6 +261,70 @@
       }
     });
   }
+
+  // —— 动态变量渲染 —— //
+  function renderLiveTab(c) {
+    const vars = window.__liveVariables;
+    if (!vars) return '<div class="dossier-section"><div class="dossier-section-label">动态数据</div><div class="dossier-section-content" style="color:var(--fg-quaternary)">变量系统尚未就绪，请先发送一条消息激活。</div></div>';
+
+    const npc = vars['NPC花名册']?.[c.name];
+    if (!npc?.动态数据) return '<div class="dossier-section"><div class="dossier-section-label">动态数据</div><div class="dossier-section-content" style="color:var(--fg-quaternary)">该角色暂无动态数据。变量将在 AI 对话过程中自动更新。</div></div>';
+
+    const d = npc.动态数据;
+    const fav = d.人物好感度 || '未知';
+    const favColor = { '厌恶': 'var(--vermil-400)', '一般': 'var(--fg-tertiary)', '友善': 'var(--moss-300)', '爱慕': 'var(--sakura-400)' }[fav] || 'var(--fg-tertiary)';
+
+    const body = d.身体状态 || {};
+    const traces = body.即时痕迹 || {};
+    const traceHtml = Object.entries(traces).filter(([,v]) => v && v !== '暂无').map(([k, v]) => `<div class="dossier-stat"><span class="dossier-stat-k">${k}</span><span class="dossier-stat-v">${escapeHtml(String(v))}</span></div>`).join('');
+
+    const clothes = d.人物穿着 || {};
+    const clothesHtml = Object.entries(clothes).filter(([,v]) => v).map(([k, v]) => `<div>${escapeHtml(k)}: ${escapeHtml(String(v))}</div>`).join('');
+
+    const exp = d.经历 || {};
+    const expNums = ['性行为次数', '性交次数', '口交次数', '肛交次数', '足交次数'];
+    const expHtml = expNums.filter(k => exp[k] !== undefined).map(k => `<div class="dossier-stat"><span class="dossier-stat-k">${k}</span><span class="dossier-stat-v">${exp[k]}</span></div>`).join('');
+
+    const favIcon = fav === '爱慕' ? 'heart' : fav === '友善' ? 'smile' : fav === '厌恶' ? 'shield' : 'user';
+
+    return `
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get(favIcon)}<span>好感度</span></div>
+        <div class="dossier-section-content"><span style="font-size:var(--fs-lg);font-weight:600;color:${favColor};">${escapeHtml(fav)}</span></div>
+      </div>
+      ${traceHtml ? `
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get('eye')}<span>身体即时痕迹</span></div>
+        <div class="dossier-stats" style="flex-wrap:wrap;">${traceHtml}</div>
+      </div>` : ''}
+      ${body.整体反馈 ? `
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get('activity')}<span>身体整体反馈</span></div>
+        <div class="dossier-section-content">${escapeHtml(body.整体反馈)}</div>
+      </div>` : ''}
+      ${clothesHtml ? `
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get('palette')}<span>当前穿着</span></div>
+        <div class="dossier-section-content">${clothesHtml}</div>
+      </div>` : ''}
+      ${d.内心想法 ? `
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get('sparkle')}<span>当前内心想法</span></div>
+        <div class="dossier-section-content" style="font-style:italic;color:var(--wisteria-200);">「${escapeHtml(d.内心想法)}」</div>
+      </div>` : ''}
+      ${expHtml ? `
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get('hash')}<span>经历统计</span></div>
+        <div class="dossier-stats" style="flex-wrap:wrap;">${expHtml}</div>
+      </div>` : ''}
+      <div class="dossier-section">
+        <div class="dossier-section-label">${GameIcons.get('info')}<span>数据来源</span></div>
+        <div class="dossier-section-content" style="font-size:var(--fs-xs);color:var(--fg-quaternary);">以上数据来源于 AI 对话中的实时变量更新。每次 AI 回复后自动刷新。</div>
+      </div>
+    `;
+  }
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"\']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
 
   window.GameRoster = { open, openWithCharacter };
 })();
