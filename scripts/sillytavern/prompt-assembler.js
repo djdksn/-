@@ -5,6 +5,7 @@
 import { createLorebookEngine } from './lorebook-engine.js';
 import { getRegexedString, REGEX_PLACEMENT } from './regex-engine.js';
 import { renderTemplate, buildGenerateContext } from './ejs-engine.js';
+import { expandMacros } from './variable-macro.js';
 
 export async function assemblePrompt(options) {
   const { userInput, history, preset, lorebooks, userName, characterName, variables, formatPrompt, regexScripts, characterTags, triggerFilter, additionalContexts } = options;
@@ -165,12 +166,24 @@ export function replaceMacros(template, context) {
     .replace(/\{\{char\}\}/g, context.characterName)
     .replace(/\{\{original\}\}/g, context.userInput);
 
+  // Basic variable substitution (existing behavior)
   if (context.variables) {
-    result = result.replace(/\{\{([^{}]+)\}\}/g, (match, key) => {
-      const value = context.variables?.[key.trim()];
+    result = result.replace(/\{\{([^{}:]+)\}\}/g, (match, key) => {
+      const trimmed = key.trim();
+      // Skip format_message_variable — handled by expandMacros below
+      if (trimmed.startsWith('format_message_variable')) return match;
+      const value = context.variables?.[trimmed];
       return value !== undefined ? String(value) : match;
     });
   }
+
+  // Advanced macro expansion (format_message_variable, registered macros)
+  result = expandMacros(result, {
+    chat: context.chat || {},
+    userName: context.userName,
+    characterName: context.characterName,
+    userInput: context.userInput,
+  });
 
   return result;
 }
