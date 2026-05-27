@@ -82,7 +82,22 @@
   }
 
   // —— Render all messages —— //
+  let _lastMsgCount = -1;
+  let _lastStreaming = false;
+
   function renderAll() {
+    const isStreaming = !!(store && store.streamState && store.streamState.isStreaming);
+    const msgCount = store?.activeChat?.messages?.length || 0;
+
+    // During streaming, skip full DOM rebuild — only update the live bubble
+    if (isStreaming && _lastStreaming && msgCount === _lastMsgCount && msgCount > 0) {
+      updateLiveStreamingBubble();
+      requestAnimationFrame(() => { scrollDown(); });
+      return;
+    }
+    _lastMsgCount = msgCount;
+    _lastStreaming = isStreaming;
+
     stream.innerHTML = '';
     let messages = [];
     let lastW2gOptions = null;
@@ -138,11 +153,24 @@
     requestAnimationFrame(() => { scrollDown(); });
   }
 
+  // Lightweight in-place update of the live streaming bubble (no full DOM rebuild)
+  function updateLiveStreamingBubble() {
+    const existing = stream.querySelector('.bubble.live-streaming');
+    const newBubble = buildStreamingBubble();
+    if (existing && newBubble) {
+      existing.replaceWith(newBubble);
+    } else if (existing && !newBubble) {
+      existing.remove();
+    } else if (!existing && newBubble) {
+      stream.appendChild(newBubble);
+    }
+  }
+
   function buildStreamingBubble() {
     const ss = store.streamState;
     if (!ss || !ss.isStreaming) return null;
     const b = document.createElement('div');
-    b.className = 'bubble from-npc';
+    b.className = 'bubble from-npc live-streaming';
     let contentHtml = '';
 
     if (ss.thinking && store.settings?.thinkingDisplay !== 'hide') {

@@ -1,58 +1,54 @@
 @echo off
-chcp 65001 >nul
-title 樱栖学园 · 编年志
-
-:: 切换到本脚本所在目录
 cd /d "%~dp0"
-
+title 樱栖学园 · 编年志
 set PORT=3456
 
 echo.
-echo   🌸 樱栖学园 · 编年志
-echo   ════════════════════
+echo   樱栖学园 · 编年志
+echo   ====================
 echo.
 
-:: 检查端口是否已被占用
-powershell -Command "try { (Invoke-WebRequest -Uri http://localhost:%PORT% -TimeoutSec 2 -UseBasicParsing).StatusCode } catch { exit 1 }" >nul 2>&1
+:: Check if server already running
+curl -s -o NUL http://localhost:%PORT% 2>NUL
 if %errorlevel% equ 0 (
-    echo   ✅ 服务器已在运行 → http://localhost:%PORT%
+    echo   [OK] Server already running
     start http://localhost:%PORT%
-    goto :end
+    goto :done
 )
 
-:: 优先尝试 npx serve
-where npx >nul 2>nul
-if %errorlevel% equ 0 (
-    echo   ▶ 使用 npx serve 启动...
-    echo   ▶ 正在启动服务器，请稍候...
-    start "" http://localhost:%PORT%
-    npx --yes serve . -l %PORT% --no-clipboard
-    goto :end
+:: Find npx — try common paths first
+set NPX=
+if exist "%ProgramFiles%\nodejs\npx.cmd" set NPX="%ProgramFiles%\nodejs\npx.cmd"
+if exist "%ProgramFiles(x86)%\nodejs\npx.cmd" set NPX="%ProgramFiles(x86)%\nodejs\npx.cmd"
+if "%NPX%"=="" where npx >nul 2>nul && set NPX=npx
+
+if not "%NPX%"=="" (
+    echo   [..] Starting server on port %PORT%...
+    start http://localhost:%PORT%
+    %NPX% --yes serve . -l %PORT% --no-clipboard
+    goto :done
 )
 
-:: 回退到 Python
+:: Fallback: Python
 where python >nul 2>nul
 if %errorlevel% equ 0 (
-    echo   ▶ 使用 Python 启动...
-    start "" http://localhost:%PORT%
+    echo   [..] Using Python server...
+    start http://localhost:%PORT%
     python -m http.server %PORT%
-    goto :end
+    goto :done
 )
 
 where python3 >nul 2>nul
 if %errorlevel% equ 0 (
-    echo   ▶ 使用 Python3 启动...
-    start "" http://localhost:%PORT%
+    echo   [..] Using Python3 server...
+    start http://localhost:%PORT%
     python3 -m http.server %PORT%
-    goto :end
+    goto :done
 )
 
-:: 都没找到
-echo   ❌ 未找到 Node.js 或 Python，请安装其中之一：
-echo      Node.js: https://nodejs.org
-echo      Python:  https://www.python.org
+echo   [ERR] Node.js or Python required.
+echo         Install: https://nodejs.org
 echo.
 pause
-goto :end
 
-:end
+:done
