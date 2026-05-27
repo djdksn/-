@@ -3,8 +3,8 @@
  * Replaces Dexie CDN with a minimal native IndexedDB wrapper.
  */
 const DB_NAME = 'SillyTavernWebDB';
-const DB_VERSION = 6;
-const STORES = ['lorebooks', 'presets', 'settings', 'chats', 'regex_scripts'];
+const DB_VERSION = 7;
+const STORES = ['lorebooks', 'presets', 'settings', 'chats', 'regex_scripts', 'scripts', 'global_variables'];
 
 class MiniDB {
   constructor(name, version) {
@@ -185,14 +185,16 @@ export async function clearAllData() {
 
 export async function exportAllData() {
   const db = getDatabase();
-  const [lorebooks, presets, settings, chats, regexScripts] = await Promise.all([
+  const [lorebooks, presets, settings, chats, regexScripts, scripts, globalVars] = await Promise.all([
     db.table('lorebooks').toArray(),
     db.table('presets').toArray(),
     db.table('settings').toArray(),
     db.table('chats').toArray(),
     db.table('regex_scripts').toArray(),
+    db.table('scripts').toArray(),
+    db.table('global_variables').toArray(),
   ]);
-  return { version: DB_VERSION, exportedAt: Date.now(), lorebooks, presets, settings, chats, regexScripts };
+  return { version: DB_VERSION, exportedAt: Date.now(), lorebooks, presets, settings, chats, regexScripts, scripts, globalVariables: globalVars };
 }
 
 export async function importAllData(backup) {
@@ -203,11 +205,15 @@ export async function importAllData(backup) {
   await db.table('settings').clear();
   await db.table('chats').clear();
   await db.table('regex_scripts').clear();
+  await db.table('scripts').clear();
+  await db.table('global_variables').clear();
   if (Array.isArray(backup.lorebooks)) await db.table('lorebooks').bulkPut(backup.lorebooks);
   if (Array.isArray(backup.presets)) await db.table('presets').bulkPut(backup.presets);
   if (Array.isArray(backup.settings)) await db.table('settings').bulkPut(backup.settings);
   if (Array.isArray(backup.chats)) await db.table('chats').bulkPut(backup.chats);
   if (Array.isArray(backup.regexScripts)) await db.table('regex_scripts').bulkPut(backup.regexScripts);
+  if (Array.isArray(backup.scripts)) await db.table('scripts').bulkPut(backup.scripts);
+  if (Array.isArray(backup.globalVariables)) await db.table('global_variables').bulkPut(backup.globalVariables);
 }
 
 export async function getLorebooks() { return getDatabase().table('lorebooks').toArray(); }
@@ -253,4 +259,26 @@ export async function saveChat(chat) {
   return chat.id;
 }
 export async function deleteChat(id) { await getDatabase().table('chats').delete(id); }
+
+// scripts CRUD
+export async function getScripts() { return getDatabase().table('scripts').toArray(); }
+export async function saveScript(script) {
+  script.updatedAt = Date.now();
+  await getDatabase().table('scripts').put(script);
+  return script.id;
+}
+export async function deleteScript(id) { await getDatabase().table('scripts').delete(id); }
+export async function saveAllScripts(scripts) {
+  await getDatabase().table('scripts').clear();
+  if (scripts.length > 0) await getDatabase().table('scripts').bulkPut(scripts);
+}
+
+// global_variables CRUD
+export async function getGlobalVariables() {
+  const all = await getDatabase().table('global_variables').toArray();
+  return all[0]?.data || {};
+}
+export async function saveGlobalVariables(data) {
+  await getDatabase().table('global_variables').put({ id: 'global', data, updatedAt: Date.now() });
+}
 
