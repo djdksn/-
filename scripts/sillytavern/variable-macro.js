@@ -117,6 +117,11 @@ function _expandFormatVariable(_args, context) {
     if (typeof val === 'object' && !Array.isArray(val)) {
       if (_isRecord(val)) {
         // Record type (e.g. NPC花名册, 校内组织, 课程)
+        // Add compact name index first for quick AI reference
+        const names = Object.keys(val);
+        if (names.length > 0) {
+          sections.push(`  [名单] ${names.join('、')}`);
+        }
         for (const [entryName, entryData] of Object.entries(val)) {
           sections.push(`  ■ ${entryName}`);
           const formatted = _format(entryData, 2, 4);

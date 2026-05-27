@@ -23,17 +23,42 @@ export const SELECTIVE_LOGIC_LABELS = {
   and_all: 'AND 全部',
 };
 
-export const DEFAULT_FORMAT_PROMPT = `你必须严格按照以下 XML 标签格式输出回复，不要使用 Markdown 包裹：
-<thinking>……</thinking>     ← 可选；内部任何字符都视为思考过程，不被解析
-<maintext>……</maintext>     ← 必填；本回合的剧情正文，可多段，保留换行
-<option>选项 A
+export const DEFAULT_FORMAT_PROMPT = `【输出格式铁律 — 每回合必须完整输出以下全部标签，缺一即视为系统级错误】
+
+禁止使用 Markdown 代码块（\`\`\`）包裹输出。直接输出裸 XML。
+
+标签顺序与要求（必须全部出现，无一例外）：
+
+1. <thinking>……</thinking>
+   → 必填。内容：①本回合时间推进量 ②将出场的 NPC 姓名列表（逐一核对 NPC花名册） ③变量更新判断。
+
+2. <maintext>……</maintext>
+   → 必填。本回合剧情正文，可多段，保留自然换行。
+   → 【命名铁律】写到的每个角色姓名必须与 NPC花名册 中该角色的键名逐字完全一致！"樱汐里"不是"神宫寺汐里"，"西园寺瑠衣"不是"小鸟游榴衣"，"桐岛可怜"不是"古手川可怜"。引用前必须在 <thinking> 中逐字核对。
+
+3. <option>
+选项 A
 选项 B
-选项 C</option>              ← 必填；至少 2 项，每行一个
-<sum>……</sum>               ← 必填；本回合一句话总结
-<vars>{"金钱": 10}</vars>   ← 选填；简单变量 JSON 深合并
-<UpdateVariable>
-  <JSONPatch>[{"op": "add", "path": "/NPC花名册/新人名", "value": {静态数据:{...}, 动态数据:{...}}}]</JSONPatch>
-</UpdateVariable>           ← 选填；新增 NPC 时使用 add 操作（禁止 replace 已有角色）`;
+选项 C
+</option>
+   → 必填。至少 3 个选项，每行一个，内容覆盖不同行动方向。
+
+4. <sum>……</sum>
+   → 必填。本回合剧情的一句话摘要，15-40 字。
+
+5. <vars>{"键": "值"}</vars>
+   → 选填。简单变量的 JSON 深合并（非 NPC/课程等结构化数据）。
+
+6. <UpdateVariable>
+<Analysis>（英文，不超过 80 词）</Analysis>
+<JSONPatch>[…]</JSONPatch>
+</UpdateVariable>
+   → 选填。JSONPatch 必须是合法 JSON 数组，path 精确到叶子节点。
+   → 【致命红线】对已存在于 NPC花名册 中的角色，严禁使用 "add" 操作！
+   → 【静态锁死】严禁 path 中出现 "静态数据" 字样。
+
+【回合完整性检查 — 输出前自检】
+在输出结束前，逐条确认：<thinking> 有吗？<maintext> 有吗？<option> 有 3 项以上吗？<sum> 有吗？缺少任何一项必须补全。`;
 
 export const DEFAULT_TAGS = ['maintext', 'option', 'sum', 'vars', 'thinking', 'think', 'w2g'];
 export const DEFAULT_OPAQUE_TAGS = ['thinking', 'think'];
