@@ -318,6 +318,9 @@ class SillytavernStore {
       console.warn('[Store] <vars> parse error (skipped):', err.message);
     }
 
+    // Sync new NPCs from variable store to GameData.characters (for sidebar roster)
+    syncNpcsToGameData(updatedChat.variables);
+
     // EJS post-processing on assistant reply
     try {
       rawContent = await renderTemplate(rawContent, {
@@ -552,6 +555,50 @@ class SillytavernStore {
       characterName: this.settings?.characterName,
       userInput: input,
     });
+  }
+}
+
+// —— Sync new NPCs from variable store to GameData for sidebar roster display ——
+export function syncNpcsToGameData(variables) {
+  if (typeof GameData === 'undefined' || !variables) return;
+  const npcs = variables['NPC花名册'];
+  if (!npcs) return;
+  const existingNames = new Set(GameData.characters.map(c => c.name));
+  const tones = ['sakura', 'wisteria', 'amber', 'moss', 'ink', 'vermil'];
+
+  for (const [npcName, npcData] of Object.entries(npcs)) {
+    if (existingNames.has(npcName)) continue;
+    const s = npcData?.静态数据;
+    if (!s) continue;
+    const social = s.社会情况 || {};
+    const body = s.身体形状 || {};
+    const details = s.个人细节 || {};
+    const dynamic = npcData?.动态数据 || {};
+    const clothes = dynamic.人物穿着 || {};
+    const wearStr = Object.entries(clothes).filter(([,v]) => v).map(([k, v]) => `${k}: ${v}`).join(' · ') || '暂无数据';
+
+    const charEntry = {
+      id: 'ch-' + npcName.replace(/[^一-龥a-zA-Z]/g, '-').toLowerCase().replace(/-+/g, '-'),
+      name: npcName,
+      kana: social.全名 || npcName,
+      tone: tones[Object.keys(npcs).length % tones.length],
+      avatar: npcName.charAt(0),
+      age: social.年龄 || 0,
+      year: social.身份 || '未知',
+      height: body.身高 ? `${body.身高} cm` : '? cm',
+      orgs: [],
+      look: body.体型概述 || social.性格 || '暂无描述',
+      build: body.体型概述 || '',
+      wear: wearStr,
+      thoughts: dynamic.内心想法 || '',
+      relations: [],
+      special: '',
+      tagline: '',
+    };
+
+    GameData.characters.push(charEntry);
+    existingNames.add(npcName);
+    console.log('[Store] Synced new NPC to GameData:', npcName);
   }
 }
 

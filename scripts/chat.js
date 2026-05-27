@@ -156,13 +156,34 @@
   // Lightweight in-place update of the live streaming bubble (no full DOM rebuild)
   function updateLiveStreamingBubble() {
     const existing = stream.querySelector('.bubble.live-streaming');
-    const newBubble = buildStreamingBubble();
-    if (existing && newBubble) {
-      existing.replaceWith(newBubble);
-    } else if (existing && !newBubble) {
-      existing.remove();
-    } else if (!existing && newBubble) {
-      stream.appendChild(newBubble);
+    const ss = store?.streamState;
+    if (!ss || !ss.isStreaming) {
+      if (existing) existing.remove();
+      return;
+    }
+    // Build inner HTML without creating a new element
+    let contentHtml = '';
+    if (ss.thinking && store.settings?.thinkingDisplay !== 'hide') {
+      const foldOpen = store.settings?.thinkingDisplay === 'inline';
+      contentHtml += `<details class="st-thinking-fold" ${foldOpen ? 'open' : ''}><summary class="st-thinking-summary"><em>思考过程…</em></summary><div class="st-thinking-body">${escapeHtml(ss.thinking).replace(/\n/g, '<br>')}</div></details>`;
+    }
+    if (ss.maintext) {
+      contentHtml += `<div class="st-maintext">${escapeHtml(ss.maintext).replace(/\n/g, '<br>')}</div>`;
+    }
+    if (ss.w2gRaw) {
+      const w2gOpts = parseW2gOptions(ss.w2gRaw);
+      if (w2gOpts.length > 0) updateSuggestions(w2gOpts);
+    }
+    if (!contentHtml) {
+      contentHtml = '<div class="bubble-typing"><span></span><span></span><span></span></div>';
+    }
+    if (existing) {
+      existing.querySelector('.bubble-content').innerHTML = contentHtml;
+    } else {
+      const b = document.createElement('div');
+      b.className = 'bubble from-npc live-streaming';
+      b.innerHTML = `<div class="bubble-content">${contentHtml}</div>`;
+      stream.appendChild(b);
     }
   }
 

@@ -3,6 +3,7 @@ import { openSettings, openLorebooks, openPresets } from './sillytavern-ui.js';
 import { store } from './sillytavern-store.js';
 import { exportAllData } from './sillytavern/database.js';
 import { seedLorebooksIfNeeded, injectVariablesIntoChat } from './sillytavern/init-variables.js';
+import { syncNpcsToGameData } from './sillytavern-store.js';
 import { initBridge } from './bridge.js';
 
 // —— DeepSeek API 默认配置 —— //
@@ -277,9 +278,27 @@ document.addEventListener('keydown', e => {
     initBridge(store);
     console.log('[bridge] Live variable bridge initialized');
 
-    // Wire up ctx-pane refresh
+    // Sync NPCs already in variable store to GameData (for sidebar roster)
+    if (store.activeChat?.variables) {
+      syncNpcsToGameData(store.activeChat.variables);
+    }
+
+    // Wire up ctx-pane refresh — skip during streaming to avoid jitter
+    let _ctxUpdatePending = false;
     store.subscribe(() => {
-      if (window.__updateCtxPane) window.__updateCtxPane();
+      if (!window.__updateCtxPane) return;
+      // Skip during active streaming; update once when streaming ends
+      if (store.streamState?.isStreaming) {
+        if (!_ctxUpdatePending) {
+          _ctxUpdatePending = true;
+        }
+        return;
+      }
+      if (_ctxUpdatePending || !store._lastCtxRender) {
+        _ctxUpdatePending = false;
+        window.__updateCtxPane();
+        store._lastCtxRender = true;
+      }
     });
 
     // Initialize chat bridge
