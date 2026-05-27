@@ -556,7 +556,7 @@ export function openLorebooks() {
             </label>
             <div>
               <strong>${esc(book.name)}</strong>
-              <span style="margin-left:8px;font-size:12px;color:var(--fg-quaternary);">${book.entries.length} 条目</span>
+              <span style="margin-left:8px;font-size:12px;color:var(--fg-quaternary);">${book.entries?.length ?? 0} 条目</span>
             </div>
           </div>
           <div style="display:flex;gap:4px;align-items:center;">

@@ -1,6 +1,6 @@
 {
-  "version": 6,
-  "exportedAt": 1779852728818,
+  "version": 7,
+  "exportedAt": 1779889558221,
   "lorebooks": [],
   "presets": [
     {
@@ -98,9 +98,9 @@
           }
         ]
       },
-      "id": "6feee44e-c652-47b8-92d6-6e92913c8a83",
-      "createdAt": 1779852616869,
-      "updatedAt": 1779852616869
+      "id": "add773cc-1e4e-4922-a3c7-1a9f6ee8bba0",
+      "createdAt": 1779889170079,
+      "updatedAt": 1779889170079
     }
   ],
   "settings": [
@@ -134,6 +134,45 @@
       "id": "settings"
     }
   ],
-  "chats": [],
-  "regexScripts": []
+  "chats": [
+    {
+      "id": "75fbc45c-8ab6-4b0e-9c57-2fda244b6124",
+      "name": "AI - 新对话 3",
+      "messages": [],
+      "characterName": "AI",
+      "userName": "用户",
+      "presetId": null,
+      "lorebookIds": [],
+      "variables": {},
+      "createdAt": 1779889436761,
+      "updatedAt": 1779889436761
+    },
+    {
+      "id": "c3ba2b01-b482-4121-ad7c-34e347f42e75",
+      "name": "AI - 新对话 2",
+      "messages": [],
+      "characterName": "AI",
+      "userName": "用户",
+      "presetId": null,
+      "lorebookIds": [],
+      "variables": {},
+      "createdAt": 1779889434167,
+      "updatedAt": 1779889434167
+    },
+    {
+      "id": "fe5ea184-201d-4037-a1be-c08ef0e9a275",
+      "name": "集成测试",
+      "messages": [],
+      "characterName": "AI",
+      "userName": "用户",
+      "presetId": null,
+      "lorebookIds": [],
+      "variables": {},
+      "createdAt": 1779889203205,
+      "updatedAt": 1779889203205
+    }
+  ],
+  "regexScripts": [],
+  "scripts": [],
+  "globalVariables": []
 }
