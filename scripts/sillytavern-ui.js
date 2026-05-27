@@ -1145,7 +1145,7 @@ export function openPresets() {
       });
     });
     const newBtn = el.querySelector('#st-pre-new');
-    if (newBtn) newBtn.addEventListener('click', () => { store.addPresetFromDefault('新预设'); modal.close(); openPresets(); });
+    if (newBtn) newBtn.addEventListener('click', async () => { await store.addPresetFromDefault('新预设'); modal.close(); openPresets(); });
     const importBtn = el.querySelector('#st-pre-import');
     if (importBtn) importBtn.addEventListener('click', async () => {
       const data = await importJsonFile();
@@ -1153,7 +1153,7 @@ export function openPresets() {
       const p = importPreset(data);
       const id = crypto.randomUUID();
       await savePreset({ ...p, id, createdAt: Date.now(), updatedAt: Date.now() });
-      store.loadAll();
+      await store.loadAll();
       modal.close(); openPresets();
       GameNotify.success('已导入', p.name);
     });
@@ -1170,7 +1170,7 @@ export function openPresetEditor(preset) {
     <div style="margin-bottom:10px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
         <label style="font-size:12px;color:var(--fg-secondary);">${label}</label>
-        <span class="pre-val" data-key="${key}" style="font-size:12px;color:var(--fg-tertiary);font-family:var(--font-mono);">${s[key] ?? ''}</span>
+        <span class="pre-val" data-for="${key}" style="font-size:12px;color:var(--fg-tertiary);font-family:var(--font-mono);">${s[key] ?? ''}</span>
       </div>
       <input type="range" min="${min}" max="${max}" step="${step}" value="${s[key] ?? min}" data-key="${key}" style="width:100%;" oninput="this.parentElement.querySelector('.pre-val').textContent=this.value">
       ${hint ? `<div style="font-size:10px;color:var(--fg-quaternary);">${hint}</div>` : ''}
@@ -1302,12 +1302,12 @@ export function openPresetEditor(preset) {
     function collect() {
       const next = JSON.parse(JSON.stringify(snap));
       // collect all inputs
-      el.querySelectorAll('[data-key]').forEach(inp => {
+      el.querySelectorAll('input[data-key], textarea[data-key]').forEach(inp => {
         const key = inp.getAttribute('data-key');
         if (inp.type === 'checkbox') {
           next.settings[key] = inp.checked;
         } else if (inp.type === 'range' || inp.type === 'number') {
-          next.settings[key] = inp.type === 'number' ? Number(inp.value) : Number(inp.value);
+          next.settings[key] = Number(inp.value);
         } else {
           next.settings[key] = inp.value;
         }

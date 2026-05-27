@@ -127,16 +127,76 @@ export function exportLorebook(lorebook) {
   };
 }
 
+// SillyTavern field name → internal field name mapping
+const ST_TO_INTERNAL = {
+  temperature: 'temp_openai',
+  top_p: 'top_p_openai',
+  top_k: 'top_k_openai',
+  top_a: 'top_a_openai',
+  min_p: 'min_p_openai',
+  frequency_penalty: 'freq_pen_openai',
+  presence_penalty: 'pres_pen_openai',
+  repetition_penalty: 'repetition_penalty_openai',
+  max_context: 'openai_max_context',
+  max_tokens: 'openai_max_tokens',
+  stream: 'stream_openai',
+  prompt: 'main',
+  nsfw_prompt: 'nsfw',
+  jailbreak_prompt: 'jailbreak',
+  enhance_definitions: 'enhanceDefinitions',
+};
+
+const INTERNAL_TO_ST = Object.fromEntries(
+  Object.entries(ST_TO_INTERNAL).map(([k, v]) => [v, k])
+);
+
+// Fields that stay the same (no mapping needed)
+const PASSTHROUGH_KEYS = [
+  'openai_model', 'chat_completion_source', 'max_context_unlocked',
+  'main', 'nsfw', 'jailbreak', 'enhanceDefinitions',
+  'impersonation_prompt', 'new_chat_prompt', 'new_group_chat_prompt',
+  'new_example_chat_prompt', 'continue_nudge_prompt',
+  'wi_format', 'group_nudge_prompt', 'scenario_format', 'personality_format',
+  'prompts', 'prompt_order', 'description',
+];
+
+function normalizeImport(data) {
+  const settings = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (key === 'name' || key === 'preset' || key === 'description') continue;
+    if (key === 'temperature_last') continue; // SillyTavern UI state, skip
+    const mapped = ST_TO_INTERNAL[key] || key;
+    settings[mapped] = value;
+  }
+  // Ensure prompts and prompt_order defaults if missing
+  if (!settings.prompts) settings.prompts = [];
+  if (!settings.prompt_order) settings.prompt_order = [];
+  return settings;
+}
+
+function normalizeExport(settings) {
+  const out = {};
+  for (const [key, value] of Object.entries(settings)) {
+    const mapped = INTERNAL_TO_ST[key] || key;
+    out[mapped] = value;
+  }
+  return out;
+}
+
 export function importPreset(data) {
   return {
     name: data.preset || data.name || '导入的预设',
-    description: data.description,
-    settings: data,
+    description: data.description || '',
+    settings: normalizeImport(data),
   };
 }
 
 export function exportPreset(preset) {
-  return { ...preset.settings, name: preset.name, description: preset.description };
+  return {
+    ...normalizeExport(preset.settings),
+    name: preset.name,
+    description: preset.description,
+  };
 }
 
 export function importJsonFile() {

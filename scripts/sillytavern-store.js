@@ -358,7 +358,12 @@ class SillytavernStore {
   async updatePreset(preset) {
     const next = { ...preset, updatedAt: Date.now() };
     await dbSavePreset(next);
-    this.presets = this.presets.map(p => p.id === next.id ? next : p);
+    const idx = this.presets.findIndex(p => p.id === next.id);
+    if (idx >= 0) {
+      this.presets = [...this.presets.slice(0, idx), next, ...this.presets.slice(idx + 1)];
+    } else {
+      this.presets = [...this.presets, next];
+    }
     this._notify();
   }
 
