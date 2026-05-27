@@ -1116,6 +1116,7 @@ export function openPresets() {
     <div style="margin-top:16px;display:flex;gap:8px;">
       <button id="st-pre-new" class="btn-sm">+ 新建预设</button>
       <button id="st-pre-import" class="btn-sm">导入 JSON</button>
+      <input type="file" id="st-pre-file-input" accept=".json,application/json" style="display:none;">
     </div>
   `;
 
@@ -1147,16 +1148,31 @@ export function openPresets() {
     const newBtn = el.querySelector('#st-pre-new');
     if (newBtn) newBtn.addEventListener('click', async () => { await store.addPresetFromDefault('新预设'); modal.close(); openPresets(); });
     const importBtn = el.querySelector('#st-pre-import');
-    if (importBtn) importBtn.addEventListener('click', async () => {
-      const data = await importJsonFile();
-      if (!data) return;
-      const p = importPreset(data);
-      const id = crypto.randomUUID();
-      await savePreset({ ...p, id, createdAt: Date.now(), updatedAt: Date.now() });
-      await store.loadAll();
-      modal.close(); openPresets();
-      GameNotify.success('已导入', p.name);
-    });
+    const fileInput = el.querySelector('#st-pre-file-input');
+    if (importBtn && fileInput) {
+      importBtn.addEventListener('click', () => { fileInput.value = ''; fileInput.click(); });
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files?.[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const data = JSON.parse(text);
+          const p = importPreset(data);
+          // Use filename (without extension) as fallback name
+          if (!data.name && !data.preset) {
+            p.name = file.name.replace(/\.json$/i, '');
+          }
+          const id = crypto.randomUUID();
+          await savePreset({ ...p, id, createdAt: Date.now(), updatedAt: Date.now() });
+          await store.loadAll();
+          modal.close(); openPresets();
+          GameNotify.success('已导入', p.name || file.name);
+        } catch (e) {
+          GameNotify.warn('导入失败', '文件格式不正确');
+          console.error('Import preset error:', e);
+        }
+      });
+    }
   });
 }
 
