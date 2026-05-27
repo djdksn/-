@@ -41,6 +41,9 @@ const ENTRY_DEFAULTS = Object.freeze({
   matchCharacterDescription: false,
   matchCharacterPersonality: false,
   matchScenario: false,
+  // at_depth position
+  depth: 4,
+  role: 0,                    // 0=System, 1=User, 2=Assistant
   // Metadata
   automationId: '',
   decorators: [],

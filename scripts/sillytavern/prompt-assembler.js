@@ -27,6 +27,10 @@ export function assemblePrompt(options) {
     new Map(allMatchedEntries.map(e => [e.entry.id, e])).values()
   ).sort((a, b) => a.score - b.score);
 
+  // Separate at_depth entries from the rest
+  const depthEntries = uniqueEntries.filter(e => e.entry.position === 'at_depth');
+  const worldInfoEntries = uniqueEntries.filter(e => e.entry.position !== 'at_depth');
+
   const maxContextTokens = preset.settings.openai_max_context || preset.settings.max_length || 4096;
   let currentTokens = 0;
 
@@ -40,12 +44,26 @@ export function assemblePrompt(options) {
     currentTokens += msgTokens;
   }
 
+  // Inject at_depth entries at specified positions in chat history
+  if (depthEntries.length > 0) {
+    const ROLE_MAP = { 0: 'system', 1: 'user', 2: 'assistant' };
+    // Sort by depth ascending, then inject from deepest to shallowest so indices stay stable
+    const sorted = [...depthEntries].sort((a, b) => (a.entry.depth || 0) - (b.entry.depth || 0));
+    for (let i = sorted.length - 1; i >= 0; i--) {
+      const e = sorted[i];
+      const injectDepth = Math.min(e.entry.depth || 0, recentHistory.length);
+      const role = ROLE_MAP[e.entry.role] || 'system';
+      const content = replaceMacros(e.entry.content, { userName, characterName, userInput, variables });
+      recentHistory.splice(injectDepth, 0, { role, content });
+    }
+  }
+
   const promptOrder = (preset.settings.prompt_order || []);
   const prompts = (preset.settings.prompts || []);
 
   function resolvePromptContent(identifier) {
     if (identifier === 'worldInfoBefore' || identifier === 'worldInfoAfter') {
-      const content = uniqueEntries.map(e => e.entry.content).join('\n\n');
+      const content = worldInfoEntries.map(e => e.entry.content).join('\n\n');
       if (!content) return null;
       return regexScripts && regexScripts.length > 0
         ? getRegexedString(content, REGEX_PLACEMENT.WORLD_INFO, { scripts: regexScripts, isPrompt: true })

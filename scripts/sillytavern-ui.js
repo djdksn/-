@@ -544,14 +544,28 @@ export function openLorebooks() {
   } else {
     listHtml = books.map(book => {
       const active = activeSet.has(book.id);
-      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;margin:4px 0;background:${active?'rgba(255,107,154,0.08)':'var(--ink-800)'};border-radius:6px;border:1px solid ${active?'var(--sakura-500)':'transparent'};">
-        <div><strong>${esc(book.name)}</strong><span style="margin-left:8px;font-size:12px;color:var(--fg-quaternary);">${book.entries.length} 条目</span></div>
-        <div style="display:flex;gap:6px;">
-          <button class="btn-sm st-lb-toggle" data-lb-id="${book.id}">${active?'停用':'启用'}</button>
-          <button class="btn-sm st-lb-edit" data-lb-id="${book.id}">编辑</button>
-          <button class="btn-sm st-lb-export" data-lb-id="${book.id}">导出</button>
-          <button class="btn-sm st-lb-delete" data-lb-id="${book.id}" style="color:var(--amber-400);">删除</button>
+      const flags = [];
+      if (book.recursiveScanning) flags.push('递归');
+      if (book.caseSensitive) flags.push('区分大小写');
+      if (book.matchWholeWords) flags.push('全词匹配');
+      return `<div style="padding:8px 12px;margin:4px 0;background:${active?'rgba(255,107,154,0.08)':'var(--ink-800)'};border-radius:6px;border:1px solid ${active?'var(--sakura-500)':'transparent'};">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <label style="cursor:pointer;display:flex;align-items:center;" title="${active?'点击停用':'点击启用'}">
+              <input type="checkbox" class="st-lb-toggle" data-lb-id="${book.id}" ${active?'checked':''} style="accent-color:var(--sakura-500);width:16px;height:16px;cursor:pointer;">
+            </label>
+            <div>
+              <strong>${esc(book.name)}</strong>
+              <span style="margin-left:8px;font-size:12px;color:var(--fg-quaternary);">${book.entries.length} 条目</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;">
+            <button class="btn-sm st-lb-edit" data-lb-id="${book.id}" title="编辑" style="padding:4px 8px;">✎ 编辑</button>
+            <button class="btn-sm st-lb-export" data-lb-id="${book.id}" title="导出" style="padding:4px 8px;">⬇</button>
+            <button class="btn-sm st-lb-delete" data-lb-id="${book.id}" title="删除" style="padding:4px 8px;color:var(--amber-400);">✕</button>
+          </div>
         </div>
+        ${flags.length > 0 ? `<div style="margin-top:4px;font-size:11px;color:var(--fg-quaternary);">${flags.join(' · ')}</div>` : ''}
       </div>`;
     }).join('');
   }
@@ -579,9 +593,9 @@ export function openLorebooks() {
 }
 
 function wireLorebookEvents(el, modal) {
-  el.querySelectorAll('.st-lb-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      store.toggleLorebook(btn.getAttribute('data-lb-id'));
+  el.querySelectorAll('.st-lb-toggle').forEach(cb => {
+    cb.addEventListener('change', () => {
+      store.toggleLorebook(cb.getAttribute('data-lb-id'));
     });
   });
   el.querySelectorAll('.st-lb-edit').forEach(btn => {
@@ -611,8 +625,10 @@ function wireLorebookEvents(el, modal) {
   });
 
   const newBtn = el.querySelector('#st-lb-new');
-  if (newBtn) newBtn.addEventListener('click', () => {
-    store.addLorebookFromDefault('新世界书');
+  if (newBtn) newBtn.addEventListener('click', async () => {
+    const name = prompt('请输入世界书名称：', '世界书');
+    if (name === null) return; // user cancelled
+    await store.addLorebookFromDefault(name.trim() || '世界书');
     modal.close();
     openLorebooks();
   });
@@ -695,6 +711,7 @@ function openLorebookEditor(book) {
               <input id="st-entry-order" type="number" min="0" max="9999" value="${entry.order}" style="width:100%;padding:6px 8px;margin-top:4px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
             </label>
           </div>
+          ${buildAtDepthFields(entry)}
           <div style="display:flex;gap:12px;align-items:center;">
             <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-constant" ${entry.constant?'checked':''}> 常驻</label>
             <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-selective" ${entry.selective?'checked':''}> 选择性</label>
@@ -738,6 +755,8 @@ function openLorebookEditor(book) {
       keys: keys.split(',').map(s => s.trim()).filter(Boolean),
       content, position, order, constant, selective, probability,
       useProbability: probability < 100,
+      depth: parseInt(document.getElementById('st-entry-depth')?.value) || 4,
+      role: parseInt(document.getElementById('st-entry-role')?.value) || 0,
     };
   }
 
@@ -799,6 +818,8 @@ function wireEditorContent(modal) {
     const matchCharacterPersonality = document.getElementById('st-entry-match-char-pers')?.checked || false;
     const matchScenario = document.getElementById('st-entry-match-scenario')?.checked || false;
     const automationId = document.getElementById('st-entry-automation-id')?.value || '';
+    const depth = parseInt(document.getElementById('st-entry-depth')?.value) || 4;
+    const role = parseInt(document.getElementById('st-entry-role')?.value) || 0;
 
     const nextEntries = book.entries.slice();
     nextEntries[idx] = {
@@ -808,7 +829,7 @@ function wireEditorContent(modal) {
       useGroupScoring, caseSensitive: entryCaseSensitive, matchWholeWords: entryWholeWords,
       excludeRecursion, preventRecursion, scanDepth,
       matchPersonaDescription, matchCharacterDescription, matchCharacterPersonality,
-      matchScenario, automationId,
+      matchScenario, automationId, depth, role,
     };
     const updated = { ...book, entries: nextEntries, updatedAt: Date.now() };
     store.updateLorebook(updated);
@@ -852,8 +873,16 @@ function wireEditorContent(modal) {
     });
   });
 
+  // Toggle at_depth fields on position change
+  const posSelect = document.getElementById('st-entry-pos');
+  if (posSelect) posSelect.addEventListener('change', () => {
+    const depthFields = document.getElementById('st-at-depth-fields');
+    if (depthFields) depthFields.style.display = posSelect.value === 'at_depth' ? 'flex' : 'none';
+    saveEntry();
+  });
+
   // Save entry on field blur
-  ['st-entry-keys', 'st-entry-content', 'st-entry-pos', 'st-entry-order', 'st-entry-constant', 'st-entry-selective', 'st-entry-prob'].forEach(id => {
+  ['st-entry-keys', 'st-entry-content', 'st-entry-order', 'st-entry-constant', 'st-entry-selective', 'st-entry-prob', 'st-entry-depth', 'st-entry-role'].forEach(id => {
     const field = document.getElementById(id);
     if (field) field.addEventListener('change', () => saveEntry());
   });
@@ -905,6 +934,25 @@ function wireEditorContent(modal) {
 }
 
 // Helper to re-open the editor inline
+function buildAtDepthFields(entry) {
+  if (!entry) return '';
+  const isAtDepth = entry.position === 'at_depth';
+  const e = entry;
+  return `
+    <div id="st-at-depth-fields" style="display:${isAtDepth ? 'flex' : 'none'};gap:12px;margin-top:8px;">
+      <label class="st-field" style="flex:1;"><span class="st-field-label">深度值</span>
+        <input id="st-entry-depth" type="number" min="0" max="99" value="${e.depth || 4}" style="width:100%;padding:6px 8px;margin-top:4px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
+      </label>
+      <label class="st-field" style="flex:1;"><span class="st-field-label">注入角色</span>
+        <select id="st-entry-role" style="width:100%;padding:6px 8px;margin-top:4px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
+          <option value="0" ${e.role===0?'selected':''}>System</option>
+          <option value="1" ${e.role===1?'selected':''}>User</option>
+          <option value="2" ${e.role===2?'selected':''}>Assistant</option>
+        </select>
+      </label>
+    </div>`;
+}
+
 function buildAdvancedFields(entry) {
   if (!entry) return '';
   const e = entry;
@@ -1012,6 +1060,7 @@ function openLorebookEditorRaw(book, editingEntryId, modal) {
             <input id="st-entry-order" type="number" min="0" max="9999" value="${entry.order}" style="width:100%;padding:6px 8px;margin-top:4px;background:var(--ink-800);border:1px solid var(--ink-600);border-radius:6px;color:var(--fg-primary);font-size:13px;">
           </label>
         </div>
+        ${buildAtDepthFields(entry)}
         <div style="display:flex;gap:12px;">
           <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-constant" ${entry.constant?'checked':''}> 常驻</label>
           <label style="font-size:12px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="st-entry-selective" ${entry.selective?'checked':''}> 选择性</label>
