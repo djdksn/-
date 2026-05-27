@@ -558,6 +558,24 @@ class SillytavernStore {
   }
 }
 
+// —— Normalize Japanese kanji to simplified Chinese for name matching ——
+// AI models often output Japanese kanji (桜, 園, 島) instead of simplified Chinese (樱, 园, 岛)
+// This normalizes names so that both forms match the same character.
+const KANJI_NORM_MAP = {
+  '桜': '樱', '園': '园', '島': '岛', '瀬': '濑', '綾': '绫',
+  '結': '结', '穂': '穗', '倉': '仓', '嵐': '岚', '紀': '纪',
+  '気': '气', '樹': '树', '葉': '叶', '絵': '绘', '亜': '亚',
+  '歩': '步', '様': '样', '経': '经', '検': '检', '験': '验',
+};
+function normalizeName(name) {
+  if (!name) return name;
+  let result = '';
+  for (const ch of name) {
+    result += KANJI_NORM_MAP[ch] || ch;
+  }
+  return result;
+}
+
 // —— Infer category + orgs from NPC identity string ——
 function inferCategoryOrg(identity) {
   if (!identity) return { category: 'student', orgs: [] };
@@ -585,6 +603,7 @@ export function syncNpcsToGameData(variables) {
   const npcs = variables['NPC花名册'];
   if (!npcs) return;
   const existingNames = new Set(GameData.characters.map(c => c.name));
+  const normalizedExisting = new Set(GameData.characters.map(c => normalizeName(c.name)));
   const tones = ['sakura', 'wisteria', 'amber', 'moss', 'ink', 'vermil'];
 
   for (const [npcName, npcData] of Object.entries(npcs)) {
@@ -594,8 +613,9 @@ export function syncNpcsToGameData(variables) {
     const identity = social.身份 || '';
 
     // Also patch existing entries that lack category/orgs
-    if (existingNames.has(npcName)) {
-      const existing = GameData.characters.find(c => c.name === npcName);
+    const normName = normalizeName(npcName);
+    if (existingNames.has(npcName) || normalizedExisting.has(normName)) {
+      const existing = GameData.characters.find(c => c.name === npcName || normalizeName(c.name) === normName);
       if (existing && (!existing.category || (existing.orgs && existing.orgs.length === 0 && identity))) {
         const { category, orgs } = inferCategoryOrg(identity);
         if (!existing.category) existing.category = category;
