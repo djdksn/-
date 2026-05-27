@@ -235,7 +235,10 @@ document.addEventListener('keydown', e => {
     await store.loadAll();
 
     // Apply DeepSeek API config if not already configured
-    if (!store.settings?.api?.apiKey || store.settings?.api?.baseUrl === 'https://api.openai.com/v1') {
+    const needsApiConfig = !store.settings?.api?.apiKey
+      || !store.settings?.api?.baseUrl
+      || store.settings?.api?.baseUrl === 'https://api.openai.com/v1';
+    if (needsApiConfig) {
       await store.updateSettings({ api: { ...store.settings?.api, ...DEEPSEEK_CONFIG } });
       console.log('[SillyTavern] API configured for DeepSeek');
     }
