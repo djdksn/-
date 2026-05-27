@@ -1104,6 +1104,7 @@ export function openPresets() {
     return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;margin:4px 0;background:${active?'rgba(106,85,214,0.08)':'var(--ink-800)'};border-radius:6px;border:1px solid ${active?'var(--wisteria-500)':'transparent'};">
       <div><strong>${esc(p.name)}</strong><span style="margin-left:8px;font-size:12px;color:var(--fg-quaternary);">model: ${esc(p.settings?.openai_model || '?')}</span></div>
       <div style="display:flex;gap:6px;">
+        <button class="btn-sm st-pre-edit" data-pre-id="${p.id}">编辑</button>
         <button class="btn-sm st-pre-set-active" data-pre-id="${p.id}">${active?'取消':'设为默认'}</button>
         <button class="btn-sm st-pre-delete" data-pre-id="${p.id}" style="color:var(--amber-400);">删除</button>
       </div>
@@ -1136,6 +1137,13 @@ export function openPresets() {
         if (confirm('删除此预设?')) { await store.deletePreset(id); modal.close(); openPresets(); }
       });
     });
+    el.querySelectorAll('.st-pre-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-pre-id');
+        const preset = store.presets.find(p => p.id === id);
+        if (preset) { modal.close(); openPresetEditor(preset); }
+      });
+    });
     const newBtn = el.querySelector('#st-pre-new');
     if (newBtn) newBtn.addEventListener('click', () => { store.addPresetFromDefault('新预设'); modal.close(); openPresets(); });
     const importBtn = el.querySelector('#st-pre-import');
@@ -1149,6 +1157,233 @@ export function openPresets() {
       modal.close(); openPresets();
       GameNotify.success('已导入', p.name);
     });
+  });
+}
+
+// ========== PRESET EDITOR ==========
+
+export function openPresetEditor(preset) {
+  const s = preset.settings || {};
+  const snap = JSON.parse(JSON.stringify(preset));
+
+  const slider = (label, key, min, max, step, hint) => `
+    <div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+        <label style="font-size:12px;color:var(--fg-secondary);">${label}</label>
+        <span class="pre-val" data-key="${key}" style="font-size:12px;color:var(--fg-tertiary);font-family:var(--font-mono);">${s[key] ?? ''}</span>
+      </div>
+      <input type="range" min="${min}" max="${max}" step="${step}" value="${s[key] ?? min}" data-key="${key}" style="width:100%;" oninput="this.parentElement.querySelector('.pre-val').textContent=this.value">
+      ${hint ? `<div style="font-size:10px;color:var(--fg-quaternary);">${hint}</div>` : ''}
+    </div>`;
+
+  const checkbox = (label, key) => `
+    <label style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:12px;color:var(--fg-secondary);cursor:pointer;">
+      <input type="checkbox" data-key="${key}" ${s[key] ? 'checked' : ''}> ${label}
+    </label>`;
+
+  const textarea = (label, key, rows) => `
+    <div style="margin-bottom:12px;">
+      <label style="font-size:12px;color:var(--fg-secondary);display:block;margin-bottom:4px;">${label}</label>
+      <textarea data-key="${key}" rows="${rows || 3}" style="width:100%;resize:vertical;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:6px 8px;font-size:12px;font-family:var(--font-mono);">${esc(s[key] || '')}</textarea>
+    </div>`;
+
+  const textinput = (label, key, placeholder) => `
+    <div style="margin-bottom:10px;">
+      <label style="font-size:12px;color:var(--fg-secondary);display:block;margin-bottom:2px;">${label}</label>
+      <input data-key="${key}" value="${esc(s[key] || '')}" placeholder="${placeholder || ''}" style="width:100%;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:5px 8px;font-size:12px;">
+    </div>`;
+
+  const section = (title, content, open = false) => `
+    <details ${open ? 'open' : ''} style="margin-bottom:8px;">
+      <summary style="cursor:pointer;padding:6px 8px;background:var(--ink-800);border-radius:4px;font-size:13px;font-weight:600;color:var(--fg-secondary);user-select:none;">${title}</summary>
+      <div style="padding:10px 4px 0;">${content}</div>
+    </details>`;
+
+  // Sampling section
+  const samplingContent = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
+      ${slider('Temperature', 'temp_openai', 0, 2, 0.01)}
+      ${slider('Top P', 'top_p_openai', 0, 1, 0.01)}
+      ${slider('Top K', 'top_k_openai', 0, 200, 1)}
+      ${slider('Top A', 'top_a_openai', 0, 1, 0.01)}
+      ${slider('Min P', 'min_p_openai', 0, 1, 0.01)}
+      ${slider('Frequency Penalty', 'freq_pen_openai', -2, 2, 0.01)}
+      ${slider('Presence Penalty', 'pres_pen_openai', -2, 2, 0.01)}
+      ${slider('Repetition Penalty', 'repetition_penalty_openai', 1, 2, 0.01)}
+    </div>`;
+
+  // Context section
+  const contextContent = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
+      <div style="margin-bottom:10px;">
+        <label style="font-size:12px;color:var(--fg-secondary);display:block;margin-bottom:2px;">Max Context</label>
+        <input type="number" data-key="openai_max_context" value="${s.openai_max_context || 4096}" style="width:100%;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:5px 8px;font-size:12px;">
+      </div>
+      <div style="margin-bottom:10px;">
+        <label style="font-size:12px;color:var(--fg-secondary);display:block;margin-bottom:2px;">Max Tokens</label>
+        <input type="number" data-key="openai_max_tokens" value="${s.openai_max_tokens || 2048}" style="width:100%;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:5px 8px;font-size:12px;">
+      </div>
+    </div>
+    ${textinput('Model', 'openai_model', 'gpt-3.5-turbo')}
+    ${textinput('Chat Completion Source', 'chat_completion_source', 'openai')}
+    ${checkbox('Streaming', 'stream_openai')}
+    ${checkbox('Unlock Max Context', 'max_context_unlocked')}`;
+
+  // Prompt templates section
+  const promptsContent = `
+    ${textarea('Main Prompt', 'main', 4)}
+    ${textarea('NSFW Prompt', 'nsfw', 3)}
+    ${textarea('Jailbreak', 'jailbreak', 3)}
+    ${textarea('Enhance Definitions', 'enhanceDefinitions', 3)}
+    ${textarea('Impersonation Prompt', 'impersonation_prompt', 3)}`;
+
+  // Utility prompts section
+  const utilityContent = `
+    ${textarea('New Chat Prompt', 'new_chat_prompt', 3)}
+    ${textarea('New Group Chat Prompt', 'new_group_chat_prompt', 3)}
+    ${textarea('New Example Chat Prompt', 'new_example_chat_prompt', 3)}
+    ${textarea('Continue Nudge Prompt', 'continue_nudge_prompt', 3)}`;
+
+  // Format templates section
+  const formatContent = `
+    ${textarea('World Info Format (wi_format)', 'wi_format', 3)}
+    ${textarea('Group Nudge Prompt', 'group_nudge_prompt', 3)}
+    ${textarea('Scenario Format', 'scenario_format', 3)}
+    ${textarea('Personality Format', 'personality_format', 3)}`;
+
+  // Prompt order section
+  const order = s.prompt_order && s.prompt_order.length > 0
+    ? s.prompt_order
+    : DEFAULT_PROMPT_ORDER.map((p, i) => ({ ...p, enabled: true }));
+  const promptsArr = s.prompts || [];
+
+  const orderContent = `
+    <div style="font-size:12px;color:var(--fg-quaternary);margin-bottom:8px;">拖拽排序或切换开关（修改后点击底部保存生效）</div>
+    <div id="pre-prompt-order-list" style="display:flex;flex-direction:column;gap:4px;">
+      ${order.map((p, i) => `
+        <div class="pre-order-item" data-idx="${i}" draggable="true" style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--ink-800);border-radius:4px;cursor:grab;">
+          <span style="cursor:grab;color:var(--fg-quaternary);font-family:var(--font-mono);">⠿</span>
+          <span style="flex:1;font-size:12px;">${esc(p.name || p.identifier)}</span>
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--fg-tertiary);">
+            <input type="checkbox" class="pre-order-enabled" data-idx="${i}" ${p.enabled !== false ? 'checked' : ''}> 启用
+          </label>
+        </div>
+      `).join('')}
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--fg-quaternary);">
+      自定义 JSON Prompts: <span style="font-family:var(--font-mono);">${promptsArr.length} 个</span>
+      <textarea id="pre-prompts-json" style="width:100%;resize:vertical;background:var(--ink-900);color:var(--fg-primary);border:1px solid var(--ink-600);border-radius:4px;padding:6px 8px;font-size:11px;font-family:var(--font-mono);margin-top:4px;" rows="4">${esc(JSON.stringify(promptsArr, null, 2))}</textarea>
+    </div>`;
+
+  const body = `
+    <div style="max-height:65vh;overflow-y:auto;padding-right:4px;">
+      ${textinput('预设名称', 'name', '预设名称')}
+      ${textinput('描述', 'description', '预设描述')}
+      ${section('采样参数', samplingContent, true)}
+      ${section('上下文 & 模型', contextContent)}
+      ${section('提示词模板', promptsContent)}
+      ${section('辅助提示词', utilityContent)}
+      ${section('格式模板', formatContent)}
+      ${section('提示词排序', orderContent)}
+    </div>
+    <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--ink-700);padding-top:12px;">
+      <button id="pre-editor-cancel" class="btn-sm" style="color:var(--fg-tertiary);">取消</button>
+      <button id="pre-editor-export" class="btn-sm">导出 JSON</button>
+      <button id="pre-editor-save" class="btn-sm" style="background:var(--sakura-500);color:#fff;">保存预设</button>
+    </div>
+  `;
+
+  const modal = GameModal.open({ size: 'lg', title: `编辑预设: ${esc(preset.name)}`, body });
+
+  requestAnimationFrame(() => {
+    const el = modal.el;
+    if (!el) return;
+
+    function collect() {
+      const next = JSON.parse(JSON.stringify(snap));
+      // collect all inputs
+      el.querySelectorAll('[data-key]').forEach(inp => {
+        const key = inp.getAttribute('data-key');
+        if (inp.type === 'checkbox') {
+          next.settings[key] = inp.checked;
+        } else if (inp.type === 'range' || inp.type === 'number') {
+          next.settings[key] = inp.type === 'number' ? Number(inp.value) : Number(inp.value);
+        } else {
+          next.settings[key] = inp.value;
+        }
+      });
+      // collect prompt_order enabled states
+      const orderItems = el.querySelectorAll('.pre-order-item');
+      const newOrder = [];
+      orderItems.forEach(item => {
+        const idx = Number(item.getAttribute('data-idx'));
+        const cb = item.querySelector('.pre-order-enabled');
+        newOrder.push({ ...order[idx], enabled: cb ? cb.checked : true });
+      });
+      next.settings.prompt_order = newOrder;
+      // collect prompts JSON
+      const promptsTextarea = el.querySelector('#pre-prompts-json');
+      if (promptsTextarea) {
+        try {
+          next.settings.prompts = JSON.parse(promptsTextarea.value);
+        } catch { /* keep old */ }
+      }
+      next.name = el.querySelector('[data-key="name"]')?.value || next.name;
+      next.description = el.querySelector('[data-key="description"]')?.value || next.description;
+      next.updatedAt = Date.now();
+      return next;
+    }
+
+    el.querySelector('#pre-editor-save').addEventListener('click', async () => {
+      const updated = collect();
+      await store.updatePreset(updated);
+      modal.close();
+      openPresets();
+      store.showToast('预设已保存');
+    });
+
+    el.querySelector('#pre-editor-cancel').addEventListener('click', () => {
+      modal.close();
+      openPresets();
+    });
+
+    el.querySelector('#pre-editor-export').addEventListener('click', () => {
+      const data = exportPreset(collect());
+      exportToJson(data, `${snap.name || 'preset'}.json`);
+    });
+
+    // Drag-and-drop for prompt_order
+    const list = el.querySelector('#pre-prompt-order-list');
+    if (list) {
+      let dragSrc = null;
+      list.addEventListener('dragstart', e => {
+        dragSrc = e.target.closest('.pre-order-item');
+        if (dragSrc) { dragSrc.style.opacity = '0.4'; e.dataTransfer.effectAllowed = 'move'; }
+      });
+      list.addEventListener('dragend', e => {
+        const item = e.target.closest('.pre-order-item');
+        if (item) item.style.opacity = '1';
+        dragSrc = null;
+      });
+      list.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+      list.addEventListener('drop', e => {
+        e.preventDefault();
+        const target = e.target.closest('.pre-order-item');
+        if (!target || !dragSrc || target === dragSrc) return;
+        const items = [...list.querySelectorAll('.pre-order-item')];
+        const fromIdx = items.indexOf(dragSrc);
+        const toIdx = items.indexOf(target);
+        if (fromIdx < toIdx) {
+          list.insertBefore(dragSrc, target.nextSibling);
+        } else {
+          list.insertBefore(dragSrc, target);
+        }
+        // Re-index
+        list.querySelectorAll('.pre-order-item').forEach((item, i) => {
+          item.setAttribute('data-idx', i);
+        });
+      });
+    }
   });
 }
 
