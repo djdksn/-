@@ -1,43 +1,39 @@
 @echo off
 cd /d "%~dp0"
-set "PORT=3456"
-title 樱栖学园 · 编年志
+set PORT=3456
+title Sakurasu
 
 echo.
-echo   樱栖学园 · 编年志
-echo   ====================
-echo   http://localhost:%PORT%/
+echo   Sakurasu
+echo   http://localhost:3456/
 echo.
 
-:: npx serve (preferred)
 where npx >nul 2>&1
 if %errorlevel% equ 0 (
-    echo   [..] npx serve on port %PORT%
-    start "" "http://localhost:%PORT%/"
-    npx --yes serve . -l %PORT% --no-clipboard
+    echo   [..] npx serve
+    start http://localhost:3456/
+    npx --yes serve . -l 3456 --no-clipboard
     goto :done
 )
 
-:: Python fallback
 where python >nul 2>&1
 if %errorlevel% equ 0 (
-    echo   [..] Python http.server on port %PORT%
-    start "" "http://localhost:%PORT%/"
-    python -m http.server %PORT%
+    echo   [..] Python
+    start http://localhost:3456/
+    python -m http.server 3456
     goto :done
 )
 
-:: Python3 fallback
 where python3 >nul 2>&1
 if %errorlevel% equ 0 (
-    echo   [..] Python3 http.server on port %PORT%
-    start "" "http://localhost:%PORT%/"
-    python3 -m http.server %PORT%
+    echo   [..] Python3
+    start http://localhost:3456/
+    python3 -m http.server 3456
     goto :done
 )
 
 echo   [ERR] Node.js or Python required.
-echo         Install: https://nodejs.org
+echo         https://nodejs.org
 echo.
 pause
 
