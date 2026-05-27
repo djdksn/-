@@ -201,6 +201,102 @@ class VariableStore {
     return {};
   }
 
+  // ---- Synchronous variants (for EJS templates; ensureLoaded must be called first) ----
+
+  async ensureLoaded() {
+    await loadGlobal();
+  }
+
+  getVarSync(key, rawOpts, chat, msgId) {
+    const opts = this._resolveOpts(rawOpts);
+
+    if (opts.scope === 'message') {
+      const mKey = _messageKey(chat?.id, msgId);
+      if (mKey && messageVars.has(mKey)) {
+        const val = pathGet(messageVars.get(mKey), key);
+        if (val !== undefined) return val;
+      }
+      return opts.defaults;
+    }
+
+    if (opts.scope === 'chat') {
+      if (chat?.variables) {
+        const val = pathGet(chat.variables, key);
+        if (val !== undefined) return val;
+      }
+      return opts.defaults;
+    }
+
+    if (opts.scope === 'global') {
+      const val = pathGet(_globalVars, key);
+      return val !== undefined ? val : opts.defaults;
+    }
+
+    // auto search: message → chat → global
+    const mKey = _messageKey(chat?.id, msgId);
+    if (mKey && messageVars.has(mKey)) {
+      const val = pathGet(messageVars.get(mKey), key);
+      if (val !== undefined) return val;
+    }
+    if (chat?.variables) {
+      const val = pathGet(chat.variables, key);
+      if (val !== undefined) return val;
+    }
+    const gVal = pathGet(_globalVars, key);
+    return gVal !== undefined ? gVal : opts.defaults;
+  }
+
+  setVarSync(key, value, rawOpts, chat, msgId) {
+    const opts = this._resolveOpts(rawOpts);
+    const flags = opts.flags || 'n';
+
+    if (opts.scope === 'message') {
+      const mKey = _messageKey(chat?.id, msgId);
+      if (!mKey) return undefined;
+      const existing = messageVars.get(mKey) || {};
+      if (flags === 'nx' && pathGet(existing, key) !== undefined) return undefined;
+      if (flags === 'xx' && pathGet(existing, key) === undefined) return undefined;
+      if (!messageVars.has(mKey)) messageVars.set(mKey, {});
+      pathSet(messageVars.get(mKey), key, value);
+      this._observer?.({ scope: 'message', key, value });
+      return value;
+    }
+
+    if (opts.scope === 'global') {
+      if (flags === 'nx' && pathGet(_globalVars, key) !== undefined) return undefined;
+      if (flags === 'xx' && pathGet(_globalVars, key) === undefined) return undefined;
+      pathSet(_globalVars, key, value);
+      saveGlobal(); // fire-and-forget
+      this._observer?.({ scope: 'global', key, value });
+      return value;
+    }
+
+    // chat scope
+    if (!chat) return undefined;
+    if (!chat.variables) chat.variables = {};
+    if (flags === 'nx' && pathGet(chat.variables, key) !== undefined) return undefined;
+    if (flags === 'xx' && pathGet(chat.variables, key) === undefined) return undefined;
+    pathSet(chat.variables, key, value);
+    this._observer?.({ scope: 'chat', key, value });
+    return value;
+  }
+
+  incVarSync(key, delta, rawOpts, chat, msgId) {
+    delta = typeof delta === 'number' ? delta : 1;
+    const opts = this._resolveOpts(rawOpts);
+    const val = this.getVarSync(key, rawOpts, chat, msgId);
+    const current = typeof val === 'number' ? val : (opts.defaults || 0);
+    let newVal = current + delta;
+    if (opts.min != null) newVal = Math.max(newVal, opts.min);
+    if (opts.max != null) newVal = Math.min(newVal, opts.max);
+    return this.setVarSync(key, newVal, { ...opts, flags: 'n' }, chat, msgId);
+  }
+
+  decVarSync(key, delta, rawOpts, chat, msgId) {
+    delta = typeof delta === 'number' ? delta : 1;
+    return this.incVarSync(key, -delta, rawOpts, chat, msgId);
+  }
+
   // Delete a key from a scope
   async deleteVar(key, scope, chat, msgId) {
     if (scope === 'global') {

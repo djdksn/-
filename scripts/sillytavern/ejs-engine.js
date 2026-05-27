@@ -7,7 +7,6 @@ import { variableStore } from './variable-store.js';
 // ejs is loaded globally via <script> tag, exposed as window.ejs
 
 const ESCAPE_PATTERN = /<#escape-ejs>([\s\S]*?)<#\/escape-ejs>/g;
-const MAX_EXECUTION_MS = 3000;
 
 function escapeEjsBlocks(text) {
   return text.replace(ESCAPE_PATTERN, (_, content) => {
@@ -22,15 +21,16 @@ function unescapeEjsBlocks(text) {
 
 /**
  * Build the context object passed to ejs templates.
+ * Uses synchronous variable accessors — ensureLoaded() must be called first.
  */
 function buildContext(extra = {}) {
   const { chat, msg, userName, characterName, userInput } = extra;
 
   const ctx = {
-    getvar: (key, opts) => variableStore.getVar(key, opts, chat, msg?.id),
-    setvar: (key, value, opts) => variableStore.setVar(key, value, opts, chat, msg?.id),
-    incvar: (key, delta, opts) => variableStore.incVar(key, delta, opts, chat, msg?.id),
-    decvar: (key, delta, opts) => variableStore.decVar(key, delta, opts, chat, msg?.id),
+    getvar: (key, opts) => variableStore.getVarSync(key, opts, chat, msg?.id),
+    setvar: (key, value, opts) => variableStore.setVarSync(key, value, opts, chat, msg?.id),
+    incvar: (key, delta, opts) => variableStore.incVarSync(key, delta, opts, chat, msg?.id),
+    decvar: (key, delta, opts) => variableStore.decVarSync(key, delta, opts, chat, msg?.id),
     print: (...args) => args.join(' '),
     console: {
       log: (...args) => console.log('[EJS]', ...args),
@@ -48,7 +48,7 @@ function buildContext(extra = {}) {
 }
 
 /**
- * Render a single template string with error handling and timeout.
+ * Render a single template string with error handling.
  */
 export async function renderTemplate(template, extra = {}) {
   if (!template || typeof template !== 'string') return template;
@@ -56,23 +56,16 @@ export async function renderTemplate(template, extra = {}) {
   // Skip if no EJS tags present (fast path)
   if (!/<%/.test(template)) return template;
 
+  await variableStore.ensureLoaded();
+
   const preprocessed = escapeEjsBlocks(template);
   const ctx = buildContext(extra);
 
   try {
-    const result = await Promise.race([
-      (async () => {
-        // ejs.render runs synchronously, but we wrap it to support timeout
-        return window.ejs.render(preprocessed, ctx, {
-          openDelimiter: '<%',
-          closeDelimiter: '%>',
-        });
-      })(),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('EJS execution timeout (3s)')), MAX_EXECUTION_MS)
-      ),
-    ]);
-
+    const result = window.ejs.render(preprocessed, ctx, {
+      openDelimiter: '<%',
+      closeDelimiter: '%>',
+    });
     return unescapeEjsBlocks(result);
   } catch (err) {
     console.error('[EJS] Template render error:', err.message, '\nTemplate:', template.slice(0, 200));
