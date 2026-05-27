@@ -30,6 +30,8 @@ async function execute(input, context = {}) {
   const parsed = parse(input);
   if (!parsed.isCommand) return { handled: false };
 
+  if (!parsed.command) return { handled: true, output: '输入 /help 查看可用命令。' };
+
   const cmd = commands.get(parsed.command);
   if (!cmd) return { handled: true, output: `未知命令: /${parsed.command}。输入 /help 查看可用命令。` };
 
@@ -48,8 +50,9 @@ async function execute(input, context = {}) {
 register('setvar', async (args, ctx) => {
   if (args.length === 0) return '用法: /setvar 键名=值 或 /setvar 键名 值';
   if (args.length >= 2 && !args[0].includes('=')) {
-    await variableStore.setVar(args[0], args[1], {}, ctx.chat);
-    return `${args[0]} = ${args[1]} ✓`;
+    const value = isNaN(+args[1]) || args[1].trim() === '' ? args[1] : +args[1];
+    await variableStore.setVar(args[0], value, {}, ctx.chat);
+    return `${args[0]} = ${JSON.stringify(value)} ✓`;
   }
   const joined = args.join(' ');
   const eqIdx = joined.indexOf('=');
@@ -57,7 +60,7 @@ register('setvar', async (args, ctx) => {
   const key = joined.slice(0, eqIdx);
   const rawVal = joined.slice(eqIdx + 1);
   // Try parse as number
-  const value = isNaN(+rawVal) || rawVal === '' ? rawVal : +rawVal;
+  const value = isNaN(+rawVal) || rawVal.trim() === '' ? rawVal : +rawVal;
   await variableStore.setVar(key, value, {}, ctx.chat);
   return `${key} = ${JSON.stringify(value)} ✓`;
 }, { description: '设置变量', usage: '/setvar 键名=值' });
@@ -75,7 +78,9 @@ register('incvar', async (args, ctx) => {
   const joined = args.join(' ');
   const eqIdx = joined.indexOf('=');
   const key = eqIdx >= 0 ? joined.slice(0, eqIdx) : joined;
-  const delta = eqIdx >= 0 ? +joined.slice(eqIdx + 1) : 1;
+  const rawDelta = eqIdx >= 0 ? joined.slice(eqIdx + 1).trim() : '1';
+  const delta = +rawDelta;
+  if (isNaN(delta) || rawDelta === '') return '增量需为有效数字';
   const newVal = await variableStore.incVar(key, delta, {}, ctx.chat);
   return `${key} = ${newVal} (+${delta}) ✓`;
 }, { description: '增加数值', usage: '/incvar 键名=5' });
@@ -86,7 +91,9 @@ register('decvar', async (args, ctx) => {
   const joined = args.join(' ');
   const eqIdx = joined.indexOf('=');
   const key = eqIdx >= 0 ? joined.slice(0, eqIdx) : joined;
-  const delta = eqIdx >= 0 ? +joined.slice(eqIdx + 1) : 1;
+  const rawDelta = eqIdx >= 0 ? joined.slice(eqIdx + 1).trim() : '1';
+  const delta = +rawDelta;
+  if (isNaN(delta) || rawDelta === '') return '增量需为有效数字';
   const newVal = await variableStore.decVar(key, delta, {}, ctx.chat);
   return `${key} = ${newVal} (-${delta}) ✓`;
 }, { description: '减少数值', usage: '/decvar 键名=3' });
