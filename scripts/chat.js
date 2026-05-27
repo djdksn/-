@@ -109,8 +109,13 @@
         stream.appendChild(turn);
         // Extract w2g from last assistant message for suggestions
         if (msg.role === 'assistant') {
-          const parsed = parseW2g(msg.content || '');
-          if (parsed.options.length > 0) lastW2gOptions = parsed.options;
+          if (msg.parsed?.w2g) {
+            const w2gOpts = parseW2gOptions(msg.parsed.w2g);
+            if (w2gOpts.length > 0) lastW2gOptions = w2gOpts;
+          } else {
+            const parsed = parseW2g(msg.content || '');
+            if (parsed.options.length > 0) lastW2gOptions = parsed.options;
+          }
         }
       }
 

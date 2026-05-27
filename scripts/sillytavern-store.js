@@ -276,8 +276,9 @@ class SillytavernStore {
       eventBuf.push(...tail);
     }
 
+    const STRUCTURAL_TAGS = new Set(['thinking', 'think', 'vars', 'sum', 'w2g']);
     let rawContent = eventBuf
-      .filter(e => (e.type === 'tag-chunk' || e.type === 'raw') && e.tag !== 'w2g')
+      .filter(e => (e.type === 'tag-chunk' || e.type === 'raw') && !STRUCTURAL_TAGS.has(e.tag))
       .map(e => e.chunk)
       .join('');
 
@@ -321,6 +322,12 @@ class SillytavernStore {
       id: crypto.randomUUID(),
       role: 'assistant',
       content: rawContent,
+      parsed: {
+        thinking: this.streamState.thinking || undefined,
+        maintext: this.streamState.maintext || rawContent,
+        sum: this.streamState.sum || undefined,
+        w2g: this.streamState.w2gRaw || undefined,
+      },
       timestamp: Date.now(),
       apiUsed: 'primary',
     };
